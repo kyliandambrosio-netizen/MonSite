@@ -57,8 +57,6 @@ AddCig.addEventListener("click", async() => {
     //Maj visu compteur
     Cpt_CigJour.textContent = NbrCigJourActu;
 
-    //Initialisation ligne si compteur = 0 
-
 
     //Envoie BDD Google Sheets
 	const valeurRetour = await SaveDataInGoogleSheets("write", "B2", NbrCigJourActu);
