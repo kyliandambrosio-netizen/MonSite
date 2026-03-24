@@ -54,6 +54,11 @@ AddCig.addEventListener("click", async() => {
     //Loading Local Data
     let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour"));
 
+    // Initialisation Ligne si non existantes
+    if (NbrCigJourActu=0) {
+        const valeurRetour = await SaveDataInGoogleSheets("write", "B1", dateActuel);
+    }
+
     //Incrementation Compteur
  	NbrCigJourActu++;
     //Maj visu compteur
@@ -61,7 +66,7 @@ AddCig.addEventListener("click", async() => {
 
 
     //Envoie BDD Google Sheets
-	const valeurRetour = await SaveDataInGoogleSheets("write", "B2", NbrCigJourActu);
+	valeurRetour = await SaveDataInGoogleSheets("write", "B2", NbrCigJourActu);
 
     //Réactivation bouton
     AddCig.disabled = false,
