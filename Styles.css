@@ -1,0 +1,77 @@
+:root{
+	--backcolor: 16#111;
+	--textcolor: 16#111;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background: var(--backcolor);
+}
+
+h1 {
+	color: var(--textcolor);
+	position : static;
+	text-align : center;
+	font-size: 60px;
+}
+
+.container1 {
+	position: absolute;
+	top: 20%;
+	left: 2%;
+	width: fit-content;
+	text-align: center;
+}
+
+
+
+h2 { 
+	color: var(--textcolor);
+	font-size: 30px;
+}
+
+
+span {
+	color: var(--textcolor);
+	font-size: 50px;
+}
+
+#Bp_AddCig {
+	background-color: red;
+	color: white;
+	width: 200px;
+	height: 50px;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#Bp_ChoixModeAff {
+	position:absolute;
+	top: 2%;
+	left: 94%;
+	background-color: grey;
+	color: white;
+	width: 100px;
+	height: 50px;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+@media (hover: hover){
+#Bp_AddCig:hover {
+	background-color: green;
+	color: red;
+}
+
+#Bp_ChoixModeAff:hover {
+	background-color: green;
+	color: red;
+}
+}
+
+button:active {
+	background-color: green;
+	color: red;
+}
