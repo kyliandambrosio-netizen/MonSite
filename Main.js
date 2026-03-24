@@ -19,11 +19,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //Chargement data depuis Bdd google sheets
     if (!sessionStorage.getItem("FrtmPageLoaded")) {
-    console.log("Loading CptCigJour From BDD IN PROGRESS");
+    console.log("Loading BDD IN PROGRESS");
 
     const DataRead = await ReadataInGoogleSheets() || [];
-    
-    if (DataRead[1] != undefined) {
 
     //Compteur Cig////////////////////////////////////////////////
     const NbrCigJour = DataRead[2][0];
