@@ -8,9 +8,6 @@ const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
 const dateActuel = Date();
 
 
-//Loading Local Data
-let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour"));
-
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 import { ReadataInGoogleSheets, SaveDataInGoogleSheets } from './GestBdd.js';
@@ -28,16 +25,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const DataRead = await ReadataInGoogleSheets() || [];
     
-    localStorage.removeItem("NbrCigJour");
+    if (DataRead[1] != undefined) {
     localStorage.setItem("NbrCigJour", parseInt(DataRead[1][1]));
     sessionStorage.setItem("FrtmPageLoaded", "true");
 
     console.log("Loading CptCigJour From BDD OK | ", parseInt(DataRead[1][1]));
-
+    } else {
+        console.log("Loading CptCigJour From BDD FAILLED - Ligne Undefined");
+    };
     };
 
     //MAJ Visu Comtpeur Cpt cig Jour
-    Cpt_CigJour.textContent =  localStorage.getItem("NbrCigJour");
+    Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
     
 });
 
@@ -51,6 +50,9 @@ AddCig.addEventListener("click", async() => {
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
     AddCig.textContent = "Envoie en cours"
+
+    //Loading Local Data
+    let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour"));
 
     //Incrementation Compteur
  	NbrCigJourActu++;
