@@ -5,13 +5,15 @@ const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
 const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
+const dateActuel = Date();
+
 
 //Loading Local Data
 let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour"));
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
-import { SaveDataInGoogleSheets } from './GestBdd.js';
+import { ReadataInGoogleSheets, SaveDataInGoogleSheets } from './GestBdd.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,18 +26,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!sessionStorage.getItem("FrtmPageLoaded")) {
     console.log("Loading CptCigJour From BDD IN PROGRESS");
 
-    NbrCigJourActu = await SaveDataInGoogleSheets("read", "B2") || 0;
+    const DataRead = await ReadataInGoogleSheets() || [];
     
     localStorage.removeItem("NbrCigJour");
-    localStorage.setItem("NbrCigJour", parseInt(NbrCigJourActu));
+    localStorage.setItem("NbrCigJour", parseInt(DataRead[1][1]));
     sessionStorage.setItem("FrtmPageLoaded", "true");
 
-    console.log("Loading CptCigJour From BDD OK | ", NbrCigJourActu);
+    console.log("Loading CptCigJour From BDD OK | ", parseInt(DataRead[1][1]));
 
     };
 
     //MAJ Visu Comtpeur Cpt cig Jour
-    Cpt_CigJour.textContent =  NbrCigJourActu;
+    Cpt_CigJour.textContent =  localStorage.getItem("NbrCigJour");
     
 });
 
@@ -54,6 +56,9 @@ AddCig.addEventListener("click", async() => {
  	NbrCigJourActu++;
     //Maj visu compteur
     Cpt_CigJour.textContent = NbrCigJourActu;
+
+    //Initialisation ligne si compteur = 0 
+
 
     //Envoie BDD Google Sheets
 	const valeurRetour = await SaveDataInGoogleSheets("write", "B2", NbrCigJourActu);
