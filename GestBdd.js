@@ -27,7 +27,7 @@ export async function ReadataInGoogleSheets() {
       return data
   })
   .catch(error => {
-      console.log("Read In GoogleSheets FAILLED",data)
+      console.log("Read In GoogleSheets FAILLED")
   });
 
 
