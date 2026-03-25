@@ -8,7 +8,7 @@ const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
-import { ReadataInGoogleSheets, SaveDataInGoogleSheets } from './GestBdd.js';
+import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets } from './GestBdd.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,10 +86,10 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 
     localStorage.setItem("IndexCig", index);
 ;
-    SaveDataInGoogleSheets("write", `A${index}`, (index-6));
-    SaveDataInGoogleSheets("write", `B${index}`, dateComplete)
-    SaveDataInGoogleSheets("write", "A5", index)
-	await SaveDataInGoogleSheets("write", "A3", NbrCigJourActu);
+    WriteOneCellInGoogleSheets("write", `A${index}`, (index-6));
+    WriteOneCellInGoogleSheets("write", `B${index}`, dateComplete)
+    WriteOneCellInGoogleSheets("write", "A5", index)
+	await WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
 
     //Réactivation bouton
     AddCig.disabled = false,
