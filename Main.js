@@ -82,20 +82,18 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
     //Maj visu compteur
     Cpt_CigJour.textContent = NbrCigJourActu;
 
-    //Création Ligne Cig dans Bdd google sheets
-
+    //Enregistrement local cptCigjour + index
+	localStorage.setItem("NbrCigJour", NbrCigJourActu);
     localStorage.setItem("IndexCig", index);
-;
+
     WriteRangeInGoogleSheets("writeRange", `A${index}:B${index}`, [NbrCigJourActu, dateComplete]);
     WriteOneCellInGoogleSheets("write", "A5", index)
-	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
+	await WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
 
     //Réactivation bouton
     AddCig.disabled = false,
     AddCig.textContent = "Ajouter"
 
-    //Enregistrement local cptCigjour
-	localStorage.setItem("NbrCigJour", NbrCigJourActu);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
