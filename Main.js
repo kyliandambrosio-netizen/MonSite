@@ -98,7 +98,11 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 
     //création ligne mémorisation Jour
     await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, ["3", MemNbrCigJour]);
-    console.log(MemNbrCigJour);
+
+    //Raz compteur cig local
+    localStorage.setItem("NbrCigJour", 0)
+    Cpt_CigJour.textContent = 0;
+
     //Raz Zone mémoire google sheet Cig jour 
     WriteOneCellInGoogleSheets("write", "A3", 0)
     WriteOneCellInGoogleSheets("write", "A5", 0)
