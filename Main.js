@@ -25,28 +25,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     //Affichage Mode Sombre ou Claire
     AffModeSombreClaire();
 
-    //Chargement data depuis Bdd google sheets
+    //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
     if (!sessionStorage.getItem("FrtmPageLoaded")) {
     console.log("Loading BDD IN PROGRESS");
 
     const DataRead = await ReadataInGoogleSheets() || [];
+    const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
+    const LastDate = DataRead[1][7] || 0; //MemJour
 
-    //Compteur Cig////////////////////////////////////////////////
-    const NbrCigJour = DataRead[2][0];
-
-    if (NbrCigJour != undefined) {
+    localStorage.setItem("DateCigJourSaved", parseInt(LastDate));
     localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
     sessionStorage.setItem("FrtmPageLoaded", "true");
-
-    console.log("Loading BDD OK | ", parseInt(NbrCigJour));
-    } else {
-        console.log("Loading BDD FAILLED - Ligne Undefined");
     };
 
-   //Chargement data depuis Bdd google sheets >>> Index Cig
-    const IndexCigJour = DataRead[4][0];
-    localStorage.setItem("IndexCig", IndexCigJour);
+
+
+    //Changement Jour///////////////////////////////////////////////////////////////////////
+    const LastDate = localStorage.getItem("DateCigJourSaved");
+
+    if (LastDate != dateActuelJour) {
+    const MemNbrCigJour = localStorage.getItem("NbrCigJour");
+    const IndexMemJour = parseInt(dateActuelJour)+2;
+    console.log("last", LastDate);
+    console.log("actu", dateComplete);
+    //création ligne mémorisation Jour
+    await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, [dateComplete, MemNbrCigJour]);
+
+    //Raz compteur cig local
+    localStorage.setItem("NbrCigJour", 0)
+
+    //Raz Zone mémoire google sheet Cig jour 
+    WriteOneCellInGoogleSheets("write", "A3", 0)
+    WriteOneCellInGoogleSheets("write", "A5", 0)
+    await WriteRangeInGoogleSheets("razRange", "A7:B200", 0);
+
+    //Mémorisation date
+    localStorage.setItem("DateCigJourSaved", dateActuelJour);
+    WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
     };
+
+
+
+
 
     //MAJ Visu Comtpeur Cpt cig Jour
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
@@ -90,22 +110,9 @@ AddCig.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Changement de jour
 Bp_TestChgmtJour.addEventListener("click", async() => {
-    const MemNbrCigJour = localStorage.getItem("NbrCigJour");
-    const now = new Date();
-    const IndexMemJour = parseInt(dateActuelJour)+2;
 
-    //création ligne mémorisation Jour
-    await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, [dateComplete, MemNbrCigJour]);
-
-    //Raz compteur cig local
-    localStorage.setItem("NbrCigJour", 0)
-    Cpt_CigJour.textContent = 0;
-
-    //Raz Zone mémoire google sheet Cig jour 
-    WriteOneCellInGoogleSheets("write", "A3", 0)
-    WriteOneCellInGoogleSheets("write", "A5", 0)
-    await WriteRangeInGoogleSheets("razRange", "A7:B200", 0);
-
+    //Mémorisation date
+    localStorage.setItem("DateCigJourSaved", 0);
     
 });
 
