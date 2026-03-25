@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (LastDate != dateActuelJour) {
     const MemNbrCigJour = localStorage.getItem("NbrCigJour");
     const IndexMemJour = parseInt(dateActuelJour)+2;
-    console.log("last", LastDate);
+    console.log("Changement Jour", "Last Date :", LastDate, "actual Date :", dateActuelJour);
     console.log("actu", dateComplete);
     //création ligne mémorisation Jour
     await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, [dateComplete, MemNbrCigJour]);
