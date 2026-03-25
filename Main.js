@@ -99,7 +99,10 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Changement de jour
 Bp_TestChgmtJour.addEventListener("click", async() => {
-    await WriteRangeInGoogleSheets("writeRange", "A7:AB200", 0);
+
+    WriteOneCellInGoogleSheets("write", "A3", 0)
+    WriteOneCellInGoogleSheets("write", "A5", 0)
+    await WriteRangeInGoogleSheets("razRange", "A7:B200", 0);
 
     
 });
