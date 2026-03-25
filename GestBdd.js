@@ -36,11 +36,11 @@ export async function ReadataInGoogleSheets() {
  
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-//Write To Google Sheets
-export async function SaveDataInGoogleSheets(action, cellule, valeur) {
+//Write 1 cell To Google Sheets
+export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
   //Construction Data
   const data = {
-  action: "write",
+  action: "writeOneCell",
   cellule: cellule,
 	valeur: valeur,
   };
@@ -66,3 +66,6 @@ export async function SaveDataInGoogleSheets(action, cellule, valeur) {
 
 };
  
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//Write Range To Google Sheets
