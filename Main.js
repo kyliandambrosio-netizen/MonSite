@@ -86,9 +86,9 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 
     localStorage.setItem("IndexCig", index);
 ;
-    WriteRangeInGoogleSheets("writeRange", `A${index}:B${index}`, [(index-6), dateComplete]);
+    WriteRangeInGoogleSheets("writeRange", `A${index}:B${index}`, [NbrCigJourActu, dateComplete]);
     WriteOneCellInGoogleSheets("write", "A5", index)
-	await WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
+	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
 
     //Réactivation bouton
     AddCig.disabled = false,
