@@ -72,7 +72,7 @@ export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
 export async function WriteRangeInGoogleSheets(action, cellule, valeur) {
   //Construction Data
   const data = {
-  action: "writeRange",
+  action: action,
   cellule: cellule,
 	valeur: [valeur],
   };
@@ -87,7 +87,7 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur) {
 
   .then(res => res.text())
   .then (Valeur => {
-      console.log("Write Range In GoogleSheets OK")
+      console.log("Write Range In GoogleSheets OK", Valeur)
       return Valeur
   })
   .catch(error => {
