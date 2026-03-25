@@ -5,7 +5,15 @@ const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
 const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
+const now = new Date();
+const dateActuelJour = now.getDate().toString().padStart(2, '0');
+const dateActuelMois = (now.getMonth()+1).toString().padStart(2, '0');
+const dateActuelAnnee = now.getFullYear().toString();
+const dateActuelheure = now.getHours().toString().padStart(2, '0');
+const dateActuelMinute = now.getMinutes().toString().padStart(2, '0');
+const dateActuelSeconde= now.getSeconds().toString().padStart(2, '0');
 
+const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
@@ -53,15 +61,6 @@ ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Incrementation Compteur cig Jour
 AddCig.addEventListener("click", async() => {  
-const now = new Date();
-const dateActuelJour = now.getDate().toString().padStart(2, '0');
-const dateActuelMois = (now.getMonth()+1).toString().padStart(2, '0');
-const dateActuelAnnee = now.getFullYear().toString();
-const dateActuelheure = now.getHours().toString().padStart(2, '0');
-const dateActuelMinute = now.getMinutes().toString().padStart(2, '0');
-const dateActuelSeconde= now.getSeconds().toString().padStart(2, '0');
-
-const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
 
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
@@ -93,11 +92,10 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 Bp_TestChgmtJour.addEventListener("click", async() => {
     const MemNbrCigJour = localStorage.getItem("NbrCigJour");
     const now = new Date();
-    const dateActuelJour = now.getDate().toString().padStart(2, '0');
     const IndexMemJour = parseInt(dateActuelJour)+2;
 
     //création ligne mémorisation Jour
-    await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, ["3", MemNbrCigJour]);
+    await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, [dateComplete, MemNbrCigJour]);
 
     //Raz compteur cig local
     localStorage.setItem("NbrCigJour", 0)
