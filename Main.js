@@ -69,25 +69,17 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 
     //Loading Local Data
     let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour")) || 0;
-    let index = parseInt(localStorage.getItem("IndexCig")) || 6;
 
     //Incrementation Compteur et index
  	NbrCigJourActu++;
-    index++;
-
-    if (index < 7) {
-        index = 7;
-    };
 
     //Maj visu compteur
     Cpt_CigJour.textContent = NbrCigJourActu;
 
-    //Enregistrement local cptCigjour + index
+    //Enregistrement local cptCigjour
 	localStorage.setItem("NbrCigJour", NbrCigJourActu);
-    localStorage.setItem("IndexCig", index);
 
-    WriteRangeInGoogleSheets("writeRange", `A${index}:B${index}`, [NbrCigJourActu, dateComplete]);
-    WriteOneCellInGoogleSheets("write", "A5", index)
+    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:B${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete]);
 	await WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
 
     //Réactivation bouton
@@ -99,7 +91,15 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Changement de jour
 Bp_TestChgmtJour.addEventListener("click", async() => {
+    const MemNbrCigJour = localStorage.getItem("NbrCigJour");
+    const now = new Date();
+    const dateActuelJour = now.getDate().toString().padStart(2, '0');
+    const IndexMemJour = parseInt(dateActuelJour)+2;
 
+    //création ligne mémorisation Jour
+    await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, ["3", MemNbrCigJour]);
+    console.log(MemNbrCigJour);
+    //Raz Zone mémoire google sheet Cig jour 
     WriteOneCellInGoogleSheets("write", "A3", 0)
     WriteOneCellInGoogleSheets("write", "A5", 0)
     await WriteRangeInGoogleSheets("razRange", "A7:B200", 0);
