@@ -45,7 +45,7 @@ export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
 	valeur: valeur,
   };
 
-  console.log("Write In GoogleSheets IN PROGRESS",data)
+  console.log("Write 1 cell In GoogleSheets IN PROGRESS",data)
 
   //Request data
   return fetch(URL, {
@@ -55,11 +55,11 @@ export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
 
   .then(res => res.text())
   .then (Valeur => {
-      console.log("Write In GoogleSheets OK")
+      console.log("Write 1 cell In GoogleSheets OK")
       return Valeur
   })
   .catch(error => {
-      console.log("Write In GoogleSheets FAILLED")
+      console.log("Write 1 cell In GoogleSheets FAILLED")
   });
 
 
@@ -69,3 +69,31 @@ export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Write Range To Google Sheets
+export async function WriteRangeInGoogleSheets(action, cellule, valeur) {
+  //Construction Data
+  const data = {
+  action: "writeRange",
+  cellule: cellule,
+	valeur: [valeur],
+  };
+
+  console.log("Write Range In GoogleSheets IN PROGRESS",data)
+
+  //Request data
+  return fetch(URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+
+  .then(res => res.text())
+  .then (Valeur => {
+      console.log("Write Range In GoogleSheets OK")
+      return Valeur
+  })
+  .catch(error => {
+      console.log("Write Range In GoogleSheets FAILLED")
+  });
+
+
+
+};
