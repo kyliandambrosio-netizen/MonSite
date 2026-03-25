@@ -8,7 +8,7 @@ const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
-import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets } from './GestBdd.js';
+import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,8 +86,7 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 
     localStorage.setItem("IndexCig", index);
 ;
-    WriteOneCellInGoogleSheets("write", `A${index}`, (index-6));
-    WriteOneCellInGoogleSheets("write", `B${index}`, dateComplete)
+    WriteRangeInGoogleSheets("writeRange", `A${index}:B${index}`, [(index-6), dateComplete]);
     WriteOneCellInGoogleSheets("write", "A5", index)
 	await WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu);
 
@@ -101,8 +100,9 @@ const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${d
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Changement de jour
-Bp_TestChgmtJour.addEventListener("click", () => {
-    console.log("LocalEssaie", NbrCigJourActu);
+Bp_TestChgmtJour.addEventListener("click", async() => {
+    await WriteRangeInGoogleSheets("writeRange", "A7:AB200", 0);
+
     
 });
 
