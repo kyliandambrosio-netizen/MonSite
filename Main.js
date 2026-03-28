@@ -98,8 +98,8 @@ AddCig.addEventListener("click", async() => {
     const dateActuelheure = DateActu.getHours().toString().padStart(2, '0');
     const dateActuelMinute = DateActu.getMinutes().toString().padStart(2, '0');
     const dateActuelSeconde= DateActu.getSeconds().toString().padStart(2, '0');
-
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
+    const IntervalleLastCig = localStorage.getItem("")
 
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
@@ -122,7 +122,7 @@ AddCig.addEventListener("click", async() => {
 
     //Enregistremnt Google Sheets
     await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:B${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete]),
+    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:B${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete, ]),
 	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
     ]);
 
@@ -161,11 +161,10 @@ setInterval(() => {
     const minute = Math.floor((CalcInterval % 3600) / 60);
     const seconde = CalcInterval % 60;
     const Intervalle = `${heure}h ${minute}m ${seconde}s`;
-    IntervalleCig.textContent = Intervalle;
 
 
     if(DateLastCig != 0){
-    IntervalleCig.textContent = `${heure}h ${minute}m ${seconde}s`;
+    IntervalleCig.textContent = Intervalle;
     } else {
         IntervalleCig.textContent = 0;
     };
