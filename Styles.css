@@ -17,15 +17,19 @@ h1 {
 
 
 .container1 {
-	position: absolute;
+	width: 300px;
 	top: 20%;
 	left: 2%;
-	width: fit-content;
 	text-align: center;
 }
 
 
 h2 { 
+	color: var(--textcolor);
+	font-size: 30px;
+}
+
+p { 
 	color: var(--textcolor);
 	font-size: 30px;
 }
@@ -96,8 +100,8 @@ button:active {
 }
 .GroupeJ {
 	position: absolute;
-	top: 45%;
-	left: 2%;
+	top: 20%;
+	left: 40%;
 	width: fit-content;
 	text-align: center;
 }
