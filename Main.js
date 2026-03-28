@@ -47,20 +47,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (LastJour  != dateActuelJour) {
         const MemNbrCigJour = localStorage.getItem("NbrCigJour");
         const IndexMemJour = parseInt(dateActuelJour)+2;
-
-        //création ligne mémorisation Jour actu
-        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete);
-
-        //Memorisation nombre cig jour précédent
-        WriteOneCellInGoogleSheets("writeOnceCEll", `J${LastJour+2}`, MemNbrCigJour);
+        const LastDateCig = localStorage.getItem("MemDateLastCig");
 
         //Raz compteur cig local
         localStorage.setItem("NbrCigJour", 0)
 
+        await Promise.all([
+        //création ligne mémorisation Jour actu
+        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
+
+        //Memorisation nombre cig jour précédent + Date derniere cig du jour
+        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [MemNbrCigJour, LastDateCig]),
+
         //Raz Zone mémoire google sheet Cig jour 
-        WriteOneCellInGoogleSheets("write", "A3", 0)
-        WriteOneCellInGoogleSheets("write", "A5", 0)
-        await WriteRangeInGoogleSheets("razRange", "A7:C200", 0);
+        WriteOneCellInGoogleSheets("write", "A3", 0),
+        WriteOneCellInGoogleSheets("write", "A5", 0),
+        WriteRangeInGoogleSheets("razRange", "A7:C200", 0)
+        ]);
+
+
 
         //Mémorisation date
         localStorage.setItem("DateCigJourSaved", dateActuelJour);
@@ -70,13 +75,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     
-
-
-
-
-
-
-
 
     //MAJ Visu Comtpeur Cpt cig Jour
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
