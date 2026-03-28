@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const DataRead = await ReadataInGoogleSheets() || [];
         const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
         const LastJour = DataRead[1][7] || 0; //MemJour
+        const DateLastCig = DataRead[NbrCigJour+5][1] || 0;
 
         localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
         localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
@@ -99,7 +100,7 @@ AddCig.addEventListener("click", async() => {
     const dateActuelMinute = DateActu.getMinutes().toString().padStart(2, '0');
     const dateActuelSeconde= DateActu.getSeconds().toString().padStart(2, '0');
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
-    const IntervalleLastCig = localStorage.getItem("")
+    let IntervalleLastCig = 0;
 
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
@@ -107,6 +108,13 @@ AddCig.addEventListener("click", async() => {
 
     //Loading Local Data
     let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour")) || 0;
+
+    //Récuperation intervalle 
+    if (NbrCigJourActu != 0) {
+        IntervalleLastCig = localStorage.getItem("Intervalle");
+    } else {
+        IntervalleLastCig = 0;
+    };
 
     //Incrementation Compteur et index
  	NbrCigJourActu++;
@@ -122,7 +130,7 @@ AddCig.addEventListener("click", async() => {
 
     //Enregistremnt Google Sheets
     await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:B${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete, ]),
+    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:C${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete, IntervalleLastCig]),
 	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
     ]);
 
