@@ -17,6 +17,9 @@ import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets, WriteRangeInGoogleSh
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
 document.addEventListener("DOMContentLoaded", async () => {
+    //Affichage Mode Sombre ou Claire
+    AffModeSombreClaire();
+
     const now = new Date();
     const dateActuelJour = now.getDate().toString().padStart(2, '0');
     const dateActuelMois = (now.getMonth()+1).toString().padStart(2, '0');
@@ -26,9 +29,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const dateActuelSeconde= now.getSeconds().toString().padStart(2, '0');
 
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
-
-    //Affichage Mode Sombre ou Claire
-    AffModeSombreClaire();
 
     //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
         console.log("Loading BDD IN PROGRESS");
