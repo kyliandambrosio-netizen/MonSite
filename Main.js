@@ -208,7 +208,7 @@ setInterval(() => {
     };
 
     localStorage.setItem("IntervalleHms", IntervalleHms);
-    localStorage.setItem("IntervalleData", Intervalle);
+    localStorage.setItem("IntervalleSeconde", Intervalle);
     localStorage.setItem("RecordIntervalle", RecordIntervalle);
 
 }, 1000);
