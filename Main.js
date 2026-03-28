@@ -20,79 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     //Affichage Mode Sombre ou Claire
     AffModeSombreClaire();
 
-    const now = new Date();
-    const dateActuelJour = now.getDate().toString().padStart(2, '0');
-    const dateActuelMois = (now.getMonth()+1).toString().padStart(2, '0');
-    const dateActuelAnnee = now.getFullYear().toString();
-    const dateActuelheure = now.getHours().toString().padStart(2, '0');
-    const dateActuelMinute = now.getMinutes().toString().padStart(2, '0');
-    const dateActuelSeconde= now.getSeconds().toString().padStart(2, '0');
+    //Refresh data depuis sheets
+    RefreshDataFromSheets();
 
-    const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
-
-    //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
-        console.log("Loading BDD IN PROGRESS");
-
-        const DataRead = await ReadataInGoogleSheets() || [];
-        const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
-        const LastJour = DataRead[1][7] || 0; //MemJour
-        const recordIntervalle = DataRead[1][2] || 0; //Record intervalle data en seconde
-        const MoyenneJour = DataRead[2][2] || 0; //Intervalle moyen journée
-        let DateLastCig = 0;
-
-        localStorage.setItem("MoyenneJour", MoyenneJour)
-        localStorage.setItem("RecordIntervalle", recordIntervalle);
-        localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
-        localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
-
-        //Chargement date dernier cig > Tab cig jour actu si nbrcig <> 0 sinon tab memo jour
-        if (NbrCigJour > 0) {
-            DateLastCig = DataRead[NbrCigJour+5][1];
-        } else {
-            DateLastCig = DataRead[28][10] || 0;
-        };
-
-         localStorage.setItem("MemDateLastCig", DateLastCig);
-
-        //Changement Jour///////////////////////////////////////////////////////////////////////
-        if (LastJour  != dateActuelJour) {
-        const MemNbrCigJour = localStorage.getItem("NbrCigJour");
-        const IndexMemJour = parseInt(dateActuelJour)+2;
-
-        //Raz compteur cig local
-        localStorage.setItem("NbrCigJour", 0)
-
-        await Promise.all([
-        //création ligne mémorisation Jour actu
-        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
-
-        //Memorisation nombre cig jour précédent + Date derniere cig du jour
-        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [MemNbrCigJour, DateLastCig]),
-
-        //Raz Zone mémoire google sheet Cig jour 
-        WriteOneCellInGoogleSheets("write", "A3", 0),
-        WriteOneCellInGoogleSheets("write", "A5", 0),
-        WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
-        ]);
-
-
-
-        //Mémorisation date
-        localStorage.setItem("DateCigJourSaved", dateActuelJour);
-        WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
-        };
-    
-
-    
-
-    //MAJ Visu object html
-    Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
-
-    const MoyenneH = Math.floor(MoyenneJour / 3600);
-    const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
-    const MoyenneS = MoyenneJour % 60;
-    const MoyenneHms = `${MoyenneH}h ${MoyenneM}m ${MoyenneS}s`;
-    SpanMoyenneJour.textContent = MoyenneHms;
 
 });
 
@@ -211,4 +141,98 @@ setInterval(() => {
     localStorage.setItem("IntervalleSeconde", Intervalle);
     localStorage.setItem("RecordIntervalle", RecordIntervalle);
 
+
 }, 1000);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Declenchement toutes les 5secondes
+setInterval(async() => {
+    //Recherche modification google sheets depuis autres apareil ///////////////////
+    const DataRead = await ReadataInGoogleSheets() || [];
+    const NbrCigJour = DataRead[2][0] || '0'; //Compteur Cig
+    const NbrCigLoc = parseInt(localStorage.getItem("NbrCigJour"));
+
+    if (DataRead[2][0] != NbrCigLoc) {
+        RefreshDataFromSheets();
+    };
+    console.log(DataRead[2][0], NbrCigLoc)
+}, 30000);
+
+
+
+//Récupération des datas depuis google sheets
+async function RefreshDataFromSheets () {
+    const now = new Date();
+    const dateActuelJour = now.getDate().toString().padStart(2, '0');
+    const dateActuelMois = (now.getMonth()+1).toString().padStart(2, '0');
+    const dateActuelAnnee = now.getFullYear().toString();
+    const dateActuelheure = now.getHours().toString().padStart(2, '0');
+    const dateActuelMinute = now.getMinutes().toString().padStart(2, '0');
+    const dateActuelSeconde= now.getSeconds().toString().padStart(2, '0');
+
+    const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
+
+    //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
+        console.log("Loading BDD IN PROGRESS");
+
+        const DataRead = await ReadataInGoogleSheets() || [];
+        const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
+        const LastJour = DataRead[1][7] || 0; //MemJour
+        const recordIntervalle = DataRead[1][2] || 0; //Record intervalle data en seconde
+        const MoyenneJour = DataRead[2][2] || 0; //Intervalle moyen journée
+        let DateLastCig = 0;
+
+        localStorage.setItem("MoyenneJour", MoyenneJour)
+        localStorage.setItem("RecordIntervalle", recordIntervalle);
+        localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
+        localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
+
+        //Chargement date dernier cig > Tab cig jour actu si nbrcig <> 0 sinon tab memo jour
+        if (NbrCigJour > 0) {
+            DateLastCig = DataRead[NbrCigJour+5][1];
+        } else {
+            DateLastCig = DataRead[28][10] || 0;
+        };
+
+         localStorage.setItem("MemDateLastCig", DateLastCig);
+
+        //Changement Jour///////////////////////////////////////////////////////////////////////
+        if (LastJour  != dateActuelJour) {
+        const MemNbrCigJour = localStorage.getItem("NbrCigJour");
+        const IndexMemJour = parseInt(dateActuelJour)+2;
+
+        //Raz compteur cig local
+        localStorage.setItem("NbrCigJour", 0)
+
+        await Promise.all([
+        //création ligne mémorisation Jour actu
+        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
+
+        //Memorisation nombre cig jour précédent + Date derniere cig du jour
+        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [MemNbrCigJour, DateLastCig]),
+
+        //Raz Zone mémoire google sheet Cig jour 
+        WriteOneCellInGoogleSheets("write", "A3", 0),
+        WriteOneCellInGoogleSheets("write", "A5", 0),
+        WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
+        ]);
+
+
+
+        //Mémorisation date
+        localStorage.setItem("DateCigJourSaved", dateActuelJour);
+        WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
+        };
+    
+
+    
+
+    //MAJ Visu object html
+    Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
+
+    const MoyenneH = Math.floor(MoyenneJour / 3600);
+    const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
+    const MoyenneS = MoyenneJour % 60;
+    const MoyenneHms = `${MoyenneH}h ${MoyenneM}m ${MoyenneS}s`;
+    SpanMoyenneJour.textContent = MoyenneHms;
+};
