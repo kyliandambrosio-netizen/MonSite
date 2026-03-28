@@ -46,10 +46,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (LastDate != dateActuelJour) {
     const MemNbrCigJour = localStorage.getItem("NbrCigJour");
     const IndexMemJour = parseInt(dateActuelJour)+2;
-    console.log("Changement Jour", "Last Date :", LastDate, "actual Date :", dateActuelJour);
-    console.log("actu", dateComplete);
+
     //création ligne mémorisation Jour
-    await WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, [dateComplete, MemNbrCigJour]);
+    WriteRangeInGoogleSheets("writeRange", `I${IndexMemJour}:J${IndexMemJour}`, [dateComplete, MemNbrCigJour]);
 
     //Raz compteur cig local
     localStorage.setItem("NbrCigJour", 0)
