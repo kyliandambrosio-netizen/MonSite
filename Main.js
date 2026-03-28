@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Déclaration variable
+//Déclaration Objet Html
 const ChoixModeAff = document.getElementById("Bp_ChoixModeAff");
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
@@ -7,6 +7,7 @@ const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
 const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
+const SpanMoyenneJour = document.getElementById("MoyenneJour");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
@@ -35,9 +36,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const DataRead = await ReadataInGoogleSheets() || [];
         const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
         const LastJour = DataRead[1][7] || 0; //MemJour
-        const recordIntervalle = DataRead[1][2] || 0;
+        const recordIntervalle = DataRead[1][2] || 0; //Record intervalle data en seconde
+        const MoyenneJour = DataRead[2][2] || 0; //Intervalle moyen journée
         let DateLastCig = 0;
-   
+
+        localStorage.setItem("MoyenneJour", MoyenneJour)
         localStorage.setItem("RecordIntervalle", recordIntervalle);
         localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
         localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
@@ -82,9 +85,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     
 
-    //MAJ Visu Comtpeur Cpt cig Jour
+    //MAJ Visu object html
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
-    
+
+    const MoyenneH = Math.floor(MoyenneJour / 3600);
+    const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
+    const MoyenneS = MoyenneJour % 60;
+    const MoyenneHms = `${MoyenneH}h ${MoyenneM}m ${MoyenneS}s`;
+    SpanMoyenneJour.textContent = MoyenneHms;
 
 });
 
@@ -106,7 +114,8 @@ AddCig.addEventListener("click", async() => {
     const dateActuelSeconde= DateActu.getSeconds().toString().padStart(2, '0');
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
     let IntervalleLastCig = 0;
-    let IntervalleData= 0;
+    let IntervalleSeconde= 0;
+
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
     AddCig.textContent = "Envoie en cours"
@@ -117,10 +126,10 @@ AddCig.addEventListener("click", async() => {
     //Récuperation intervalle 
     if (NbrCigJourActu != 0) {
         IntervalleLastCig = localStorage.getItem("IntervalleHms");
-        IntervalleData = localStorage.getItem("IntervalleData");
+        IntervalleSeconde = localStorage.getItem("IntervalleSeconde");
     } else {
         IntervalleLastCig = 0;
-        IntervalleData = 0;
+        IntervalleSeconde = 0;
     };
 
     //Incrementation Compteur et index
@@ -137,7 +146,7 @@ AddCig.addEventListener("click", async() => {
 
     //Enregistremnt Google Sheets
     await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:D${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig, IntervalleData]),
+    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:D${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig, IntervalleSeconde]),
 	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
     ]);
 
