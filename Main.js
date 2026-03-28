@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         //Raz Zone mémoire google sheet Cig jour 
         WriteOneCellInGoogleSheets("write", "A3", 0)
         WriteOneCellInGoogleSheets("write", "A5", 0)
-        await WriteRangeInGoogleSheets("razRange", "A7:B200", 0);
+        await WriteRangeInGoogleSheets("razRange", "A7:C200", 0);
 
         //Mémorisation date
         localStorage.setItem("DateCigJourSaved", dateActuelJour);
@@ -130,7 +130,7 @@ AddCig.addEventListener("click", async() => {
 
     //Enregistremnt Google Sheets
     await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:C${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete, IntervalleLastCig]),
+    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:C${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig]),
 	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
     ]);
 
@@ -145,7 +145,8 @@ AddCig.addEventListener("click", async() => {
 //Action Bouton Changement de jour
 Bp_TestChgmtJour.addEventListener("click", async() => {
 
-    //Mémorisation date
+     WriteOneCellInGoogleSheets("write", "H2", 27)
+     sessionStorage.removeItem("FrtmPageLoaded")
     localStorage.setItem("DateCigJourSaved", 0);
     
 });
