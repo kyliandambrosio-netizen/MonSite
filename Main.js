@@ -35,19 +35,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         const DataRead = await ReadataInGoogleSheets() || [];
         const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
         const LastJour = DataRead[1][7] || 0; //MemJour
-        const DateLastCig = DataRead[NbrCigJour+5][1] || 0;
-
-        localStorage.setItem("MemDateLastCig", DateLastCig);
+        let DateLastCig = 0;
+   
         localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
         localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
         sessionStorage.setItem("FrtmPageLoaded", "true");
 
-        //Changement Jour///////////////////////////////////////////////////////////////////////
+        //Chargement date dernier cig > Tab cig jour actu si nbrcig <> 0 sinon tab memo jour
+        if (NbrCigJour > 0) {
+            DateLastCig = DataRead[NbrCigJour+5][1];
+        } else {
+            DateLastCig = DataRead[28][10] || 0;
+        };
 
+         localStorage.setItem("MemDateLastCig", DateLastCig);
+
+        //Changement Jour///////////////////////////////////////////////////////////////////////
         if (LastJour  != dateActuelJour) {
         const MemNbrCigJour = localStorage.getItem("NbrCigJour");
         const IndexMemJour = parseInt(dateActuelJour)+2;
-        const LastDateCig = localStorage.getItem("MemDateLastCig");
 
         //Raz compteur cig local
         localStorage.setItem("NbrCigJour", 0)
@@ -57,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
 
         //Memorisation nombre cig jour précédent + Date derniere cig du jour
-        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [MemNbrCigJour, LastDateCig]),
+        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [MemNbrCigJour, DateLastCig]),
 
         //Raz Zone mémoire google sheet Cig jour 
         WriteOneCellInGoogleSheets("write", "A3", 0),
