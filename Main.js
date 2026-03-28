@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         //Raz Zone mémoire google sheet Cig jour 
         WriteOneCellInGoogleSheets("write", "A3", 0),
         WriteOneCellInGoogleSheets("write", "A5", 0),
-        WriteRangeInGoogleSheets("razRange", "A7:C200", 0)
+        WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
         ]);
 
 
@@ -106,7 +106,7 @@ AddCig.addEventListener("click", async() => {
     const dateActuelSeconde= DateActu.getSeconds().toString().padStart(2, '0');
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
     let IntervalleLastCig = 0;
-
+    let IntervalleData= 0;
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
     AddCig.textContent = "Envoie en cours"
@@ -116,9 +116,11 @@ AddCig.addEventListener("click", async() => {
 
     //Récuperation intervalle 
     if (NbrCigJourActu != 0) {
-        IntervalleLastCig = localStorage.getItem("Intervalle");
+        IntervalleLastCig = localStorage.getItem("IntervalleHms");
+        IntervalleData = localStorage.getItem("IntervalleData");
     } else {
         IntervalleLastCig = 0;
+        IntervalleData = 0;
     };
 
     //Incrementation Compteur et index
@@ -135,7 +137,7 @@ AddCig.addEventListener("click", async() => {
 
     //Enregistremnt Google Sheets
     await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:C${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig]),
+    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:D${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig, IntervalleData]),
 	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
     ]);
 
@@ -196,7 +198,8 @@ setInterval(() => {
         IntervalleCig.textContent = 0;
     };
 
-    localStorage.setItem("Intervalle", IntervalleHms);
+    localStorage.setItem("IntervalleHms", IntervalleHms);
+    localStorage.setItem("IntervalleData", Intervalle);
     localStorage.setItem("RecordIntervalle", RecordIntervalle);
 
 }, 1000);
