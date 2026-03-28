@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const LastJour = DataRead[1][7] || 0; //MemJour
         const DateLastCig = DataRead[NbrCigJour+5][1] || 0;
 
+        localStorage.setItem("MemDateLastCig", DateLastCig);
         localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
         localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
         sessionStorage.setItem("FrtmPageLoaded", "true");
