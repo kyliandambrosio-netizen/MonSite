@@ -6,6 +6,7 @@ const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
 const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
 const IntervalleCig = document.getElementById("IntervalleCig");
+const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
@@ -29,17 +30,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     AffModeSombreClaire();
 
     //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
-    if (!sessionStorage.getItem("FrtmPageLoaded")) {
         console.log("Loading BDD IN PROGRESS");
 
         const DataRead = await ReadataInGoogleSheets() || [];
         const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
         const LastJour = DataRead[1][7] || 0; //MemJour
+        const recordIntervalle = DataRead[1][2] || 0;
         let DateLastCig = 0;
    
+        localStorage.setItem("RecordIntervalle", recordIntervalle);
         localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
         localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
-        sessionStorage.setItem("FrtmPageLoaded", "true");
 
         //Chargement date dernier cig > Tab cig jour actu si nbrcig <> 0 sinon tab memo jour
         if (NbrCigJour > 0) {
@@ -78,7 +79,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
         };
     
-    };
 
     
 
@@ -168,22 +168,35 @@ Bp_TestLoadBDD.addEventListener("click", () => {
 //Declenchement toutes les secondes
 setInterval(() => {
     //Affichage intervalle dernière cig ///////////////////////////////////////////
+    let RecordIntervalle = localStorage.getItem("RecordIntervalle") || 0;
     const DateActu = new Date();
     const DateLastCig = new Date(localStorage.getItem("MemDateLastCig") ||0);
-    const CalcInterval = Math.floor((DateActu - DateLastCig) / 1000);;
-    const heure = Math.floor(CalcInterval / 3600);
-    const minute = Math.floor((CalcInterval % 3600) / 60);
-    const seconde = CalcInterval % 60;
-    const Intervalle = `${heure}h ${minute}m ${seconde}s`;
+    const Intervalle = Math.floor((DateActu - DateLastCig) / 1000);
+    const heure = Math.floor(Intervalle / 3600);
+    const minute = Math.floor((Intervalle % 3600) / 60);
+    const seconde = Intervalle % 60;
+    const IntervalleHms = `${heure}h ${minute}m ${seconde}s`;
+
+    //Record intervalle
+    if (Intervalle >= RecordIntervalle) {
+        RecordIntervalle = Intervalle;
+        WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
+    }
+
+    const heureRecord = Math.floor(RecordIntervalle / 3600);
+    const minuteRecord = Math.floor((RecordIntervalle % 3600) / 60);
+    const secondeRecord = RecordIntervalle % 60;
+    const Record = `${heureRecord}h ${minuteRecord}m ${secondeRecord}s`;
+    SpanRecordIntervalleCig.textContent = Record;
 
 
     if(DateLastCig != 0){
-    IntervalleCig.textContent = Intervalle;
+    IntervalleCig.textContent = IntervalleHms;
     } else {
         IntervalleCig.textContent = 0;
     };
 
-    localStorage.setItem("Intervalle", Intervalle);
-
+    localStorage.setItem("Intervalle", IntervalleHms);
+    localStorage.setItem("RecordIntervalle", RecordIntervalle);
 
 }, 1000);
