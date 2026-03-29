@@ -79,14 +79,23 @@ AddCig.addEventListener("click", async() => {
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     
     //insertion ligne normal si aucune manquante
-    paramTab.push([paramTab.length+1, `${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`, IntervalleLastCig]);
+    paramTab.push([paramTab.length+1, dateComplete, IntervalleLastCig]);
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
+
+    //Enregistremnt Google Sheets
+    const essaie = [
+        [14, 3, 45],
+        [17, 98, 65]
+    ];
+
+    WriteRangeInGoogleSheets("writeArray", `A7`, paramTab, 7, 1)
+
 
     //Refresh Tableau jour
     VisuTabJour(paramTab);
  
-    //Enregistremnt Google Sheets
 
+    
 
  
     //Réactivation bouton
@@ -246,7 +255,7 @@ async function RefreshDataFromSheets () {
         WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
 
         //Memorisation nombre cig jour précédent + Date derniere cig du jour
-        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [MemNbrCigJour, DateLastCig]),
+        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]]),
 
         //Raz Zone mémoire google sheet Cig jour 
         WriteOneCellInGoogleSheets("write", "A3", 0),
