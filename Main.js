@@ -239,14 +239,16 @@ async function RefreshDataFromSheets () {
         //Raz compteur cig local
         localStorage.setItem("NbrCigJour", 0)
 
+        await Promise.all([
         //création ligne mémorisation Jour actu
-        await WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
+        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
 
         //Memorisation nombre cig jour précédent + Date derniere cig du jour
-        await WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]])
+        WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]]),
 
         //Raz Zone mémoire google sheet Cig jour 
         WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
+        ]);
 
         //Mémorisation date
         localStorage.setItem("DateCigJourSaved", dateActuelJour);
