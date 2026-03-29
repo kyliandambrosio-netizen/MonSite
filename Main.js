@@ -262,13 +262,22 @@ async function RefreshDataFromSheets () {
     //MAJ Visu object html
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
 
+    MoyJour();
+    
+    
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Moyen Jour
+function MoyJour() {
+    const MoyenneJour = localStorage.getItem("MoyenneJour");
+
     const MoyenneH = Math.floor(MoyenneJour / 3600);
     const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
     const MoyenneS = MoyenneJour % 60;
     const MoyenneHms = `${MoyenneH}h ${MoyenneM}m ${MoyenneS}s`;
     SpanMoyenneJour.textContent = MoyenneHms;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Tableau affichage jour
