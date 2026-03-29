@@ -120,7 +120,7 @@ Bp_Test.addEventListener("click", () => {
 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     let NbrFumJour = paramTab.length;
-    const Index = 2;
+    const Index = 1;
 
     //Decrementer compteur 
     localStorage.setItem("NbrCigJour", paramTab.length+1);
