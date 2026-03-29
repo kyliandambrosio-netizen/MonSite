@@ -65,7 +65,7 @@ AddCig.addEventListener("click", async() => {
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     
     //insertion ligne normal si aucune manquante
-    paramTab.push([paramTab.length+1, dateComplete, IntervalleLastCig]);
+    paramTab.push([paramTab.length+1, dateComplete, IntervalleLastCig, IntervalleSeconde]);
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
     //Visu span compteur nombre fum
@@ -108,8 +108,8 @@ Bp_Test.addEventListener("click", async() => {
     const Index = 1;
 
     //Desactivation boutons
-    Cpt_CigJour.disabled = true;
-    Cpt_CigJour.hidden = true;
+    AddCig.disabled = true;
+    AddCig.textContent = "Changement Jour En Cours";
 
     //Decrementer compteur 
     localStorage.setItem("NbrCigJour", paramTab.length+1);
@@ -134,8 +134,8 @@ Bp_Test.addEventListener("click", async() => {
      WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
     ]);
     
-    Cpt_CigJour.disabled = false;
-    Cpt_CigJour.hidden = false;
+    AddCig.disabled = false;
+    AddCig.textContent = "Ajouter";
 
 });
 
