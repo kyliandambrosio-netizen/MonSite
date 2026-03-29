@@ -75,17 +75,20 @@ AddCig.addEventListener("click", async() => {
     //Visu span compteur nombre fum
     Cpt_CigJour.textContent = paramTab.length;
 
+    //Refresh Tableau jour
+    VisuTabJour(paramTab);
+     
     //Enregistrement cptCigjour
 	localStorage.setItem("NbrCigJour", paramTab.length);
-    WriteOneCellInGoogleSheets("WriteOneCell", "A3", paramTab.length)
+    await Promise.all([
+    WriteOneCellInGoogleSheets("WriteOneCell", "A3", paramTab.length),
 
     //Enregistremnt Google Sheets
     WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
+    ]);
 
-    //Refresh Tableau jour
-    VisuTabJour(paramTab);
  
-    //Réactivation bouton
+    //Réactivation boutons
     AddCig.disabled = false,
     AddCig.textContent = "Ajouter"
 
@@ -114,7 +117,7 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bp Test
-Bp_Test.addEventListener("click", () => {
+Bp_Test.addEventListener("click", async() => {
 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     let NbrFumJour = paramTab.length;
@@ -129,12 +132,17 @@ Bp_Test.addEventListener("click", () => {
         paramTab[i][0] = paramTab[i][0] -1;
     };
 
-    
+    //Refresh tableau
+    VisuTabJour(paramTab);
+
+    //Enregistremnt Google Sheets
+    await WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
+    WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
     localStorage.setItem("NbrCigJour", NbrFumJour-1);
     Cpt_CigJour.textContent = NbrFumJour-1;
     
-    VisuTabJour(paramTab);
+
 
     
 });
