@@ -91,7 +91,7 @@ AddCig.addEventListener("click", async() => {
 //Action Bouton Changement de jour
 Bp_TestChgmtJour.addEventListener("click", async() => {
 
-     WriteOneCellInGoogleSheets("write", "H2", 27)
+     WriteOneCellInGoogleSheets("write", "H2", 28)
      sessionStorage.removeItem("FrtmPageLoaded")
     localStorage.setItem("DateCigJourSaved", 0);
     
@@ -106,8 +106,8 @@ Bp_TestLoadBDD.addEventListener("click", () => {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Declenchement toutes les secondes
-setInterval(() => {
+//Declenchement toutes les seconde
+setInterval(async() => {
     //Affichage intervalle dernière cig ///////////////////////////////////////////
     let RecordIntervalle = localStorage.getItem("RecordIntervalle") || 0;
     const DateActu = new Date();
@@ -143,21 +143,6 @@ setInterval(() => {
 
 
 }, 1000);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Declenchement toutes les 5secondes
-setInterval(async() => {
-    //Recherche modification google sheets depuis autres apareil ///////////////////
-    const DataRead = await ReadataInGoogleSheets() || [];
-    const NbrCigJour = DataRead[2][0] || '0'; //Compteur Cig
-    const NbrCigLoc = parseInt(localStorage.getItem("NbrCigJour"));
-
-    if (DataRead[2][0] != NbrCigLoc) {
-        RefreshDataFromSheets();
-        console.log("Changement de jour");
-    };
-
-}, 5000);
 
 
 
