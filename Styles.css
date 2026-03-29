@@ -15,6 +15,12 @@ h1 {
 	font-size: 60px;
 }
 
+tr {
+	color: var(--textcolor);
+	position : static;
+	text-align : center;
+	font-size: 30px;
+}
 
 .container1 {
 	width: 300px;
