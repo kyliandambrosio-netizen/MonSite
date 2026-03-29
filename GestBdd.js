@@ -1,5 +1,5 @@
 /////////////////////////////////////////////ECHANGE GOOGLE SHEET//////////////////////////
-const URL = "https://script.google.com/macros/s/AKfycbxxTlkL6Wl3UOpp6MIsasdx-LdfoUnM1JnjE0DmTcSU_s2Oqk9BHKeDBieN5IsZLenO/exec";
+const URL = "https://script.google.com/macros/s/AKfycbzSufBqcBDh82Qu9wgK8dcwOz32gWHSw4AgvZ37hT4G-iHk-lVgwhdbprcEf-XLytJv/exec";
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 
@@ -62,12 +62,14 @@ export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Write Range To Google Sheets
-export async function WriteRangeInGoogleSheets(action, cellule, valeur) {
+export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart, columnStart) {
   //Construction Data
   const data = {
   action: action,
   cellule: cellule,
-	valeur: [valeur],
+	valeur: valeur,
+  rowStart: rowStart,
+  columnStart: columnStart
   };
 
   //Request data
@@ -78,6 +80,7 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur) {
 
   .then(res => res.text())
   .then (Valeur => {
+    console.log(data)
       return Valeur
   })
   .catch(error => {
