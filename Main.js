@@ -122,7 +122,7 @@ setInterval(async() => {
     if(DateLastCigSeconde != 946681200){
         if (Intervalle >= RecordIntervalle && Intervalle != 0) {
             RecordIntervalle = Intervalle;
-            WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
+           await WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
         }
         }
 
