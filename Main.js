@@ -58,10 +58,6 @@ AddCig.addEventListener("click", async() => {
         IntervalleSeconde = 0;
     };
 
-    //Bloquage bouton pendant envoie données
-    AddCig.disabled = true,
-    AddCig.textContent = "Envoie en cours"
-
     //Mémorisation Date
     localStorage.setItem("MemDateLastCig", DateActu);
 
@@ -80,24 +76,12 @@ AddCig.addEventListener("click", async() => {
      
     //Enregistrement cptCigjour
 	localStorage.setItem("NbrCigJour", paramTab.length);
-    await Promise.all([
-    WriteOneCellInGoogleSheets("WriteOneCell", "A3", paramTab.length),
 
     //Enregistremnt Google Sheets
-    WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
-    ]);
-
- 
-    //Réactivation boutons
-    AddCig.disabled = false,
-    AddCig.textContent = "Ajouter"
-
-    
-
+    await WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
  
 
-
-
+ 
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +107,10 @@ Bp_Test.addEventListener("click", async() => {
     let NbrFumJour = paramTab.length;
     const Index = 1;
 
+    //Desactivation boutons
+    Cpt_CigJour.disabled = true;
+    Cpt_CigJour.hidden = true;
+
     //Decrementer compteur 
     localStorage.setItem("NbrCigJour", paramTab.length+1);
     Cpt_CigJour.textContent = NbrFumJour-1;
@@ -135,16 +123,20 @@ Bp_Test.addEventListener("click", async() => {
     //Refresh tableau
     VisuTabJour(paramTab);
 
-    //Enregistremnt Google Sheets
-    await WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
-    WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
+    //enregistrement local
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
     localStorage.setItem("NbrCigJour", NbrFumJour-1);
     Cpt_CigJour.textContent = NbrFumJour-1;
-    
 
-
+    //Enregistremnt Google Sheets  
+    await Promise.all ([
+    WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
+     WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
+    ]);
     
+    Cpt_CigJour.disabled = false;
+    Cpt_CigJour.hidden = false;
+
 });
 
 
@@ -255,16 +247,12 @@ async function RefreshDataFromSheets () {
         WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]]),
 
         //Raz Zone mémoire google sheet Cig jour 
-        WriteOneCellInGoogleSheets("write", "A3", 0),
-        WriteOneCellInGoogleSheets("write", "A5", 0),
         WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
         ]);
 
-
-
         //Mémorisation date
         localStorage.setItem("DateCigJourSaved", dateActuelJour);
-        WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
+        WriteOneCellInGoogleSheets("writeOnceCell", "H2", dateActuelJour)
         };
     
         //Réactivation bouton
