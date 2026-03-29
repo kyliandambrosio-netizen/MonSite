@@ -154,9 +154,10 @@ setInterval(async() => {
 
     if (DataRead[2][0] != NbrCigLoc) {
         RefreshDataFromSheets();
+        console.log("Changement de jour");
     };
-    console.log(DataRead[2][0], NbrCigLoc)
-}, 30000);
+
+}, 5000);
 
 
 
@@ -173,7 +174,6 @@ async function RefreshDataFromSheets () {
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
 
     //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
-        console.log("Loading BDD IN PROGRESS");
 
         const DataRead = await ReadataInGoogleSheets() || [];
         const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
