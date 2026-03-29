@@ -47,12 +47,7 @@ AddCig.addEventListener("click", async() => {
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
     let IntervalleLastCig = 0;
     let IntervalleSeconde= 0;
-    let NbrCigJourActu = localStorage.getItem("NbrCigJour");
-
-    //Bloquage bouton pendant envoie données
-    AddCig.disabled = true,
-    AddCig.textContent = "Envoie en cours"
-
+    let NbrCigJourActu = localStorage.getItem("NbrCigJour") || 0;
 
     //Récuperation intervalle 
     if (NbrCigJourActu != 0) {
@@ -63,17 +58,12 @@ AddCig.addEventListener("click", async() => {
         IntervalleSeconde = 0;
     };
 
-    //Incrementation Compteur et index
- 	NbrCigJourActu++;
-
-    //Maj visu compteur
-    Cpt_CigJour.textContent = NbrCigJourActu;
+    //Bloquage bouton pendant envoie données
+    AddCig.disabled = true,
+    AddCig.textContent = "Envoie en cours"
 
     //Mémorisation Date
     localStorage.setItem("MemDateLastCig", DateActu);
-
-    //Enregistrement local cptCigjour
-	localStorage.setItem("NbrCigJour", NbrCigJourActu);
 
     //Refresh Tableau Jour 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
@@ -82,25 +72,27 @@ AddCig.addEventListener("click", async() => {
     paramTab.push([paramTab.length+1, dateComplete, IntervalleLastCig]);
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
+    //Visu span compteur nombre fum
+    Cpt_CigJour.textContent = paramTab.length;
+
+    //Enregistrement cptCigjour
+	localStorage.setItem("NbrCigJour", paramTab.length);
+    WriteOneCellInGoogleSheets("WriteOneCell", "A3", paramTab.length)
+
     //Enregistremnt Google Sheets
-    const essaie = [
-        [14, 3, 45],
-        [17, 98, 65]
-    ];
-
-    WriteRangeInGoogleSheets("writeArray", `A7`, paramTab, 7, 1)
-
+    WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
 
     //Refresh Tableau jour
     VisuTabJour(paramTab);
  
+    //Réactivation bouton
+    AddCig.disabled = false,
+    AddCig.textContent = "Ajouter"
 
     
 
  
-    //Réactivation bouton
-    AddCig.disabled = false,
-    AddCig.textContent = "Ajouter"
+
 
 
 });
@@ -123,9 +115,6 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bp Test
 Bp_Test.addEventListener("click", () => {
-    //Désactivation bouton
-    AddCig.disabled = true,
-    AddCig.textContent = "Envoie En Cours"
 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     let NbrFumJour = paramTab.length;
@@ -146,11 +135,6 @@ Bp_Test.addEventListener("click", () => {
     Cpt_CigJour.textContent = NbrFumJour-1;
     
     VisuTabJour(paramTab);
-
-
-    //Réactivation bouton
-    AddCig.disabled = false,
-    AddCig.textContent = "Ajouter"
 
     
 });
@@ -234,9 +218,10 @@ async function RefreshDataFromSheets () {
 
         //Chargement date dernier cig > Tab cig jour actu si nbrcig <> 0 sinon tab memo jour
         if (NbrCigJour > 0) {
-            DateLastCig = DataRead[NbrCigJour+5][1];
+            DateLastCig = new Date(DataRead[NbrCigJour+5][1]);
         } else {
             DateLastCig = DataRead[LastJour+1][10] || 0;
+            console.log(DateLastCig)
         };
 
 
@@ -244,6 +229,10 @@ async function RefreshDataFromSheets () {
 
         //Changement Jour///////////////////////////////////////////////////////////////////////
         if (LastJour  != dateActuelJour) {
+        //Désactivation bouton
+        AddCig.disabled = true,
+        AddCig.textContent = "Chgmt Jour En Cours"
+
         const MemNbrCigJour = localStorage.getItem("NbrCigJour");
         const IndexMemJour = parseInt(dateActuelJour)+2;
 
@@ -270,8 +259,9 @@ async function RefreshDataFromSheets () {
         WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
         };
     
-
-    
+        //Réactivation bouton
+        AddCig.disabled = false,
+        AddCig.textContent = "Ajouter"
 
     //MAJ Visu object html
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
