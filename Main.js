@@ -26,8 +26,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Changement Mode Sombre/Claire
 ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
@@ -145,7 +143,7 @@ setInterval(async() => {
 }, 1000);
 
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Récupération des datas depuis google sheets
 async function RefreshDataFromSheets () {
     const now = new Date();
@@ -176,7 +174,7 @@ async function RefreshDataFromSheets () {
         if (NbrCigJour > 0) {
             DateLastCig = DataRead[NbrCigJour+5][1];
         } else {
-            DateLastCig = DataRead[28][10] || 0;
+            DateLastCig = DataRead[LastJour+1][10] || 0;
         };
 
          localStorage.setItem("MemDateLastCig", DateLastCig);
