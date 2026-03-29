@@ -4,7 +4,7 @@ const ChoixModeAff = document.getElementById("Bp_ChoixModeAff");
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
-const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
+const Bp_Test = document.getElementById("Bp_Test");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 const SpanMoyenneJour = document.getElementById("MoyenneJour");
@@ -23,6 +23,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //Refresh data depuis sheets
     RefreshDataFromSheets();
+
+    //Refresh tableau jour
+    let VisuTableauMemJour = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
+    VisuTabJour(VisuTableauMemJour);
 
 });
 
@@ -73,8 +77,11 @@ AddCig.addEventListener("click", async() => {
 	localStorage.setItem("NbrCigJour", NbrCigJourActu);
 
     //Refresh Tableau Jour 
-    let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || [];
-    paramTab.push([NbrCigJourActu, `${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`, IntervalleLastCig]);
+    let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
+    //const index = paramTab.findIndex(ligne => ligne[0] === "" || ligne[0] === undefined); //Vérification pas de ligne vide
+
+    //insertion ligne normal si aucune manquante
+    paramTab.push([paramTab.length+1, `${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`, IntervalleLastCig]);
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
     VisuTabJour(paramTab);
@@ -86,7 +93,7 @@ AddCig.addEventListener("click", async() => {
 	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
     ]);
 
-
+ 
     //Réactivation bouton
     AddCig.disabled = false,
     AddCig.textContent = "Ajouter"
@@ -98,17 +105,49 @@ AddCig.addEventListener("click", async() => {
 //Action Bouton Changement de jour
 Bp_TestChgmtJour.addEventListener("click", async() => {
 
-     WriteOneCellInGoogleSheets("write", "H2", 28)
-     sessionStorage.removeItem("FrtmPageLoaded")
+
+    sessionStorage.removeItem("FrtmPageLoaded")
     localStorage.setItem("DateCigJourSaved", 0);
     localStorage.removeItem("VisuTableauJour");
+    await WriteOneCellInGoogleSheets("write", "H2", 28)
+
+    location.reload();
+
     
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bp Test chargement bdd
-Bp_TestLoadBDD.addEventListener("click", () => {
-    sessionStorage.removeItem("FrtmPageLoaded")
+//Action Bp Test
+Bp_Test.addEventListener("click", () => {
+    //Désactivation bouton
+    AddCig.disabled = true,
+    AddCig.textContent = "Envoie En Cours"
+
+    let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
+    let NbrFumJour = paramTab.length;
+    const Index = 2;
+
+    //Decrementer compteur 
+    localStorage.setItem("NbrCigJour", paramTab.length+1);
+    Cpt_CigJour.textContent = NbrFumJour-1;
+    paramTab.splice(Index-1, 1);
+
+    for (let i=Index-1; i<NbrFumJour-1; i++) {
+        paramTab[i][0] = paramTab[i][0] -1;
+    };
+
+    
+    localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
+    localStorage.setItem("NbrCigJour", NbrFumJour-1);
+    Cpt_CigJour.textContent = NbrFumJour-1;
+    
+    VisuTabJour(paramTab);
+
+
+    //Réactivation bouton
+    AddCig.disabled = false,
+    AddCig.textContent = "Ajouter"
+
     
 });
 
