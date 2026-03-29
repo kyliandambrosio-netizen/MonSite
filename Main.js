@@ -47,13 +47,12 @@ AddCig.addEventListener("click", async() => {
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
     let IntervalleLastCig = 0;
     let IntervalleSeconde= 0;
+    let NbrCigJourActu = localStorage.getItem("NbrCigJour");
 
     //Bloquage bouton pendant envoie données
     AddCig.disabled = true,
     AddCig.textContent = "Envoie en cours"
 
-    //Loading Local Data
-    let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour")) || 0;
 
     //Récuperation intervalle 
     if (NbrCigJourActu != 0) {
@@ -78,20 +77,16 @@ AddCig.addEventListener("click", async() => {
 
     //Refresh Tableau Jour 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
-    //const index = paramTab.findIndex(ligne => ligne[0] === "" || ligne[0] === undefined); //Vérification pas de ligne vide
-
+    
     //insertion ligne normal si aucune manquante
     paramTab.push([paramTab.length+1, `${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`, IntervalleLastCig]);
     localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
+    //Refresh Tableau jour
     VisuTabJour(paramTab);
  
-
     //Enregistremnt Google Sheets
-    await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:D${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig, IntervalleSeconde]),
-	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
-    ]);
+
 
  
     //Réactivation bouton
