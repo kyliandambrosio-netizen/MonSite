@@ -109,30 +109,37 @@ setInterval(async() => {
     //Affichage intervalle dernière cig ///////////////////////////////////////////
     let RecordIntervalle = localStorage.getItem("RecordIntervalle") || 0;
     const DateActu = new Date();
-    const DateLastCig = new Date(localStorage.getItem("MemDateLastCig") ||0);
+    const DateLastCig = new Date(localStorage.getItem("MemDateLastCig"));
+    const DateLastCigSeconde = Math.floor(new Date(localStorage.getItem("MemDateLastCig")) /1000);
     const Intervalle = Math.floor((DateActu - DateLastCig) / 1000);
     const heure = Math.floor(Intervalle / 3600);
     const minute = Math.floor((Intervalle % 3600) / 60);
     const seconde = Intervalle % 60;
     const IntervalleHms = `${heure}h ${minute}m ${seconde}s`;
 
+
     //Record intervalle
-    if (Intervalle >= RecordIntervalle) {
-        RecordIntervalle = Intervalle;
-        WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
-    }
+    if(DateLastCigSeconde != 946681200){
+        if (Intervalle >= RecordIntervalle && Intervalle != 0) {
+            RecordIntervalle = Intervalle;
+            WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
+        }
+        }
 
     const heureRecord = Math.floor(RecordIntervalle / 3600);
     const minuteRecord = Math.floor((RecordIntervalle % 3600) / 60);
     const secondeRecord = RecordIntervalle % 60;
     const Record = `${heureRecord}h ${minuteRecord}m ${secondeRecord}s`;
-    SpanRecordIntervalleCig.textContent = Record;
+    
 
 
-    if(DateLastCig != 0){
-    IntervalleCig.textContent = IntervalleHms;
+    if(DateLastCigSeconde != 946681200){
+        IntervalleCig.textContent = IntervalleHms;
+        SpanRecordIntervalleCig.textContent = Record;     
+           
     } else {
         IntervalleCig.textContent = 0;
+        SpanRecordIntervalleCig.textContent = 0;
     };
 
     localStorage.setItem("IntervalleHms", IntervalleHms);
@@ -176,6 +183,7 @@ async function RefreshDataFromSheets () {
         } else {
             DateLastCig = DataRead[LastJour+1][10] || 0;
         };
+
 
          localStorage.setItem("MemDateLastCig", DateLastCig);
 
