@@ -8,6 +8,7 @@ const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 const SpanMoyenneJour = document.getElementById("MoyenneJour");
+const TabJourHtml = document.getElementById("TabVisuJour");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
@@ -22,7 +23,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //Refresh data depuis sheets
     RefreshDataFromSheets();
-
 
 });
 
@@ -72,6 +72,14 @@ AddCig.addEventListener("click", async() => {
     //Enregistrement local cptCigjour
 	localStorage.setItem("NbrCigJour", NbrCigJourActu);
 
+    //Refresh Tableau Jour 
+    let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || [];
+    paramTab.push([NbrCigJourActu, `${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`, IntervalleLastCig]);
+    localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
+
+    VisuTabJour(paramTab);
+ 
+
     //Enregistremnt Google Sheets
     await Promise.all([
     WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:D${NbrCigJourActu+6}`, [NbrCigJourActu, DateActu, IntervalleLastCig, IntervalleSeconde]),
@@ -83,6 +91,7 @@ AddCig.addEventListener("click", async() => {
     AddCig.disabled = false,
     AddCig.textContent = "Ajouter"
 
+
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,6 +101,7 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
      WriteOneCellInGoogleSheets("write", "H2", 28)
      sessionStorage.removeItem("FrtmPageLoaded")
     localStorage.setItem("DateCigJourSaved", 0);
+    localStorage.removeItem("VisuTableauJour");
     
 });
 
@@ -122,7 +132,7 @@ setInterval(async() => {
     if(DateLastCigSeconde != 946681200){
         if (Intervalle >= RecordIntervalle && Intervalle != 0) {
             RecordIntervalle = Intervalle;
-           await WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
+           WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
         }
         }
 
@@ -146,6 +156,8 @@ setInterval(async() => {
     localStorage.setItem("IntervalleSeconde", Intervalle);
     localStorage.setItem("RecordIntervalle", RecordIntervalle);
 
+
+    
 
 }, 1000);
 
@@ -226,4 +238,24 @@ async function RefreshDataFromSheets () {
     const MoyenneS = MoyenneJour % 60;
     const MoyenneHms = `${MoyenneH}h ${MoyenneM}m ${MoyenneS}s`;
     SpanMoyenneJour.textContent = MoyenneHms;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Gestion Tableau affichage jour
+function VisuTabJour(ParamTab) {
+    TabJourHtml.innerHTML ="";
+
+    ParamTab.forEach(ligne => {
+    const tr = document.createElement("tr");
+
+        ligne.forEach(cell => {
+        const td = document.createElement("td");
+        td.textContent = cell;
+        tr.appendChild(td);
+        })
+    TabJourHtml.appendChild(tr);
+    });
+
+
 };
