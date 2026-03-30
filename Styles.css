@@ -119,19 +119,21 @@ th:nth-child(4) {
 
 table {
 	border-collapse: collapse;
-	width: 100%;
+	width: 500px;
 }
 
 th, td {
 	border: 1px solid #ccc;
-	padding: 8px;
+	padding: 10px;
 	text-align: center;
 }
 
 th {
 	background-color: rgb(116, 114, 114);
+	font-size: 30px;
 }
 
 td {
 	background-color: rgb(148, 144, 144);
+	font-size: 20px;
 }
