@@ -78,7 +78,7 @@ AddCig.addEventListener("click", async() => {
 	localStorage.setItem("NbrCigJour", paramTab.length);
 
     //Enregistremnt Google Sheets
-    await WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
+    WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
  
 
  
