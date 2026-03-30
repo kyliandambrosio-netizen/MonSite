@@ -61,7 +61,7 @@ export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
  
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-//Write Range To Google Sheets
+//Write Array To Google Sheets
 export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart, columnStart) {
   //Construction Data
   const data = {
