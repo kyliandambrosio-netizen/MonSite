@@ -101,11 +101,11 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bp Test
-Bp_Test.addEventListener("click", async() => {
+async function supprimerLigne(index) {
+    console.log(index);
 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     let NbrFumJour = paramTab.length;
-    const Index = 1;
 
     //Desactivation boutons
     AddCig.disabled = true;
@@ -114,9 +114,9 @@ Bp_Test.addEventListener("click", async() => {
     //Decrementer compteur 
     localStorage.setItem("NbrCigJour", paramTab.length+1);
     Cpt_CigJour.textContent = NbrFumJour-1;
-    paramTab.splice(Index-1, 1);
+    paramTab.splice(index, 1);
 
-    for (let i=Index-1; i<NbrFumJour-1; i++) {
+    for (let i=index; i<NbrFumJour-1; i++) {
         paramTab[i][0] = paramTab[i][0] -1;
     };
 
@@ -129,15 +129,13 @@ Bp_Test.addEventListener("click", async() => {
     Cpt_CigJour.textContent = NbrFumJour-1;
 
     //Enregistremnt Google Sheets  
-    await Promise.all ([
-    WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
+    await WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
      WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
-    ]);
     
     AddCig.disabled = false;
     AddCig.textContent = "Ajouter";
 
-});
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,17 +281,50 @@ function MoyJour() {
 //Gestion Tableau affichage jour
 function VisuTabJour(ParamTab) {
     TabJourHtml.innerHTML ="";
+    
 
-    ParamTab.forEach(ligne => {
+    ParamTab.forEach((ligne, index) => {
+
     const tr = document.createElement("tr");
 
-        ligne.forEach(cell => {
-        const td = document.createElement("td");
-        td.textContent = cell;
-        tr.appendChild(td);
-        })
-    TabJourHtml.appendChild(tr);
+        //Index
+        const tdIndex = document.createElement("td");
+        tdIndex.textContent = index+1;
+        
+
+        //Date
+        const tdDate = document.createElement("td");
+        tdDate.textContent = ligne[1];
+
+
+        //Intervalle
+        const tdIntervalle = document.createElement("td");
+        tdIntervalle.textContent = ligne[2];
+        
+
+        //Intervalle Seconde
+        const tdIntervalleSec = document.createElement("td");
+        tdIntervalleSec.textContent = ligne[3];
+        
+
+        //Bp Suppression ligne
+        const tdBtn = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.textContent = "❌";
+
+        btn.onclick = () => supprimerLigne(index);
+
+
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdIndex);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdIntervalle);
+        tr.appendChild(tdIntervalleSec);
+        tr.appendChild(tdBtn);
+
+        TabJourHtml.appendChild(tr);
     });
+
 
 
 };
