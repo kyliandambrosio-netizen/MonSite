@@ -2,6 +2,8 @@
 const URL = "https://script.google.com/macros/s/AKfycbzSufBqcBDh82Qu9wgK8dcwOz32gWHSw4AgvZ37hT4G-iHk-lVgwhdbprcEf-XLytJv/exec";
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
+let Buffer = [];
+let SendEnCours = false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Read From Google Sheets
@@ -72,19 +74,42 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart
   columnStart: columnStart
   };
 
+  Buffer.push(data);
+
+  if (SendEnCours) {
+    
+    console.log("deja en cours", Buffer);
+
+    return;
+  }
+
+  SendEnCours = true;
+
+
+  while (Buffer.length > 0) {
+      console.log("Capasseoupas", Buffer.length, Buffer);
+    console.log(Buffer[0])
   //Request data
-  return fetch(URL, {
+  await fetch(URL, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(Buffer[0])
   })
 
   .then(res => res.text())
   .then (Valeur => {
-    console.log(data)
+    console.log("WriteInSheetOK", data)
+    Buffer.splice(0, 1);
+    console.log("Capasseoupas", Buffer.length, Buffer);
+    SendEnCours = false
       return Valeur
   })
   .catch(error => {
+    Buffer.splice(0, 1);
+          console.log("Capasseoupas", Buffer.length, Buffer);
+    SendEnCours = false;
   });
+
+};
 
 
 
