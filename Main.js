@@ -100,7 +100,7 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bp Test
+//Suppression ligne tableau jour
 async function supprimerLigne(index) {
     console.log(index);
 
@@ -130,7 +130,7 @@ async function supprimerLigne(index) {
 
     //Enregistremnt Google Sheets  
     await WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
-     WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
+    await WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
     
     AddCig.disabled = false;
     AddCig.textContent = "Ajouter";
@@ -312,7 +312,7 @@ function VisuTabJour(ParamTab) {
         const btn = document.createElement("button");
         btn.textContent = "❌";
 
-        btn.onclick = () => supprimerLigne(index);
+        btn.onclick =  () => {supprimerLigne(index)};
 
 
         tdBtn.appendChild(btn);
@@ -328,3 +328,10 @@ function VisuTabJour(ParamTab) {
 
 
 };
+
+async function DisableBtn() {
+            document.querySelectorAll("button").forEach(btn => {
+                console.log(btn)
+            btn.disabled = true;
+            });
+}
