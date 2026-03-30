@@ -220,7 +220,7 @@ async function RefreshDataFromSheets () {
         if (NbrCigJour > 0) {
             DateLastCig = new Date(DataRead[NbrCigJour+5][1]);
         } else {
-            DateLastCig = DataRead[LastJour+1][10] || 0;
+            DateLastCig = DataRead[LastJour][10] || 0;
             console.log(DateLastCig)
         };
 
