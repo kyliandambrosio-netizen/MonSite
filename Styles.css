@@ -144,3 +144,13 @@ button {
 	border: none;
 	font-size: 15px;
 }
+
+#VisuSaveEnCours{
+	font-size: 16px;
+	color: red;
+	position: absolute;
+	top : 5px;
+	left : 5px;
+
+
+}
