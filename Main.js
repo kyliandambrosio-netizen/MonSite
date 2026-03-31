@@ -62,7 +62,7 @@ AddCig.addEventListener("click", async() => {
     localStorage.setItem("MemDateLastCig", DateActu);
 
     //Refresh Tableau Jour 
-    let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
+    let paramTab = (JSON.parse(localStorage.getItem("VisuTableauJour"))) || []; //Load tableau jour local
     
     //insertion ligne normal si aucune manquante
     paramTab.push([paramTab.length+1, dateComplete, IntervalleLastCig, IntervalleSeconde]);
@@ -129,8 +129,8 @@ async function supprimerLigne(index) {
     Cpt_CigJour.textContent = NbrFumJour-1;
 
     //Enregistremnt Google Sheets  
-    await WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
-    await WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
+    WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
+    WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
     
     AddCig.disabled = false;
     AddCig.textContent = "Ajouter";
