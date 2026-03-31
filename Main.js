@@ -261,9 +261,11 @@ async function RefreshDataFromSheets () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Moyen Jour
 function MoyJour() {
+
     let MoyenneJour = localStorage.getItem("MoyenneJour") || 0;
     const TableauJour = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
-    
+    const now = new Date();
+    const dateActuelJour = now.getDate().toString();
 
     //Calcul
     MoyenneJour = 0;
@@ -273,13 +275,17 @@ function MoyJour() {
         }
     });
     
-    MoyenneJour = parseInt(MoyenneJour / TableauJour.length);
+    MoyenneJour = parseInt(MoyenneJour / TableauJour.length-1);
 
+    //Affichage
     const MoyenneH = Math.floor(MoyenneJour / 3600);
     const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
     const MoyenneS = MoyenneJour % 60;
     const MoyenneHms = `${MoyenneH}h ${MoyenneM}m ${MoyenneS}s`;
     SpanMoyenneJour.textContent = MoyenneHms;
+
+    //ecriture google sheets
+    WriteRangeInGoogleSheets("writeOneCell", `L${parseInt(dateActuelJour)+2}`, MoyenneJour)
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
