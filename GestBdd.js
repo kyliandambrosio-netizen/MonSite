@@ -67,8 +67,9 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart
   });
 
     Buffer.splice(0, 1);
-    SendEnCours = false
-    visuSaveEnCours.textContent = "";
+
 
 };
+    SendEnCours = false
+    visuSaveEnCours.textContent = "";
 };
