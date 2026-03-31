@@ -270,13 +270,10 @@ function MoyJour() {
     TableauJour.forEach((ligne) => {
         if (ligne[0] != 1){
         MoyenneJour = parseInt(MoyenneJour) + parseInt(ligne[3]);
-        console.log( parseInt(ligne[3]))
         }
     });
+    
     MoyenneJour = parseInt(MoyenneJour / TableauJour.length);
-
-console.log(MoyenneJour)
-
 
     const MoyenneH = Math.floor(MoyenneJour / 3600);
     const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
