@@ -49,16 +49,12 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart
   Buffer.push(data);
 
   if (SendEnCours) {
-    
-    console.log("deja en cours", Buffer);
-
     return;
   }
 
   SendEnCours = true;
 
   while (Buffer.length > 0) {
-  console.log("StartEnvoieArray", Buffer[0]);
 
   //Request data
   await fetch(URL, {
@@ -67,7 +63,6 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart
   });
 
     Buffer.splice(0, 1);
-    console.log("FinEnvoieArray", Buffer[0]);
     SendEnCours = false
 
 };
