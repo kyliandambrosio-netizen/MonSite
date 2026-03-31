@@ -233,7 +233,7 @@ async function RefreshDataFromSheets () {
         localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
         //création ligne mémorisation Jour actu
-        WriteRangeInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
+        WriteRangeInGoogleSheets("writeOneCell", `I${IndexMemJour}`, dateComplete),
 
         //Memorisation nombre cig jour précédent + Date derniere cig du jour
         WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]]),
@@ -243,7 +243,7 @@ async function RefreshDataFromSheets () {
 
         //Mémorisation date
         localStorage.setItem("DateCigJourSaved", dateActuelJour);
-        WriteRangeInGoogleSheets("writeOnceCell", "H2", dateActuelJour)
+        WriteRangeInGoogleSheets("writeOneCell", "H2", dateActuelJour)
         };
     
     //MAJ Visu object html
