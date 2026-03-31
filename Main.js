@@ -273,11 +273,12 @@ function MoyJour() {
     MoyenneJour = 0;
     TableauJour.forEach((ligne) => {
         if (ligne[0] != 1){
+            console.log(ligne[3])
         MoyenneJour = parseInt(MoyenneJour) + parseInt(ligne[3]);
         }
     });
     
-    MoyenneJour = parseInt(MoyenneJour / TableauJour.length-1);
+    MoyenneJour = parseInt(MoyenneJour / (TableauJour.length-1));
 
     //Affichage
     const MoyenneH = Math.floor(MoyenneJour / 3600);
