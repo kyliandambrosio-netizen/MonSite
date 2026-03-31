@@ -197,6 +197,7 @@ async function RefreshDataFromSheets () {
     const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
 
     //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
+        AddCig.textContent = "Chargement ...";
 
         const DataRead = await ReadataInGoogleSheets() || [];
         const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
@@ -251,6 +252,7 @@ async function RefreshDataFromSheets () {
     
     //MAJ Visu object html
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
+    AddCig.textContent = "Ajouter";
 
     //Calcule Moyen jour 
     MoyJour();
