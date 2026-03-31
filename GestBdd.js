@@ -33,7 +33,6 @@ export async function ReadataInGoogleSheets() {
 
 };
  
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Write Array To Google Sheets
 export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart, columnStart) {
@@ -66,7 +65,4 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart
     SendEnCours = false
 
 };
-
-
-
 };
