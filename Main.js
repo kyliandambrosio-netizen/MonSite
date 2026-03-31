@@ -103,7 +103,6 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Suppression ligne tableau jour
 function supprimerLigne(index) {
-    console.log(index);
 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     let NbrFumJour = paramTab.length;
@@ -147,7 +146,6 @@ setInterval(() => {
     const minute = Math.floor((Intervalle % 3600) / 60);
     const seconde = Intervalle % 60;
     const IntervalleHms = `${heure}h ${minute}m ${seconde}s`;
-
 
     //Record intervalle
     if(DateLastCigSeconde != 946681200){
@@ -216,7 +214,6 @@ async function RefreshDataFromSheets () {
             DateLastCig = new Date(DataRead[NbrCigJour+5][1]);
         } else {
             DateLastCig = DataRead[LastJour][10] || 0;
-            console.log(DateLastCig)
         };
 
 
@@ -273,7 +270,6 @@ function MoyJour() {
     MoyenneJour = 0;
     TableauJour.forEach((ligne) => {
         if (ligne[0] != 1){
-            console.log(ligne[3])
         MoyenneJour = parseInt(MoyenneJour) + parseInt(ligne[3]);
         }
     });
