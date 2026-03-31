@@ -80,7 +80,8 @@ AddCig.addEventListener("click", () => {
     //Enregistremnt Google Sheets
     WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
  
-
+    //Calcule Moyen jour 
+    MoyJour();
  
 });
 
@@ -128,6 +129,8 @@ function supprimerLigne(index) {
     WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
     WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
 
+    //Calcule Moyen jour 
+    MoyJour();
 };
 
 
@@ -249,6 +252,7 @@ async function RefreshDataFromSheets () {
     //MAJ Visu object html
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
 
+    //Calcule Moyen jour 
     MoyJour();
     
     
@@ -257,7 +261,22 @@ async function RefreshDataFromSheets () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Moyen Jour
 function MoyJour() {
-    const MoyenneJour = localStorage.getItem("MoyenneJour");
+    let MoyenneJour = localStorage.getItem("MoyenneJour") || 0;
+    const TableauJour = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
+    
+
+    //Calcul
+    MoyenneJour = 0;
+    TableauJour.forEach((ligne) => {
+        if (ligne[0] != 1){
+        MoyenneJour = parseInt(MoyenneJour) + parseInt(ligne[3]);
+        console.log( parseInt(ligne[3]))
+        }
+    });
+    MoyenneJour = parseInt(MoyenneJour / TableauJour.length);
+
+console.log(MoyenneJour)
+
 
     const MoyenneH = Math.floor(MoyenneJour / 3600);
     const MoyenneM = Math.floor((MoyenneJour % 3600) / 60);
@@ -316,11 +335,4 @@ function VisuTabJour(ParamTab) {
 
 
 
-};
-
-async function DisableBtn() {
-            document.querySelectorAll("button").forEach(btn => {
-                console.log(btn)
-            btn.disabled = true;
-            });
 }
