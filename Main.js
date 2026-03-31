@@ -12,12 +12,12 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
-import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
+import { ReadataInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     //Affichage Mode Sombre ou Claire
     AffModeSombreClaire();
 
@@ -36,7 +36,7 @@ ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton Incrementation Compteur cig Jour
-AddCig.addEventListener("click", async() => {  
+AddCig.addEventListener("click", () => {  
     const DateActu = new Date();
     const dateActuelJour = DateActu.getDate().toString().padStart(2, '0');
     const dateActuelMois = (DateActu.getMonth()+1).toString().padStart(2, '0');
@@ -92,7 +92,7 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
     sessionStorage.removeItem("FrtmPageLoaded")
     localStorage.setItem("DateCigJourSaved", 0);
     localStorage.removeItem("VisuTableauJour");
-    await WriteOneCellInGoogleSheets("write", "H2", 28)
+    await WriteRangeInGoogleSheets("writeOneCell", "H2", 30)
 
     location.reload();
 
@@ -101,15 +101,11 @@ Bp_TestChgmtJour.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Suppression ligne tableau jour
-async function supprimerLigne(index) {
+function supprimerLigne(index) {
     console.log(index);
 
     let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
     let NbrFumJour = paramTab.length;
-
-    //Desactivation boutons
-    AddCig.disabled = true;
-    AddCig.textContent = "Changement Jour En Cours";
 
     //Decrementer compteur 
     localStorage.setItem("NbrCigJour", paramTab.length+1);
@@ -131,16 +127,13 @@ async function supprimerLigne(index) {
     //Enregistremnt Google Sheets  
     WriteRangeInGoogleSheets("razRange", "A7:D200", 0), //Raz Zone mémoire google sheet Cig jour 
     WriteRangeInGoogleSheets("writeArray", "", paramTab, 7, 1)
-    
-    AddCig.disabled = false;
-    AddCig.textContent = "Ajouter";
 
 };
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Declenchement toutes les seconde
-setInterval(async() => {
+setInterval(() => {
     //Affichage intervalle dernière cig ///////////////////////////////////////////
     let RecordIntervalle = localStorage.getItem("RecordIntervalle") || 0;
     const DateActu = new Date();
@@ -157,7 +150,7 @@ setInterval(async() => {
     if(DateLastCigSeconde != 946681200){
         if (Intervalle >= RecordIntervalle && Intervalle != 0) {
             RecordIntervalle = Intervalle;
-           WriteOneCellInGoogleSheets("WriteOneCell", "C2", RecordIntervalle)
+           WriteRangeInGoogleSheets("writeOneCell", "C2", RecordIntervalle)
         }
         }
 
@@ -227,9 +220,6 @@ async function RefreshDataFromSheets () {
 
         //Changement Jour///////////////////////////////////////////////////////////////////////
         if (LastJour  != dateActuelJour) {
-        //Désactivation bouton
-        AddCig.disabled = true,
-        AddCig.textContent = "Chgmt Jour En Cours"
 
         console.log("Changement de jour")
 
@@ -242,26 +232,20 @@ async function RefreshDataFromSheets () {
         paramTab.splice(0, 0);
         localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
-        await Promise.all([
         //création ligne mémorisation Jour actu
-        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
+        WriteRangeInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete),
 
         //Memorisation nombre cig jour précédent + Date derniere cig du jour
         WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]]),
             
         //Raz Zone mémoire google sheet Cig jour 
         WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
-        ]);
 
         //Mémorisation date
         localStorage.setItem("DateCigJourSaved", dateActuelJour);
-        WriteOneCellInGoogleSheets("writeOnceCell", "H2", dateActuelJour)
+        WriteRangeInGoogleSheets("writeOnceCell", "H2", dateActuelJour)
         };
     
-        //Réactivation bouton
-        AddCig.disabled = false,
-        AddCig.textContent = "Ajouter"
-
     //MAJ Visu object html
     Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
 
