@@ -1,5 +1,5 @@
 /////////////////////////////////////////////ECHANGE GOOGLE SHEET//////////////////////////
-const URL = "https://script.google.com/macros/s/AKfycbzSufBqcBDh82Qu9wgK8dcwOz32gWHSw4AgvZ37hT4G-iHk-lVgwhdbprcEf-XLytJv/exec";
+const URL = "https://script.google.com/macros/s/AKfycbztjnz7Vu2Kkr1rHX6sshZBJnhmescISNwIvgB-M2jkbL1ZJXkY8TIwqIclz4O873Ky/exec";
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 let Buffer = [];
@@ -11,7 +11,7 @@ export async function ReadataInGoogleSheets() {
   //Construction Data
   const data = {
   action: "read",
-  cellule: 0,
+  cellule: "A1:M200",
 	valeur: 0,
   };
 
