@@ -85,29 +85,18 @@ export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart
 
   SendEnCours = true;
 
-
   while (Buffer.length > 0) {
-      console.log("Capasseoupas", Buffer.length, Buffer);
-    console.log(Buffer[0])
+  console.log("StartEnvoieArray", Buffer[0]);
+
   //Request data
   await fetch(URL, {
     method: "POST",
     body: JSON.stringify(Buffer[0])
-  })
-
-  .then(res => res.text())
-  .then (Valeur => {
-    console.log("WriteInSheetOK", data)
-    Buffer.splice(0, 1);
-    console.log("Capasseoupas", Buffer.length, Buffer);
-    SendEnCours = false
-      return Valeur
-  })
-  .catch(error => {
-    Buffer.splice(0, 1);
-          console.log("Capasseoupas", Buffer.length, Buffer);
-    SendEnCours = false;
   });
+
+    Buffer.splice(0, 1);
+    console.log("FinEnvoieArray", Buffer[0]);
+    SendEnCours = false
 
 };
 
