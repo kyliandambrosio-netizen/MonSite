@@ -35,34 +35,6 @@ export async function ReadataInGoogleSheets() {
  
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-//Write 1 cell To Google Sheets
-export async function WriteOneCellInGoogleSheets(action, cellule, valeur) {
-  //Construction Data
-  const data = {
-  action: "writeOneCell",
-  cellule: cellule,
-	valeur: valeur,
-  };
-
-  //Request data
-  return fetch(URL, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-
-  .then(res => res.text())
-  .then (Valeur => {
-      return Valeur
-  })
-  .catch(error => {
-  });
-
-
-
-};
- 
-
-///////////////////////////////////////////////////////////////////////////////////////////
 //Write Array To Google Sheets
 export async function WriteRangeInGoogleSheets(action, cellule, valeur, rowStart, columnStart) {
   //Construction Data
