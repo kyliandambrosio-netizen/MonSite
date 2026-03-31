@@ -231,11 +231,16 @@ async function RefreshDataFromSheets () {
         AddCig.disabled = true,
         AddCig.textContent = "Chgmt Jour En Cours"
 
+        console.log("Changement de jour")
+
         const MemNbrCigJour = localStorage.getItem("NbrCigJour");
         const IndexMemJour = parseInt(dateActuelJour)+2;
 
-        //Raz compteur cig local
+        //Raz local
         localStorage.setItem("NbrCigJour", 0)
+        let paramTab = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
+        paramTab.splice(0, 0);
+        localStorage.setItem("VisuTableauJour", JSON.stringify(paramTab));
 
         await Promise.all([
         //création ligne mémorisation Jour actu
@@ -243,7 +248,7 @@ async function RefreshDataFromSheets () {
 
         //Memorisation nombre cig jour précédent + Date derniere cig du jour
         WriteRangeInGoogleSheets("writeRange", `J${LastJour+2}:K${LastJour+2}`, [[MemNbrCigJour, DateLastCig]]),
-
+            
         //Raz Zone mémoire google sheet Cig jour 
         WriteRangeInGoogleSheets("razRange", "A7:D200", 0)
         ]);
