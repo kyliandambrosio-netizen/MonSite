@@ -4,6 +4,7 @@ const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const visuSaveEnCours = document.getElementById("VisuSaveEnCours");
 
+
 let Buffer = [];
 let SendEnCours = false;
 
