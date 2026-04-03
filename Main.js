@@ -49,13 +49,11 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
-import { ReadataInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Refresh Data From Bdd OnSnapshot
 let TabJourTableauTrier = [];
-let TabJour = [];
 const db = getFirestore();
 const CollTabJourTableauTrier =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 const CollTabJour = collection(db, "TabJour");
