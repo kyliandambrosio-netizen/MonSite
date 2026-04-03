@@ -1,3 +1,36 @@
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDlvVPPvQRbWdlXWUCFSB0iTCLML9r176w",
+    authDomain: "sie1-a95c4.firebaseapp.com",
+    projectId: "sie1-a95c4",
+    storageBucket: "sie1-a95c4.firebasestorage.app",
+    messagingSenderId: "485770107307",
+    appId: "1:485770107307:web:e15cef3374870e9a831aee",
+    measurementId: "G-BZH0GMGRP7"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+import { getFirestore,
+        collection, 
+        addDoc,
+        getDocs,
+        onSnapshot,
+        deleteDoc,
+        doc
+     } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Déclaration Objet Html
 const ChoixModeAff = document.getElementById("Bp_ChoixModeAff");
@@ -14,6 +47,29 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 import { ReadataInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Action Bouton Changement de jour
+Bp_Test.addEventListener("click", async() => {
+const db = getFirestore();
+const TabVisuJour = ((localStorage.getItem("VisuTableauJour"))) || []; //Load tableau jour local
+
+ await addDoc(collection(db, "cig"), {
+    data: TabVisuJour
+})
+   
+});
+
+Bp_TestChgmtJour.addEventListener("click", async() => {
+const db = getFirestore();
+ const snapshot = await getDocs(collection(db, "cig"))
+ const data = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+ }));
+console.log(data[0])
+
+    
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
@@ -85,20 +141,6 @@ AddCig.addEventListener("click", () => {
  
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton Changement de jour
-Bp_TestChgmtJour.addEventListener("click", async() => {
-
-
-    sessionStorage.removeItem("FrtmPageLoaded")
-    localStorage.setItem("DateCigJourSaved", 0);
-    localStorage.removeItem("VisuTableauJour");
-    await WriteRangeInGoogleSheets("writeOneCell", "H2", 30)
-
-    location.reload();
-
-    
-});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Suppression ligne tableau jour
