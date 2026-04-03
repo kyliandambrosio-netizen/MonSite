@@ -53,65 +53,56 @@ import { ReadataInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Affichage temps reel Bdd
-const db = getFirestore();
-const CollCollTabJourTriAsc =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
+//Refresh Data From Bdd OnSnapshot
+let TabJourTableauTrier = [];
+let TabJour = [];
 
-onSnapshot(CollCollTabJourTriAsc, snapshot => {
-    
- const data = snapshot.docs.map(doc => ({
+const db = getFirestore();
+const CollTabJour = collection(db, "TabJour");
+
+//Chargement collection Tableau Jour
+onSnapshot(CollTabJour, snapshot => {
+  TabJourTableauTrier = snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
  }));
 
- VisuTabJour(data)
-    Cpt_CigJour.textContent = data.length;
+//Mapping document > variable
+const CollTabJourTableauTrier = query(CollTabJour, orderBy("dateTri", "asc"));
+
+//Refresh Object Html
+VisuTabJour(TabJourTableauTrier)
+Cpt_CigJour.textContent = TabJourTableauTrier.length;
 
 })
+
+    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Bouton test
 Bp_Test.addEventListener("click", async() => {
-const db = getFirestore();
-const TabVisuJour = ((localStorage.getItem("VisuTableauJour"))) || []; //Load tableau jour local
-
- await addDoc(collection(db, "TabJour"), {
-    id: "tab0",
-    data: TabVisuJour
-})
+    console.log(TabJourTableauTrier.length)
    
 });
 
-Bp_TestChgmtJour.addEventListener("click", async() => {
-const db = getFirestore();
- const snapshot = await getDocs(collection(db, "cig"))
- const data = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
- }));
-
-    
-});
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //ajout cig
 AddCig.addEventListener("click", async() => {
-    const db = getFirestore();
     const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
-    const DataTabJour = await getDocs(CollTabJourTriAsc);
 
     let LastDate = 0;
     let IntervalleHms = "0";
 
     //Vérification Tableau Non Vide 
-    if (DataTabJour.size !=0) { 
+    if (TabJourTableauTrier.length !=0) { 
         //Recuperation derniere ligne pour calcule intervalle
-        const LastDate = DataTabJour.docs[(DataTabJour.size-1)].data().dateTri;
+        const LastDate = TabJourTableauTrier[(TabJourTableauTrier.length-1)].dateTri;
 
         //Calcul intervalle
         const intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
@@ -134,27 +125,7 @@ async function SupprimerFume(id) {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Declenchement toutes les seconde
-setInterval(async () => {
-    const TableauDbJour = await getDocs(CollTabJourTriAsc);
-
-    console.log(DataDbJour)
-
-    const DateActu = new Date();
-    const LastDate = TableauDbJour.docs[(TableauDbJour.size-1)].data().dateTri;
-    const intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
-
-    //Affichage Intervalle denière fum
-    IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
-
-    //Affichage Reccord Interval
-    SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde)
-
-    
-
-    }, 1000);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+  
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
@@ -182,7 +153,9 @@ function VisuTabJour(Data) {
     
     Data.forEach((ligne, index) => {
 
-    const tr = document.createElement("tr");
+        if (ligne.date != undefined) {
+
+        const tr = document.createElement("tr");
 
         //Index
         const tdIndex = document.createElement("td");
@@ -215,6 +188,7 @@ function VisuTabJour(Data) {
         tr.appendChild(tdBtn);
 
         TabJourHtml.appendChild(tr);
+        };
     });
 }
 
