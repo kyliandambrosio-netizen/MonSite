@@ -20,10 +20,7 @@
 
 import { getFirestore,
         collection, 
-        addDoc,
         setDoc,
-        getDocs,
-        getDoc,
         onSnapshot,
         deleteDoc,
         doc,
@@ -37,7 +34,7 @@ const db = getFirestore();
 
     //Chargement Collection TabJour
     let TabJour = [];
-    const CollTabJour =(collection(db, "TabJour"));
+    const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 
     //Chargement collection Tableau Jour
     onSnapshot(CollTabJour, snapshot => {
@@ -78,7 +75,6 @@ AddCig.addEventListener("click", async() => {
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
     const ReccordInter = 0;
-    console.log(TabJour)
 
     let LastDate = 0;
     let IntervalleHms = "0";
