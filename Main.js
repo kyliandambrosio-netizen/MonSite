@@ -112,7 +112,7 @@ async function AddLigneTabJour(Type) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//ajout ligne fum
+//Bp Ajout Cig
 AddCig.addEventListener("click", async() => {
     const Type = "C";
     AddLigneTabJour(Type);
@@ -186,6 +186,14 @@ function VisuTabJour(Data) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function SupprimerLigne(id) {
+
+    //Raz intervalle si reste 1 seul ligne apres suppression
+    if (TabJour.length == 1 && TabJour[0].exists()) {
+    await setDoc(doc(db, "TabJour", TabJour[0].id), {
+        inter : 0,
+    })
+    }
+
     await deleteDoc(doc(db, "TabJour", id));
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
