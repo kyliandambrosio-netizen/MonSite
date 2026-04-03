@@ -74,6 +74,7 @@ import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //ajout ligne fum
 AddCig.addEventListener("click", async() => {
+    
     const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
