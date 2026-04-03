@@ -31,11 +31,11 @@ import { getFirestore,
 
 //Chargement BDD =>
 const db = getFirestore();
+let TabJour = [];
+let Stats = null;
+const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 
-    //Chargement Collection TabJour
-    let TabJour = [];
-    const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
-
+    /////////////////////////////////////////////
     //Chargement collection Tableau Jour
     onSnapshot(CollTabJour, snapshot => {
     TabJour = snapshot.docs.map(doc => ({
@@ -48,7 +48,11 @@ const db = getFirestore();
     Cpt_CigJour.textContent = TabJour.length;
     })
 
-
+    /////////////////////////////////////////////
+    //Chargement collection stats
+    onSnapshot(doc(db, "Stats", "GlobalData"), snapshot => {
+        Stats = snapshot.data();
+    })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +78,7 @@ AddCig.addEventListener("click", async() => {
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
-    const ReccordInter = 0;
+    const ReccordInter = Stats.RecordIntervalle;
 
     let LastDate = 0;
     let IntervalleHms = "0";
@@ -98,20 +102,15 @@ AddCig.addEventListener("click", async() => {
     })
 
     //Si reccord intervalle > Ecriture reccord dans bdd
-        if (intervalleSeconde < ReccordInter) {
-        await setDoc(doc(db, "TabJour", "Data"), {
-        ReccordInter : intervalleSeconde
+        if (intervalleSeconde > ReccordInter) {
+        SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
+        await setDoc(doc(db, "Stats", "GlobalData"), {
+        RecordIntervalle : intervalleSeconde
         
     })
         }
 
 });
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function SupprimerLigne(id) {
-    await deleteDoc(doc(db, "TabJour", id));
-}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,6 +179,12 @@ function VisuTabJour(Data) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function SupprimerLigne(id) {
+    await deleteDoc(doc(db, "TabJour", id));
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
 
     const Interheure = Math.floor(DateSeconde / 3600);
@@ -197,7 +202,7 @@ setInterval(async () => {
     const DateActu = new Date();
     const LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
     const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
-    const ReccordInter = 0;
+    const ReccordInter = Stats.RecordIntervalle;
 
     //Affichage Intervalle denière fum
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
@@ -205,6 +210,8 @@ setInterval(async () => {
     //Affichage Reccord Interval
     if (intervalleSeconde >= ReccordInter) {
     SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde)
+    } else {
+     SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
     };
 
     }, 1000);
