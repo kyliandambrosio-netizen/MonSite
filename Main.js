@@ -72,10 +72,8 @@ import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//ajout ligne fum
-AddCig.addEventListener("click", async() => {
-    
-    const DateActuVisu = new Date().toLocaleString();
+async function AddLigneTabJour(Type) {
+        const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
@@ -99,7 +97,8 @@ AddCig.addEventListener("click", async() => {
     await setDoc(doc(db, "TabJour", MyId), {
         date : DateActuVisu,
         dateTri: DateActuString,
-        inter : IntervalleHms
+        inter : IntervalleHms,
+        type : Type
     })
 
     //Si reccord intervalle > Ecriture reccord dans bdd
@@ -110,7 +109,13 @@ AddCig.addEventListener("click", async() => {
         
     })
         }
+}
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//ajout ligne fum
+AddCig.addEventListener("click", async() => {
+    const Type = "C";
+    AddLigneTabJour(Type);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
