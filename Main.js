@@ -56,19 +56,16 @@ import { ReadataInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
 //Refresh Data From Bdd OnSnapshot
 let TabJourTableauTrier = [];
 let TabJour = [];
-
 const db = getFirestore();
+const CollTabJourTableauTrier =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 const CollTabJour = collection(db, "TabJour");
 
 //Chargement collection Tableau Jour
-onSnapshot(CollTabJour, snapshot => {
+onSnapshot(CollTabJourTableauTrier, snapshot => {
   TabJourTableauTrier = snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
  }));
-
-//Mapping document > variable
-const CollTabJourTableauTrier = query(CollTabJour, orderBy("dateTri", "asc"));
 
 //Refresh Object Html
 VisuTabJour(TabJourTableauTrier)
