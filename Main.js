@@ -111,18 +111,22 @@ async function AddLigneTabJour(Type) {
     })
         }
 
-    //Calcul moyenne jour 
-    let MoyenneJour = 0;
 
-    for (let index = 0; index < TabJour.length; index++) {
-        MoyenneJour = (MoyenneJour + TabJour[index].inter) / TabJour.length; 
-            console.log(TabJour[index].inter)
-        if (index < TabJour.length-1) {
-        SpanMoyenneJour.textContent = MoyenneJour;
-        }
+
+    SpanMoyenneJour.textContent = await CalcMoyenne(TabJour, `InterSeconde`)
+    
+}
+
+async function CalcMoyenne(Tableau, Valeur) {
+    //Calcul Moyenne Jour
+    let MoyenneJour = 0;
+    /////////!!!!!!!!!!!!!!!!!!!!MOYENNE NON FONCTIONNELLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    for (let index = (Tableau.length-1); index > 0 ; index--) {
+        MoyenneJour = MoyenneJour + Tableau[index].interSeconde; 
+          console.log(MoyenneJour, Tableau.length-1, MoyenneJour/Tableau.length-1)
     }
 
-    
+    return await calcAffDate(parseInt(MoyenneJour/Tableau.length-1))
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,13 +206,13 @@ function VisuTabJour(Data) {
 async function SupprimerLigne(id) {
 
     //Si suppresion ligne 1 > Raz intervalle ligne 2 avant supp ligne 1
-    if (TabJour[0].id == id) {
+    if (TabJour[0].id == id && TabJour.length != 1) {
     
     await setDoc(doc(db, "TabJour", TabJour[1].id), {
         date : TabJour[1].date,
         dateTri: TabJour[1].dateTri,
         inter : 0,
-        interSeconde : TabJour[1].dateTri,
+        interSeconde : TabJour[1].interSeconde,
         type : TabJour[1].dateTri
     })
     }
@@ -219,7 +223,6 @@ async function SupprimerLigne(id) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
-
     const Interheure = Math.floor(DateSeconde / 3600);
     const Interminute = Math.floor((DateSeconde % 3600) / 60);
     const InterSeconde = DateSeconde % 60;
@@ -233,7 +236,7 @@ async function calcAffDate(DateSeconde) {
 //Declenchement toutes les seconde
 setInterval(async () => {
     const DateActu = new Date();
-    const LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
+    const LastDate = new Date(TabJour[(TabJour.length-1)].dateTri) || 0;
     const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     const ReccordInter = Stats.RecordIntervalle;
 
