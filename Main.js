@@ -3,9 +3,6 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
   // Your web app's Firebase configuration
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
@@ -33,6 +30,30 @@ import { getFirestore,
         query,
         orderBy
      } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+
+//Chargement BDD =>
+const db = getFirestore();
+
+    //Chargement Collection TabJour
+    let TabJour = [];
+    const CollTabJour =(collection(db, "TabJour"));
+
+    //Chargement collection Tableau Jour
+    onSnapshot(CollTabJour, snapshot => {
+    TabJour = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    //Refresh Object Html
+    VisuTabJour(TabJour)
+    Cpt_CigJour.textContent = TabJour.length;
+
+    console.log("BDD Collection TabJour chargée")
+    })
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,55 +73,26 @@ import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Refresh Data From Bdd OnSnapshot
-let TabJourTableauTrier = [];
-const db = getFirestore();
-const CollTabJourTableauTrier =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
-const CollTabJour = collection(db, "TabJour");
-
-//Chargement collection Tableau Jour
-onSnapshot(CollTabJourTableauTrier, snapshot => {
-  TabJourTableauTrier = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
- }));
-
-//Refresh Object Html
-VisuTabJour(TabJourTableauTrier)
-Cpt_CigJour.textContent = TabJourTableauTrier.length;
-
-})
-
-    
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton test
-Bp_Test.addEventListener("click", async() => {
-    console.log(TabJourTableauTrier.length)
-   
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//ajout cig
+//ajout ligne fum
 AddCig.addEventListener("click", async() => {
     const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
+    //const ReccordInter = TabJour.Data.ReccordInter;
+    console.log(TabJour)
 
     let LastDate = 0;
     let IntervalleHms = "0";
+    let intervalleSeconde = 0;
 
     //Vérification Tableau Non Vide 
-    if (TabJourTableauTrier.length !=0) { 
+    if (TabJour.length !=0) { 
         //Recuperation derniere ligne pour calcule intervalle
-        const LastDate = TabJourTableauTrier[(TabJourTableauTrier.length-1)].dateTri;
+        const LastDate = TabJour[(TabJour.length-1)].dateTri;
 
         //Calcul intervalle
-        const intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
+        intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
         IntervalleHms = await calcAffDate(intervalleSeconde)
     }  
 
@@ -110,17 +102,25 @@ AddCig.addEventListener("click", async() => {
         dateTri: DateActuString,
         inter : IntervalleHms
     })
+        console.log("Bdd Collection TabJour Maj")
+
+    //Si reccord intervalle > Ecriture reccord dans bdd
+        if (intervalleSeconde < ReccordInter) {
+        await setDoc(doc(db, "TabJour", "Data"), {
+        ReccordInter : intervalleSeconde
+        
+    })
+        console.log("Bdd Collection TabJour Maj")
+        }
 
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function SupprimerFume(id) {
+async function SupprimerLigne(id) {
     await deleteDoc(doc(db, "TabJour", id));
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
@@ -131,11 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton Changement Mode Sombre/Claire
-ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//Action Bouton Changement Mode Sombre/Claire
+ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +172,7 @@ function VisuTabJour(Data) {
         const btn = document.createElement("button");
         btn.textContent = "❌";
 
-        btn.onclick =  () => {SupprimerFume(ligne.id)};
+        btn.onclick =  () => {SupprimerLigne(ligne.id)};
 
         tdBtn.appendChild(btn);
         tr.appendChild(tdIndex);
@@ -186,7 +185,7 @@ function VisuTabJour(Data) {
         };
     });
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
@@ -198,4 +197,23 @@ async function calcAffDate(DateSeconde) {
     const intervalle = `${Interheure}h ${Interminute}m ${InterSeconde}s`;
     return intervalle;
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Declenchement toutes les seconde
+setInterval(async () => {
+    const DateActu = new Date();
+    const LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
+    const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+    const ReccordInter = 0;
+
+    //Affichage Intervalle denière fum
+    IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
+
+    //Affichage Reccord Interval
+    if (intervalleSeconde >= ReccordInter) {
+    SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde)
+    };
+
+    }, 1000);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
