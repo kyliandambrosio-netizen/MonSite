@@ -90,7 +90,7 @@ AddCig.addEventListener("click", async() => {
     if (LastFum.size !=0) { //Tableau rempli avec au moins 1 document
         const LastDateDoc = LastFum.docs[(LastFum.size-1)];
         LastDate = LastDateDoc.data().dateTri;
-        intervalle = DateActu - LastDate;
+        intervalle = Math.floor((DateActu - LastDate) / 1000);
         console.log(DateActu, LastDate, intervalle)
     } else { //Tableau vide > premiere donnée
         intervalle = 0;
