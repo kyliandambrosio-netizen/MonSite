@@ -80,25 +80,26 @@ const db = getFirestore();
 //ajout cig
 AddCig.addEventListener("click", async() => {
     const db = getFirestore();
-    const DateActu = new Date().toLocaleString();
-    const MyId = `Ajout${new Date().toISOString()}`;
+    const DateActuVisu = new Date().toLocaleString();
+    const DateActu = new Date().toISOString();
+    const MyId = `Ajout${DateActu}`;
     const LastFum = await getDocs(q);
     let LastDate = 0;
     let intervalle = 0;
 
     if (LastFum.size !=0) { //Tableau rempli avec au moins 1 document
         const LastDateDoc = LastFum.docs[(LastFum.size-1)];
-        LastDate = LastDateDoc.data().date;
+        LastDate = LastDateDoc.data().dateTri;
         intervalle = DateActu - LastDate;
-
+        console.log(DateActu, LastDate, intervalle)
     } else { //Tableau vide > premiere donnée
         intervalle = 0;
     }
 
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
-        date : DateActu,
-        dateTri: new Date().toISOString(),
+        date : DateActuVisu,
+        dateTri: DateActu,
         inter : intervalle
     })
 
