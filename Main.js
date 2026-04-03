@@ -26,6 +26,7 @@ import { getFirestore,
         addDoc,
         setDoc,
         getDocs,
+        getDoc,
         onSnapshot,
         deleteDoc,
         doc,
@@ -49,6 +50,24 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 //Liaison fonction
 import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 import { ReadataInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Affichage temps reel Bdd
+const db = getFirestore();
+const CollCollTabJourTriAsc =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
+
+onSnapshot(CollCollTabJourTriAsc, snapshot => {
+    
+ const data = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+ }));
+
+ VisuTabJour(data)
+    Cpt_CigJour.textContent = data.length;
+
+})
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,20 +103,19 @@ AddCig.addEventListener("click", async() => {
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
-    const LastFum = await getDocs(q);
+    const DataTabJour = await getDocs(CollTabJourTriAsc);
 
     let LastDate = 0;
     let IntervalleHms = "0";
 
     //Vérification Tableau Non Vide 
-    if (LastFum.size !=0) { 
-        //Recuperation derniere date pour calcule intervalle
-        const LastDate = LastFum.docs[(LastFum.size-1)].data().dateTri;;
+    if (DataTabJour.size !=0) { 
+        //Recuperation derniere ligne pour calcule intervalle
+        const LastDate = DataTabJour.docs[(DataTabJour.size-1)].data().dateTri;
 
         //Calcul intervalle
         const intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
         IntervalleHms = await calcAffDate(intervalleSeconde)
-        console.log(IntervalleHms)
     }  
 
     //Ecriture Ligne Bdd
@@ -117,21 +135,23 @@ async function SupprimerFume(id) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function calcAffDate(DateSeconde) {
-    const Interheure = Math.floor(DateSeconde / 3600);
-    const Interminute = Math.floor((DateSeconde % 3600) / 60);
-    const InterSeconde = DateSeconde % 60;
-
-    const intervalle = `${Interheure}h ${Interminute}m ${InterSeconde}s`;
-
-    return intervalle;
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Declenchement toutes les seconde
-setInterval(() => {
+setInterval(async () => {
+    const TableauDbJour = await getDocs(CollTabJourTriAsc);
 
+    console.log(DataDbJour)
+
+    const DateActu = new Date();
+    const LastDate = TableauDbJour.docs[(TableauDbJour.size-1)].data().dateTri;
+    const intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
+
+    //Affichage Intervalle denière fum
+    IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
+
+    //Affichage Reccord Interval
+    SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde)
+
+    
 
     }, 1000);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
@@ -149,22 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
 ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Affichage temps reel Bdd
-const db = getFirestore();
-const q =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
-onSnapshot(q, snapshot => {
-    
- const data = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
- }));
-
- VisuTabJour(data)
-    Cpt_CigJour.textContent = data.length;
-
-})
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -213,3 +217,16 @@ function VisuTabJour(Data) {
         TabJourHtml.appendChild(tr);
     });
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function calcAffDate(DateSeconde) {
+
+    const Interheure = Math.floor(DateSeconde / 3600);
+    const Interminute = Math.floor((DateSeconde % 3600) / 60);
+    const InterSeconde = DateSeconde % 60;
+
+    const intervalle = `${Interheure}h ${Interminute}m ${InterSeconde}s`;
+    return intervalle;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
