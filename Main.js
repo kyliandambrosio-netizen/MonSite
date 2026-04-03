@@ -49,8 +49,6 @@ const db = getFirestore();
     //Refresh Object Html
     VisuTabJour(TabJour)
     Cpt_CigJour.textContent = TabJour.length;
-
-    console.log("BDD Collection TabJour chargée")
     })
 
 
@@ -79,7 +77,7 @@ AddCig.addEventListener("click", async() => {
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
-    //const ReccordInter = TabJour.Data.ReccordInter;
+    const ReccordInter = 0;
     console.log(TabJour)
 
     let LastDate = 0;
@@ -102,7 +100,6 @@ AddCig.addEventListener("click", async() => {
         dateTri: DateActuString,
         inter : IntervalleHms
     })
-        console.log("Bdd Collection TabJour Maj")
 
     //Si reccord intervalle > Ecriture reccord dans bdd
         if (intervalleSeconde < ReccordInter) {
@@ -110,7 +107,6 @@ AddCig.addEventListener("click", async() => {
         ReccordInter : intervalleSeconde
         
     })
-        console.log("Bdd Collection TabJour Maj")
         }
 
 });
