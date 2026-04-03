@@ -73,7 +73,7 @@ import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function AddLigneTabJour(Type) {
-        const DateActuVisu = new Date().toLocaleString();
+    const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
@@ -98,6 +98,7 @@ async function AddLigneTabJour(Type) {
         date : DateActuVisu,
         dateTri: DateActuString,
         inter : IntervalleHms,
+        interSeconde : intervalleSeconde,
         type : Type
     })
 
@@ -109,6 +110,19 @@ async function AddLigneTabJour(Type) {
         
     })
         }
+
+    //Calcul moyenne jour 
+    let MoyenneJour = 0;
+
+    for (let index = 0; index < TabJour.length; index++) {
+        MoyenneJour = (MoyenneJour + TabJour[index].inter) / TabJour.length; 
+            console.log(TabJour[index].inter)
+        if (index < TabJour.length-1) {
+        SpanMoyenneJour.textContent = MoyenneJour;
+        }
+    }
+
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,10 +201,15 @@ function VisuTabJour(Data) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function SupprimerLigne(id) {
 
-    //Raz intervalle si reste 1 seul ligne apres suppression
-    if (TabJour.length == 1 && TabJour[0].exists()) {
-    await setDoc(doc(db, "TabJour", TabJour[0].id), {
+    //Si suppresion ligne 1 > Raz intervalle ligne 2 avant supp ligne 1
+    if (TabJour[0].id == id) {
+    
+    await setDoc(doc(db, "TabJour", TabJour[1].id), {
+        date : TabJour[1].date,
+        dateTri: TabJour[1].dateTri,
         inter : 0,
+        interSeconde : TabJour[1].dateTri,
+        type : TabJour[1].dateTri
     })
     }
 
