@@ -81,26 +81,30 @@ const db = getFirestore();
 AddCig.addEventListener("click", async() => {
     const db = getFirestore();
     const DateActuVisu = new Date().toLocaleString();
-    const DateActu = new Date().toISOString();
-    const MyId = `Ajout${DateActu}`;
+    const DateActuString = new Date().toISOString();
+    const DateActu = new Date();
+    const MyId = `Ajout${DateActuString}`;
     const LastFum = await getDocs(q);
-    let LastDate = 0;
-    let intervalle = 0;
 
-    if (LastFum.size !=0) { //Tableau rempli avec au moins 1 document
-        const LastDateDoc = LastFum.docs[(LastFum.size-1)];
-        LastDate = LastDateDoc.data().dateTri;
-        intervalle = Math.floor((DateActu - LastDate) / 1000);
-        console.log(DateActu, LastDate, intervalle)
-    } else { //Tableau vide > premiere donnée
-        intervalle = 0;
-    }
+    let LastDate = 0;
+    let IntervalleHms = "0";
+
+    //Vérification Tableau Non Vide 
+    if (LastFum.size !=0) { 
+        //Recuperation derniere date pour calcule intervalle
+        const LastDate = LastFum.docs[(LastFum.size-1)].data().dateTri;;
+
+        //Calcul intervalle
+        const intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
+        IntervalleHms = await calcAffDate(intervalleSeconde)
+        console.log(IntervalleHms)
+    }  
 
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
         date : DateActuVisu,
-        dateTri: DateActu,
-        inter : intervalle
+        dateTri: DateActuString,
+        inter : IntervalleHms
     })
 
 });
@@ -111,6 +115,26 @@ async function SupprimerFume(id) {
     await deleteDoc(doc(db, "TabJour", id));
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function calcAffDate(DateSeconde) {
+    const Interheure = Math.floor(DateSeconde / 3600);
+    const Interminute = Math.floor((DateSeconde % 3600) / 60);
+    const InterSeconde = DateSeconde % 60;
+
+    const intervalle = `${Interheure}h ${Interminute}m ${InterSeconde}s`;
+
+    return intervalle;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Declenchement toutes les seconde
+setInterval(() => {
+
+
+    }, 1000);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
