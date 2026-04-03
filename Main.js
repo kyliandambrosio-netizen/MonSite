@@ -54,6 +54,7 @@ const db = getFirestore();
 const TabVisuJour = ((localStorage.getItem("VisuTableauJour"))) || []; //Load tableau jour local
 
  await addDoc(collection(db, "cig"), {
+    id: "tab0",
     data: TabVisuJour
 })
    
