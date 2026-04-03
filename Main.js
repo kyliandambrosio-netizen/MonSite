@@ -24,6 +24,7 @@
 import { getFirestore,
         collection, 
         addDoc,
+        setDoc,
         getDocs,
         onSnapshot,
         deleteDoc,
@@ -76,41 +77,45 @@ const db = getFirestore();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//ajout cig
 AddCig.addEventListener("click", async() => {
     const db = getFirestore();
     const DateActu = new Date().toLocaleString();
-
-    const LastDate = localStorage.getItem("LastDate") || 0;
+    const MyId = `Ajout${new Date().toISOString()}`;
+    const LastFum = await getDocs(q);
+    let LastDate = 0;
     let intervalle = 0;
 
-    if (LastDate != 0) {
+    if (LastFum.size !=0) { //Tableau rempli avec au moins 1 document
+        const LastDateDoc = LastFum.docs[(LastFum.size-1)];
+        LastDate = LastDateDoc.data().date;
         intervalle = DateActu - LastDate;
-    };
-    console.log(DateActu)
-    await addDoc(collection(db, "TabJour"), {
-        date : DateActu,
-        Intervalle : "0",
-    })
-});
 
+    } else { //Tableau vide > premiere donnée
+        intervalle = 0;
+    }
+
+    //Ecriture Ligne Bdd
+    await setDoc(doc(db, "TabJour", MyId), {
+        date : DateActu,
+        dateTri: new Date().toISOString(),
+        inter : intervalle
+    })
+
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function SupprimerFume(id) {
     await deleteDoc(doc(db, "TabJour", id));
 }
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Action Page Refresh
 document.addEventListener("DOMContentLoaded", () => {
     //Affichage Mode Sombre ou Claire
     AffModeSombreClaire();
-
-    //Refresh tableau jour
-    let VisuTableauMemJour = JSON.parse(localStorage.getItem("VisuTableauJour")) || []; //Load tableau jour local
-    VisuTabJour(VisuTableauMemJour);
 
 });
 
@@ -123,8 +128,8 @@ ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Affichage temps reel Bdd
 const db = getFirestore();
-const q =query(collection(db, "TabJour"), orderBy("date", "asc"));
-onSnapshot(collection(db, "TabJour"), snapshot => {
+const q =query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
+onSnapshot(q, snapshot => {
     
  const data = snapshot.docs.map(doc => ({
     id: doc.id,
@@ -146,7 +151,6 @@ function VisuTabJour(Data) {
 
     TabJourHtml.innerHTML ="";
     
-
     Data.forEach((ligne, index) => {
 
     const tr = document.createElement("tr");
@@ -155,20 +159,17 @@ function VisuTabJour(Data) {
         const tdIndex = document.createElement("td");
         tdIndex.textContent = index+1;
         
-
         //Date
         const tdDate = document.createElement("td");
         tdDate.textContent = ligne.date;
 
         //Intervalle
         const tdIntervalle = document.createElement("td");
-        tdIntervalle.textContent = ligne.Intervalle;
-        
+        tdIntervalle.textContent = ligne.inter;
 
         //Intervalle Seconde
         const tdIntervalleSec = document.createElement("td");
         tdIntervalleSec.textContent = ligne.IntervalleSec;
-        
 
         //Bp Suppression ligne
         const tdBtn = document.createElement("td");
@@ -176,7 +177,6 @@ function VisuTabJour(Data) {
         btn.textContent = "❌";
 
         btn.onclick =  () => {SupprimerFume(ligne.id)};
-
 
         tdBtn.appendChild(btn);
         tr.appendChild(tdIndex);
@@ -187,7 +187,4 @@ function VisuTabJour(Data) {
 
         TabJourHtml.appendChild(tr);
     });
-
-
-
 }
