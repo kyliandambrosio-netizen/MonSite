@@ -32,7 +32,7 @@ import { getFirestore,
 //Chargement BDD =>
 const db = getFirestore();
 let TabJour = [];
-let Stats = null;
+let Record = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 
     /////////////////////////////////////////////
@@ -45,13 +45,12 @@ const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 
     //Refresh Object Html
     VisuTabJour(TabJour)
-    Cpt_CigJour.textContent = TabJour.length;
     })
 
     /////////////////////////////////////////////
     //Chargement collection stats
-    onSnapshot(doc(db, "Stats", "GlobalData"), snapshot => {
-        Stats = snapshot.data();
+    onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
+        Record = snapshot.data();
     })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +76,7 @@ async function AddLigneTabJour(Type) {
     const DateActuString = new Date().toISOString();
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
-    const ReccordInter = Stats.RecordIntervalle;
+    const ReccordInter = Record.Intervalle;
 
     let LastDate = 0;
     let IntervalleHms = "0";
@@ -103,31 +102,37 @@ async function AddLigneTabJour(Type) {
     })
 
     //Si reccord intervalle > Ecriture reccord dans bdd
-        if (intervalleSeconde > ReccordInter) {
-        SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
-        await setDoc(doc(db, "Stats", "GlobalData"), {
-        RecordIntervalle : intervalleSeconde
+    if (intervalleSeconde > ReccordInter) {
+    SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
+    await setDoc(doc(db, "GlobalData", "Record"), {
+    Intervalle : intervalleSeconde
         
     })
         }
 
 
 
-    SpanMoyenneJour.textContent = await CalcMoyenne(TabJour, `InterSeconde`)
+    SpanMoyenneJour.textContent = await CalcMoyenne(TabJour)
     
 }
 
-async function CalcMoyenne(Tableau, Valeur) {
+async function CalcMoyenne(Tableau) {
     //Calcul Moyenne Jour
     let MoyenneJour = 0;
-    /////////!!!!!!!!!!!!!!!!!!!!MOYENNE NON FONCTIONNELLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     for (let index = (Tableau.length-1); index > 0 ; index--) {
         MoyenneJour = MoyenneJour + Tableau[index].interSeconde; 
-          console.log(MoyenneJour, Tableau.length-1, MoyenneJour/Tableau.length-1)
     }
 
-    return await calcAffDate(parseInt(MoyenneJour/Tableau.length-1))
+    return await calcAffDate(parseInt(MoyenneJour/(Tableau.length-1)))
 }
+
+Bp_Test.addEventListener("click", async() => {
+    
+    const A = await CalcMoyenne(TabJour)
+    SpanMoyenneJour.textContent = A;
+    
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Ajout Cig
@@ -154,7 +159,7 @@ ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Tableau affichage jour
-function VisuTabJour(Data) {
+async function VisuTabJour(Data) {
 
     const tbody = document.getElementById("TabVisuJour");
 
@@ -199,6 +204,11 @@ function VisuTabJour(Data) {
         TabJourHtml.appendChild(tr);
         };
     });
+
+    //Refresh Object Hmtl
+    Cpt_CigJour.textContent = TabJour.length;
+    SpanMoyenneJour.textContent = await CalcMoyenne(TabJour)
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,7 +248,7 @@ setInterval(async () => {
     const DateActu = new Date();
     const LastDate = new Date(TabJour[(TabJour.length-1)].dateTri) || 0;
     const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
-    const ReccordInter = Stats.RecordIntervalle;
+    const ReccordInter = Record.Intervalle;
 
     //Affichage Intervalle denière fum
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
