@@ -9,8 +9,12 @@
 
 <body>
 
-
-	<h1>Mon premier site</h1>
+<div class="BpChoixPage">
+	<button onclick="showTab('Home')">Accueil</button>
+	<button onclick="showTab('Analyse')">Analyse</button>
+	<button onclick="showTab('Historique')">Historique</button>
+	<button onclick="showTab('Param')">Réglage</button>
+</div>
 
 	<button id="Bp_TestChgmtJour">TestLecture</button>
 	<button id="Bp_Test">TestEcriture</button>
@@ -19,7 +23,9 @@
 	<button id="Bp_ChoixModeAff">Mode</button>
 
 
-	<div class="container1">
+	<div class="Tab" id="Home">
+		<h1>Accueil</h1>
+
 		<h2>Comtpeur 1</h2>
 
 		<span id="Cpt_CigJour">0</span>
@@ -35,10 +41,11 @@
 		<span id="RecordIntervalle">0</span>
 
 	</div>
+	<p></p>
 
 
-	<div class="GroupeJ">
-
+	<div class="Tab" id="Analyse">
+		<h1>Analyse</h1>
 		<p>Moyenne journalière :</p>
 		<span id="MoyenneJour">0</span>
 		<p></p>
