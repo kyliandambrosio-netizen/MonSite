@@ -94,8 +94,11 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Ajout ligne dans tableau jour
 async function AddLigneTabJour(Type) {
-    const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
+    const DateActuStringHour = new Date().getHours().toString().padStart(2, "0");
+    const DateActuStringMinute = new Date().getMinutes().toString().padStart(2, "0");
+    const DateActuStringSeconde = new Date().getSeconds().toString().padStart(2, "0");
+    const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute} : ${DateActuStringSeconde}`
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
     const ReccordInter = Record.Intervalle;
@@ -123,7 +126,7 @@ async function AddLigneTabJour(Type) {
         }
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
-        date : DateActuVisu,
+        date : DateActuStringComplet,
         dateTri: DateActuString,
         inter : IntervalleHms,
         interSeconde : intervalleSeconde,
