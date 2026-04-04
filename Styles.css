@@ -1,67 +1,38 @@
-:root{
-	--backcolor: 16#111;
-	--textcolor: 16#111;
-}
 
 body {
 	font-family: Arial, sans-serif;
-	background: var(--backcolor);
+	background: #111;
+	color: aquamarine;
 }
 
-h1 {
-	color: var(--textcolor);
-	position : static;
-	text-align : center;
+.BpChoixPage button {
+	background-color: grey;
+	font-size: 30px;
+	width: 180px;
+}
+
+.Tab {
+	text-align: center;
 	font-size: 60px;
 }
 
+#Cpt_CigJour {
+	font-size: 300px;
+}
 
-.container1 {
-	width: 300px;
-	top: 20%;
-	left: 2%;
+@media (min-width: 1000px) {
+	.Tab {
 	text-align: center;
+	top: 50px;
+	left: 50px;
+	font-size: 40px;
+}
+	
+#Cpt_CigJour {
+	font-size: 60px;
+}
 }
 
-
-h2 { 
-	color: var(--textcolor);
-	font-size: 30px;
-}
-
-p { 
-	color: var(--textcolor);
-	font-size: 30px;
-}
-
-
-span {
-	color: var(--textcolor);
-	font-size: 50px;
-}
-
-#Bp_AddCig {
-	background-color: red;
-	color: white;
-	width: 200px;
-	height: 50px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
-}
-
-#Bp_ChoixModeAff {
-	position:absolute;
-	top: 2%;
-	left: 94%;
-	background-color: grey;
-	color: white;
-	width: 100px;
-	height: 50px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
-}
 
 @media (hover: hover){
 #Bp_AddCig:hover {
@@ -69,28 +40,6 @@ span {
 	color: red;
 }
 }
-#Bp_ChoixModeAff:hover {
-	background-color: green;
-	color: red;
-}
-
-
-button:active {
-	background-color: green;
-	color: red;
-}
-
-
-#Bp_AddJ {
-	background-color: red;
-	color: white;
-	width: 200px;
-	height: 50px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
-}
-
 
 @media (hover: hover){
 #Bp_AddJ:hover {
@@ -98,10 +47,46 @@ button:active {
 	color: red;
 }
 }
-.GroupeJ {
-	position: absolute;
-	top: 20%;
-	left: 40%;
-	width: fit-content;
+
+
+
+
+tr {
+	color: var(--textcolor);
+	position : static;
+	text-align : center;
+	font-size: 30px;
+}
+
+td:nth-child(4),
+th:nth-child(4) {
+	display: none;
+}
+
+table {
+	border-collapse: collapse;
+	width: 500px;
+}
+
+th, td {
+	border: 1px solid #ccc;
+	padding: 10px;
 	text-align: center;
+}
+
+th {
+	background-color: rgb(116, 114, 114);
+	font-size: 30px;
+}
+
+td {
+	background-color: rgb(148, 144, 144);
+	font-size: 20px;
+}
+
+table button {
+	background-color: rgb(148, 144, 144);
+	color: white;
+	border: none;
+	font-size: 15px;
 }

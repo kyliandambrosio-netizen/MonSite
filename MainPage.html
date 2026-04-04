@@ -9,41 +9,61 @@
 
 <body>
 
+<div class="BpChoixPage">
+	<button onclick="showTab('Home')">🏠</button>
+	<button onclick="showTab('Analyse')">📊</button>
+	<button onclick="showTab('Historique')">💾</button>
+	<button onclick="showTab('Param')">🔧</button>
+</div>
 
-	<h1>Mon premier site</h1>
-
-	<button id="Bp_TestChgmtJour">TestChangementJour</button>
-	<button id="TestChargementBdd">TestLoadBDD</button>
+	<button id="Bp_TestChgmtJour">TestLecture</button>
+	<button id="Bp_Test">TestEcriture</button>
 
 
-	<button id="Bp_ChoixModeAff">Mode</button>
+	<div class="Tab" id="Home">
+		<h1>Accueil</h1>
 
-
-	<div class="container1">
-		<h2>Comtpeur 1</h2>
-
-		<span id="Cpt_CigJour"></span>
+		<span id="Cpt_CigJour">0</span>
 
 		<p> </p>
 
 		<button id="Bp_AddCig">Ajouter</button>
 
-		<p>Dernière Cig :</p>
+		<p>Dernière Fum :</p>
 		<span id="IntervalleCig">0</span>
 
+		<p>Record :</p>
+		<span id="RecordIntervalle">0</span>
+
 	</div>
+	<p></p>
 
-	<div class="GroupeJ">
-		<h2>Compteur 2</h2>
 
-		<span id="Cpt_JJour"></span>
+	<div class="Tab" id="Analyse">
+		<h1>Analyse</h1>
+		<p>Moyenne journalière :</p>
+		<span id="MoyenneJour">0</span>
+		<p></p>
+		<table> 
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Date</th>
+					<th>Intervalle</th>
+					<th>IntervalleSec</th>
+					<th></th>
 
-		<p> </p>
-
-		<button id="Bp_AddJ">Ajouter J</button>
+				</tr>
+			</thead>
+			<tbody id="TabVisuJour" ></tbody>
+		</table>
 	</div>
 
 
 	<script type="module" src="Main.js"></script>
+
 </body>
+
+
+
 </html> 

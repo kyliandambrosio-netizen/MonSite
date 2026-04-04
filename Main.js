@@ -1,175 +1,329 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Déclaration variable
-const ChoixModeAff = document.getElementById("Bp_ChoixModeAff");
+//Import FireBase
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDlvVPPvQRbWdlXWUCFSB0iTCLML9r176w",
+    authDomain: "sie1-a95c4.firebaseapp.com",
+    projectId: "sie1-a95c4",
+    storageBucket: "sie1-a95c4.firebasestorage.app",
+    messagingSenderId: "485770107307",
+    appId: "1:485770107307:web:e15cef3374870e9a831aee",
+    measurementId: "G-BZH0GMGRP7"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+import { getFirestore,
+        collection, 
+        setDoc,
+        onSnapshot,
+        deleteDoc,
+        doc,
+        query,
+        orderBy
+     } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+
+//Chargement BDD =>
+const db = getFirestore();
+let TabJour = [];
+let TabSemaine = [];
+let Record = null;
+let Preference = null;
+const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
+const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "asc"));
+
+    /////////////////////////////////////////////
+    //Chargement collection Tableau Jour
+    onSnapshot(CollTabJour, snapshot => {
+    TabJour = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    //Refresh Object Html
+    VisuTabJour(TabJour)
+    CalcMoyenneJourSemaine();
+    })
+
+    //Chargement collection Tableau Semaine
+    onSnapshot(CollTabSemaine, snapshot => {
+    TabSemaine = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    CalcMoyenneJourSemaine();
+    })
+
+    /////////////////////////////////////////////
+    //Chargement collection GlobalData Record
+    onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
+        Record = snapshot.data();
+    })
+
+    /////////////////////////////////////////////
+    //Chargement collection GlobalData Preference
+    onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
+        Preference = snapshot.data();
+    })
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Déclaration Objet Html
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
-const Bp_TestLoadBDD = document.getElementById("TestChargementBdd");
+const Bp_Test = document.getElementById("Bp_Test");
 const IntervalleCig = document.getElementById("IntervalleCig");
+const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
+const SpanMoyenneJour = document.getElementById("MoyenneJour");
+const TabJourHtml = document.getElementById("TabVisuJour");
 
-//Liaison fonction
-import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
-import { ReadataInGoogleSheets, WriteOneCellInGoogleSheets, WriteRangeInGoogleSheets } from './GestBdd.js';
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Changement Page
+window.showTab = function(Page) {
+    const tabs = document.querySelectorAll(".Tab");
+    tabs.forEach(tab => {
+        tab.style.display = tab.id === Page ? "block" : "none";
+    })
+    console.log(tabs)
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Ajout ligne dans tableau jour
+async function AddLigneTabJour(Type) {
+    const DateActuString = new Date().toISOString();
+    const DateActuStringHour = new Date().getHours().toString().padStart(2, "0");
+    const DateActuStringMinute = new Date().getMinutes().toString().padStart(2, "0");
+    const DateActuStringSeconde = new Date().getSeconds().toString().padStart(2, "0");
+    const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute} : ${DateActuStringSeconde}`
+    const DateActu = new Date();
+    const MyId = `Ajout${DateActuString}`;
+    const ReccordInter = Record.Intervalle;
+
+    let LastDate = 0;
+    let IntervalleHms = "0";
+    let intervalleSeconde = 0;
+
+    //Vérification Tableau Non Vide 
+    if (TabJour.length !=0) { 
+        //Recuperation derniere ligne pour calcule intervalle
+        LastDate = TabJour[(TabJour.length-1)].dateTri;
+
+        //Calcul intervalle
+        intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
+        IntervalleHms = await calcAffDate(intervalleSeconde)
+    }  
+
+    //Si reccord intervalle > Ecriture reccord dans bdd
+    if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
+    await setDoc(doc(db, "GlobalData", "Record"), {
+    Intervalle : intervalleSeconde
+        
+    })
+        }
+    //Ecriture Ligne Bdd
+    await setDoc(doc(db, "TabJour", MyId), {
+        date : DateActuStringComplet,
+        dateTri: DateActuString,
+        inter : IntervalleHms,
+        interSeconde : intervalleSeconde,
+        type : Type
+    })
+
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Page Refresh
-document.addEventListener("DOMContentLoaded", async () => {
-    const now = new Date();
-    const dateActuelJour = now.getDate().toString().padStart(2, '0');
-    const dateActuelMois = (now.getMonth()+1).toString().padStart(2, '0');
-    const dateActuelAnnee = now.getFullYear().toString();
-    const dateActuelheure = now.getHours().toString().padStart(2, '0');
-    const dateActuelMinute = now.getMinutes().toString().padStart(2, '0');
-    const dateActuelSeconde= now.getSeconds().toString().padStart(2, '0');
+//Bp Ajout Cig
+AddCig.addEventListener("click", async() => {
+    const Type = "C";
+    AddLigneTabJour(Type);
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Gestion affichage jour
+async function VisuTabJour(Data) {
+    const tbody = document.getElementById("TabVisuJour");
 
-    //Affichage Mode Sombre ou Claire
-    AffModeSombreClaire();
+    TabJourHtml.innerHTML ="";
+    
+    Data.forEach((ligne, index) => {
 
-    //Chargement data depuis Bdd google sheets/////////////////////////////////////////////
-    if (!sessionStorage.getItem("FrtmPageLoaded")) {
-        console.log("Loading BDD IN PROGRESS");
+        if (ligne.date != undefined) {
 
-        const DataRead = await ReadataInGoogleSheets() || [];
-        const NbrCigJour = DataRead[2][0] || 0; //Compteur Cig
-        const LastJour = DataRead[1][7] || 0; //MemJour
+        const tr = document.createElement("tr");
 
-        localStorage.setItem("DateCigJourSaved", parseInt(LastJour));
-        localStorage.setItem("NbrCigJour", parseInt(NbrCigJour));
-        sessionStorage.setItem("FrtmPageLoaded", "true");
+        //Index
+        const tdIndex = document.createElement("td");
+        tdIndex.textContent = index+1;
+        
+        //Date
+        const tdDate = document.createElement("td");
+        tdDate.textContent = ligne.date;
 
-        //Changement Jour///////////////////////////////////////////////////////////////////////
+        //Intervalle
+        const tdIntervalle = document.createElement("td");
+        tdIntervalle.textContent = ligne.inter;
 
-        if (LastJour  != dateActuelJour) {
-        const MemNbrCigJour = localStorage.getItem("NbrCigJour");
-        const IndexMemJour = parseInt(dateActuelJour)+2;
+        //Intervalle Seconde
+        const tdIntervalleSec = document.createElement("td");
+        tdIntervalleSec.textContent = ligne.IntervalleSec;
 
-        //création ligne mémorisation Jour actu
-        WriteOneCellInGoogleSheets("writeOnceCell", `I${IndexMemJour}`, dateComplete);
+        //Bp Suppression ligne
+        const tdBtn = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.textContent = "❌";
 
-        //Memorisation nombre cig jour précédent
-        WriteOneCellInGoogleSheets("writeOnceCEll", `J${LastJour+2}`, MemNbrCigJour);
+        btn.onclick =  () => {SupprimerLigne(ligne.id)};
 
-        //Raz compteur cig local
-        localStorage.setItem("NbrCigJour", 0)
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdIndex);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdIntervalle);
+        tr.appendChild(tdIntervalleSec);
+        tr.appendChild(tdBtn);
 
-        //Raz Zone mémoire google sheet Cig jour 
-        WriteOneCellInGoogleSheets("write", "A3", 0)
-        WriteOneCellInGoogleSheets("write", "A5", 0)
-        await WriteRangeInGoogleSheets("razRange", "A7:B200", 0);
-
-        //Mémorisation date
-        localStorage.setItem("DateCigJourSaved", dateActuelJour);
-        WriteOneCellInGoogleSheets("write", "H2", dateActuelJour)
+        TabJourHtml.appendChild(tr);
         };
-    
-    };
+    });
 
-    
-
-
-
-
-
-
-
-
-    //MAJ Visu Comtpeur Cpt cig Jour
-    Cpt_CigJour.textContent =  parseInt(localStorage.getItem("NbrCigJour"));;
-    
-
-});
-
-
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton Changement Mode Sombre/Claire
-ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
+async function SupprimerLigne(id) {
+
+    //Si suppresion ligne 1 > Raz intervalle ligne 2 avant supp ligne 1
+    if (TabJour[0].id == id && TabJour.length != 1) {
+    
+    await setDoc(doc(db, "TabJour", TabJour[1].id), {
+        date : TabJour[1].date,
+        dateTri: TabJour[1].dateTri,
+        inter : 0,
+        interSeconde : TabJour[1].interSeconde,
+        type : TabJour[1].dateTri
+    })
+    }
+
+    await deleteDoc(doc(db, "TabJour", id));
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton Incrementation Compteur cig Jour
-AddCig.addEventListener("click", async() => {  
+async function calcAffDate(DateSeconde) {
+    const Interheure = Math.floor(DateSeconde / 3600);
+    const Interminute = Math.floor((DateSeconde % 3600) / 60);
+    const InterSeconde = DateSeconde % 60;
+
+    const intervalle = `${Interheure}h ${Interminute}m ${InterSeconde}s`;
+    return intervalle;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Declenchement toutes les seconde
+setInterval(async () => {
+    let LastDate = 0;
+    if (TabJour.length !=0) {
+        LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
+    } else if (TabSemaine.length !=0) {
+        LastDate = new Date(TabSemaine[(TabSemaine.length-1)].LastFum);
+    }
+    else {
+        LastDate = new Date();
+    }
+
+
     const DateActu = new Date();
-    const dateActuelJour = DateActu.getDate().toString().padStart(2, '0');
-    const dateActuelMois = (DateActu.getMonth()+1).toString().padStart(2, '0');
-    const dateActuelAnnee = DateActu.getFullYear().toString();
-    const dateActuelheure = DateActu.getHours().toString().padStart(2, '0');
-    const dateActuelMinute = DateActu.getMinutes().toString().padStart(2, '0');
-    const dateActuelSeconde= DateActu.getSeconds().toString().padStart(2, '0');
-    const dateComplete = `${dateActuelJour}/${dateActuelMois}/${dateActuelAnnee} ${dateActuelheure}:${dateActuelMinute}:${dateActuelSeconde}`;
-    const IntervalleLastCig = localStorage.getItem("")
+    const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+    const ReccordInter = Record.Intervalle;
 
-    //Bloquage bouton pendant envoie données
-    AddCig.disabled = true,
-    AddCig.textContent = "Envoie en cours"
+    //Affichage Intervalle denière fum
+    IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
-    //Loading Local Data
-    let NbrCigJourActu = parseInt(localStorage.getItem("NbrCigJour")) || 0;
+    //Affichage Reccord Interval
+    if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
+    SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
-    //Incrementation Compteur et index
- 	NbrCigJourActu++;
-
-    //Maj visu compteur
-    Cpt_CigJour.textContent = NbrCigJourActu;
-
-    //Mémorisation Date
-    localStorage.setItem("MemDateLastCig", DateActu);
-
-    //Enregistrement local cptCigjour
-	localStorage.setItem("NbrCigJour", NbrCigJourActu);
-
-    //Enregistremnt Google Sheets
-    await Promise.all([
-    WriteRangeInGoogleSheets("writeRange", `A${NbrCigJourActu+6}:B${NbrCigJourActu+6}`, [NbrCigJourActu, dateComplete, ]),
-	WriteOneCellInGoogleSheets("write", "A3", NbrCigJourActu)
-    ]);
-
-
-    //Réactivation bouton
-    AddCig.disabled = false,
-    AddCig.textContent = "Ajouter"
-
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton Changement de jour
-Bp_TestChgmtJour.addEventListener("click", async() => {
-
-    //Mémorisation date
-    localStorage.setItem("DateCigJourSaved", 0);
-    
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bp Test chargement bdd
-Bp_TestLoadBDD.addEventListener("click", () => {
-    sessionStorage.removeItem("FrtmPageLoaded")
-    
-});
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Declenchement toutes les secondes
-setInterval(() => {
-    //Affichage intervalle dernière cig ///////////////////////////////////////////
-    const DateActu = new Date();
-    const DateLastCig = new Date(localStorage.getItem("MemDateLastCig") ||0);
-    const CalcInterval = Math.floor((DateActu - DateLastCig) / 1000);;
-    const heure = Math.floor(CalcInterval / 3600);
-    const minute = Math.floor((CalcInterval % 3600) / 60);
-    const seconde = CalcInterval % 60;
-    const Intervalle = `${heure}h ${minute}m ${seconde}s`;
-
-
-    if(DateLastCig != 0){
-    IntervalleCig.textContent = Intervalle;
     } else {
-        IntervalleCig.textContent = 0;
+     SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
     };
 
-    localStorage.setItem("Intervalle", Intervalle);
+
+    //Changement de jour
+
+    }, 1000);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Changement De Jour
+Bp_TestChgmtJour.addEventListener("click", async () => {
+    const dateActu = new Date();
+    const JourPrecedent = Math.floor(dateActu.getDay()-1);
+    let MoyenneJour = 0;
+
+    //Calcul Moyenne Jour
+    for (let index = (TabJour.length-1); index > 0 ; index--) {
+        MoyenneJour = MoyenneJour + TabJour[index].interSeconde; 
+    }
+
+    //Ecritrue ligne Jour Semaine Bdd
+    await setDoc(doc(db, "TabSemaine", `Jour:${JourPrecedent}`), {
+        LastFum : TabJour[TabJour.length-1].dateTri,
+        NbrC : TabJour.length,
+        MoyenneInter : (MoyenneJour / (TabJour.length-1))
+
+    })
 
 
-}, 1000);
+    //Raz Tableau jour
+   while (TabJour.length != 0) {
+        await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
+   }
+})
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Bp test droite supprimer jour
+async function CalcMoyenneJourSemaine() {
+       //Calcul Moyenne Jour Semaine
+    let MoyenneJourSemaine = 0;
+    let NbrData = 0;
+    let ResultatMoyenne = 0;
+        
+        //Jour actu
+    for (let index = (TabJour.length-1); index >= 1 ; index--) {
+        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].interSeconde; 
+        NbrData = NbrData + 1;
+    }
+        //jour de la semaine
+    for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
+        MoyenneJourSemaine = MoyenneJourSemaine + TabSemaine[index].MoyenneInter; 
+        NbrData = NbrData + 1;
+    }
+    
+    //Refresh Object Hmtl
+    Cpt_CigJour.textContent = TabJour.length;
+
+    if (NbrData !=0) {
+    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/NbrData))
+    } else {
+    SpanMoyenneJour.textContent = "0h 0m 0s";
+    }
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
