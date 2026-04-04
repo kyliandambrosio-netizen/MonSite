@@ -9,13 +9,6 @@
 
 <body>
 
-<div class="BpChoixPage">
-	<button onclick="showTab('Home')">🏠</button>
-	<button onclick="showTab('Analyse')">📊</button>
-	<button onclick="showTab('Historique')">💾</button>
-	<button onclick="showTab('Param')">🔧</button>
-</div>
-
 	<button id="Bp_TestChgmtJour">TestLecture</button>
 	<button id="Bp_Test">TestEcriture</button>
 
@@ -27,7 +20,7 @@
 
 		<p> </p>
 
-		<button id="Bp_AddCig">Ajouter</button>
+		<button class id="Bp_AddCig">Ajouter</button>
 
 		<p>Dernière Fum :</p>
 		<span id="IntervalleCig">0</span>
@@ -60,6 +53,12 @@
 	</div>
 
 
+<div class="BpChoixPage">
+	<button onclick="showTab('Home')">🏠</button>
+	<button onclick="showTab('Analyse')">📊</button>
+	<button onclick="showTab('Historique')">💾</button>
+	<button onclick="showTab('Param')">🔧</button>
+</div>
 	<script type="module" src="Main.js"></script>
 
 </body>
