@@ -71,7 +71,6 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
     //Chargement collection GlobalData Preference
     onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
         Preference = snapshot.data();
-        AffModeSombreClaire(Preference.ModeSombre)
     })
 
 
@@ -79,7 +78,6 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Déclaration Objet Html
-const ChoixModeAff = document.getElementById("Bp_ChoixModeAff");
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
@@ -154,22 +152,6 @@ AddCig.addEventListener("click", async() => {
     const Type = "C";
     AddLigneTabJour(Type);
 });
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Page Refresh
-document.addEventListener("DOMContentLoaded", () => {
-    //Affichage Mode Sombre ou Claire
-    const choix = localStorage.getItem("ChoixModeSombre");
-    AffModeSombreClaire(choix);
-
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Action Bouton Changement Mode Sombre/Claire
-ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,36 +267,6 @@ setInterval(async () => {
     //Changement de jour
 
     }, 1000);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//MAJ Couleur Page + texte sur choix mode sombre ou clair
-function AffModeSombreClaire(choix) {
-	if (choix === 1) {
-		document.getElementById("Bp_ChoixModeAff").textContent = "Mode Sombre";
-		document.documentElement.style.setProperty('--backcolor', "white");
-		document.documentElement.style.setProperty('--textcolor', "black");
-
-	} else {
-		document.getElementById("Bp_ChoixModeAff").textContent = "Mode Clair";
-		document.documentElement.style.setProperty('--backcolor', '#111');
-		document.documentElement.style.setProperty('--textcolor', '#eee');
-	}	
-};
-
-//Action changement "choix mode sombre / clair"
-async function ChgmtModeSombreClaire() {
-	if (Preference.ModeSombre === 1) {
-        await setDoc(doc(db, "GlobalData", "Preference"), {
-            ModeSombre: 2
-        })
-	} else {
-        await setDoc(doc(db, "GlobalData", "Preference"), {
-            ModeSombre: 1
-        })
-	}
-    localStorage.setItem("ChoixModeSombre", Preference.ModeSombre);
-};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
