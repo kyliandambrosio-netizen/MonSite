@@ -203,16 +203,16 @@ async function VisuTabJour(Data) {
         };
     });
 
-    //Calcul Moyenne Jour
-    let MoyenneJour = 0;
+    //Calcul Moyenne Jour Semaine
+    let MoyenneJourSemaine = 0;
 
-    for (let index = (TabJour.length-1); index > 0 ; index--) {
-        MoyenneJour = MoyenneJour + TabJour[index].interSeconde; 
+    for (let index = 0; index < (TabJour.length-1) ; index++) {
+        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].interSeconde; 
     }
 
     //Refresh Object Hmtl
     Cpt_CigJour.textContent = TabJour.length;
-    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJour/(TabJour.length-1)))
+    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/(TabJour.length-1)))
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
