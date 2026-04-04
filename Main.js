@@ -48,6 +48,7 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
 
     //Refresh Object Html
     VisuTabJour(TabJour)
+    CalcMoyenneJourSemaine();
     })
 
     //Chargement collection Tableau Semaine
@@ -57,6 +58,7 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
         ...doc.data()
     }));
 
+    CalcMoyenneJourSemaine();
     })
 
     /////////////////////////////////////////////
@@ -158,7 +160,6 @@ ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion affichage jour
 async function VisuTabJour(Data) {
-
     const tbody = document.getElementById("TabVisuJour");
 
     TabJourHtml.innerHTML ="";
@@ -203,29 +204,6 @@ async function VisuTabJour(Data) {
         };
     });
 
-    //Calcul Moyenne Jour Semaine
-    let MoyenneJourSemaine = 0;
-    let NbrData = 0;
-        
-        //Jour actu
-    for (let index = (TabJour.length-1); index > 0 ; index--) {
-        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].interSeconde; 
-        NbrData = NbrData + 1;
-    }
-        //jour de la semaine
-    for (let index = (TabSemaine.length-1); index > 0  ; index--) {
-        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].MoyenneInter; 
-        NbrData = NbrData + 1;
-    }
-    
-    //Refresh Object Hmtl
-    Cpt_CigJour.textContent = TabJour.length;
-
-    if (NbrData !=0) {
-    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/NbrData))
-    } else {
-        SpanMoyenneJour.textContent = "0h 0m 0s";
-    }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -349,14 +327,36 @@ Bp_TestChgmtJour.addEventListener("click", async () => {
    while (TabJour.length != 0) {
         await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
    }
-
-
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp test droite supprimer jour
-Bp_Test.addEventListener("click", async () => {
-    await deleteDoc(doc(db, "TabSemaine", TabSemaine[0].id));
-});
+async function CalcMoyenneJourSemaine() {
+       //Calcul Moyenne Jour Semaine
+    let MoyenneJourSemaine = 0;
+    let NbrData = 0;
+    let ResultatMoyenne = 0;
+        
+        //Jour actu
+    for (let index = (TabJour.length-1); index >= 1 ; index--) {
+        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].interSeconde; 
+        NbrData = NbrData + 1;
+    }
+        //jour de la semaine
+    for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
+        MoyenneJourSemaine = MoyenneJourSemaine + TabSemaine[index].MoyenneInter; 
+        NbrData = NbrData + 1;
+    }
+    
+    //Refresh Object Hmtl
+    Cpt_CigJour.textContent = TabJour.length;
+
+    if (NbrData !=0) {
+    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/NbrData))
+    } else {
+    SpanMoyenneJour.textContent = "0h 0m 0s";
+    }
+
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
