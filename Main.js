@@ -36,7 +36,7 @@ let TabSemaine = [];
 let Record = null;
 let Preference = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
-const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("Date", "asc"));
+const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "asc"));
 
     /////////////////////////////////////////////
     //Chargement collection Tableau Jour
@@ -253,7 +253,10 @@ setInterval(async () => {
     let LastDate = 0;
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
-    } else {
+    } else if (TabSemaine.length !=0) {
+        LastDate = new Date(TabSemaine[(TabSemaine.length-1)].LastFum);
+    }
+    else {
         LastDate = new Date();
     }
 
@@ -308,7 +311,7 @@ async function ChgmtModeSombreClaire() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
-Bp_Test.addEventListener("click", async () => {
+Bp_TestChgmtJour.addEventListener("click", async () => {
     const dateActu = new Date();
     const JourPrecedent = Math.floor(dateActu.getDate()- 1);
     let MoyenneJour = 0;
@@ -320,7 +323,7 @@ Bp_Test.addEventListener("click", async () => {
 
     //Ecritrue ligne Jour Semaine Bdd
     await setDoc(doc(db, "TabSemaine", `Jour:${JourPrecedent}`), {
-        Date : dateActu,
+        LastFum : TabJour[TabJour.length-1].dateTri,
         NbrC : TabJour.length,
         MoyenneInter : (MoyenneJour / (TabJour.length-1))
 
@@ -334,4 +337,11 @@ Bp_Test.addEventListener("click", async () => {
 
 
 })
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Bp test droite supprimer jour
+Bp_Test.addEventListener("click", async () => {
+    await deleteDoc(doc(db, "TabSemaine", TabSemaine[0].id));
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
