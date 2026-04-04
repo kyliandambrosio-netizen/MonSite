@@ -1,73 +1,38 @@
-:root{
-	--backcolor: 16#111;
-	--textcolor: 16#111;
-}
 
 body {
 	font-family: Arial, sans-serif;
-	background: var(--backcolor);
+	background: #111;
+	color: aquamarine;
 }
 
-h1 {
-	color: var(--textcolor);
-	position : static;
-	text-align : center;
+.BpChoixPage button {
+	background-color: grey;
+	font-size: 30px;
+	width: 180px;
+}
+
+.Tab {
+	text-align: center;
 	font-size: 60px;
 }
 
-tr {
-	color: var(--textcolor);
-	position : static;
-	text-align : center;
-	font-size: 30px;
+#Cpt_CigJour {
+	font-size: 300px;
 }
 
-#Home {
-	width: 350px;
-	top: 20%;
-	left: 2%;
+@media (min-width: 1000px) {
+	.Tab {
 	text-align: center;
+	top: 50px;
+	left: 50px;
+	font-size: 40px;
+}
+	
+#Cpt_CigJour {
+	font-size: 60px;
+}
 }
 
-
-h2 { 
-	color: var(--textcolor);
-	font-size: 30px;
-}
-
-p { 
-	color: var(--textcolor);
-	font-size: 30px;
-}
-
-
-span {
-	color: var(--textcolor);
-	font-size: 50px;
-}
-
-#Bp_AddCig {
-	background-color: red;
-	color: white;
-	width: 200px;
-	height: 50px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
-}
-
-#Bp_ChoixModeAff {
-	position:absolute;
-	top: 2%;
-	left: 94%;
-	background-color: grey;
-	color: white;
-	width: 100px;
-	height: 50px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
-}
 
 @media (hover: hover){
 #Bp_AddCig:hover {
@@ -75,28 +40,6 @@ span {
 	color: red;
 }
 }
-#Bp_ChoixModeAff:hover {
-	background-color: green;
-	color: red;
-}
-
-
-button:active {
-	background-color: green;
-	color: red;
-}
-
-
-#Bp_AddJ {
-	background-color: red;
-	color: white;
-	width: 200px;
-	height: 50px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
-}
-
 
 @media (hover: hover){
 #Bp_AddJ:hover {
@@ -104,12 +47,15 @@ button:active {
 	color: red;
 }
 }
-#Analyse {
-	position: absolute;
-	top: 20%;
-	left: 40%;
-	width: fit-content;
-	text-align: center;
+
+
+
+
+tr {
+	color: var(--textcolor);
+	position : static;
+	text-align : center;
+	font-size: 30px;
 }
 
 td:nth-child(4),
@@ -143,19 +89,4 @@ table button {
 	color: white;
 	border: none;
 	font-size: 15px;
-}
-
-.BpChoixPage {
-	position : relative;
-	text-align : center;
-	width: fit-content;
-	text-align: center;
-	font-size: 20px;
-}
-
-.BpChoixPage button{
-	background-color: rgb(89, 86, 86);
-	font-size: 30px;
-	height: 100px;
-	width: 200px;
 }
