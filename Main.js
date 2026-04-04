@@ -276,6 +276,9 @@ setInterval(async () => {
      SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
     };
 
+
+    //Changement de jour
+
     }, 1000);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
