@@ -32,8 +32,11 @@ import { getFirestore,
 //Chargement BDD =>
 const db = getFirestore();
 let TabJour = [];
+let TabSemaine = [];
 let Record = null;
+let Preference = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
+const CollTabSemaine = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 
     /////////////////////////////////////////////
     //Chargement collection Tableau Jour
@@ -47,11 +50,28 @@ const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
     VisuTabJour(TabJour)
     })
 
+    //Chargement collection Tableau Semaine
+    onSnapshot(CollTabSemaine, snapshot => {
+    TabSemaine = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    })
+
     /////////////////////////////////////////////
-    //Chargement collection stats
+    //Chargement collection GlobalData Record
     onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
         Record = snapshot.data();
     })
+
+    /////////////////////////////////////////////
+    //Chargement collection GlobalData Preference
+    onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
+        Preference = snapshot.data();
+        AffModeSombreClaire(Preference.ModeSombre)
+    })
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,11 +86,10 @@ const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 const SpanMoyenneJour = document.getElementById("MoyenneJour");
 const TabJourHtml = document.getElementById("TabVisuJour");
 
-//Liaison fonction
-import { ChgmtModeSombreClaire, AffModeSombreClaire } from './VisuPage.js';
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Ajout ligne dans tableau jour
 async function AddLigneTabJour(Type) {
     const DateActuVisu = new Date().toLocaleString();
     const DateActuString = new Date().toISOString();
@@ -109,30 +128,8 @@ async function AddLigneTabJour(Type) {
         
     })
         }
-
-
-
-    SpanMoyenneJour.textContent = await CalcMoyenne(TabJour)
-    
 }
 
-async function CalcMoyenne(Tableau) {
-    //Calcul Moyenne Jour
-    let MoyenneJour = 0;
-
-    for (let index = (Tableau.length-1); index > 0 ; index--) {
-        MoyenneJour = MoyenneJour + Tableau[index].interSeconde; 
-    }
-
-    return await calcAffDate(parseInt(MoyenneJour/(Tableau.length-1)))
-}
-
-Bp_Test.addEventListener("click", async() => {
-    
-    const A = await CalcMoyenne(TabJour)
-    SpanMoyenneJour.textContent = A;
-    
-})
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Ajout Cig
@@ -146,7 +143,8 @@ AddCig.addEventListener("click", async() => {
 //Action Page Refresh
 document.addEventListener("DOMContentLoaded", () => {
     //Affichage Mode Sombre ou Claire
-    AffModeSombreClaire();
+    const choix = localStorage.getItem("ChoixModeSombre");
+    AffModeSombreClaire(choix);
 
 });
 
@@ -158,7 +156,7 @@ ChoixModeAff.addEventListener("click", ChgmtModeSombreClaire);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Gestion Tableau affichage jour
+//Gestion affichage jour
 async function VisuTabJour(Data) {
 
     const tbody = document.getElementById("TabVisuJour");
@@ -205,9 +203,16 @@ async function VisuTabJour(Data) {
         };
     });
 
+    //Calcul Moyenne Jour
+    let MoyenneJour = 0;
+
+    for (let index = (TabJour.length-1); index > 0 ; index--) {
+        MoyenneJour = MoyenneJour + TabJour[index].interSeconde; 
+    }
+
     //Refresh Object Hmtl
     Cpt_CigJour.textContent = TabJour.length;
-    SpanMoyenneJour.textContent = await CalcMoyenne(TabJour)
+    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJour/(TabJour.length-1)))
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,6 +233,7 @@ async function SupprimerLigne(id) {
     }
 
     await deleteDoc(doc(db, "TabJour", id));
+    console.log(TabJour.length)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -246,7 +252,10 @@ async function calcAffDate(DateSeconde) {
 //Declenchement toutes les seconde
 setInterval(async () => {
     const DateActu = new Date();
-    const LastDate = new Date(TabJour[(TabJour.length-1)].dateTri) || 0;
+    let LastDate = 0;
+    if (TabJour.length !=0) {
+        LastDate = new Date(TabJour[(TabJour.length-1)].dateTri) || 0;
+    }
     const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     const ReccordInter = Record.Intervalle;
 
@@ -261,4 +270,69 @@ setInterval(async () => {
     };
 
     }, 1000);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//MAJ Couleur Page + texte sur choix mode sombre ou clair
+function AffModeSombreClaire(choix) {
+	if (choix === 1) {
+		document.getElementById("Bp_ChoixModeAff").textContent = "Mode Sombre";
+		document.documentElement.style.setProperty('--backcolor', "white");
+		document.documentElement.style.setProperty('--textcolor', "black");
+
+	} else {
+		document.getElementById("Bp_ChoixModeAff").textContent = "Mode Clair";
+		document.documentElement.style.setProperty('--backcolor', '#111');
+		document.documentElement.style.setProperty('--textcolor', '#eee');
+	}	
+};
+
+//Action changement "choix mode sombre / clair"
+async function ChgmtModeSombreClaire() {
+	if (Preference.ModeSombre === 1) {
+        await setDoc(doc(db, "GlobalData", "Preference"), {
+            ModeSombre: 2
+        })
+	} else {
+        await setDoc(doc(db, "GlobalData", "Preference"), {
+            ModeSombre: 1
+        })
+	}
+    localStorage.setItem("ChoixModeSombre", Preference.ModeSombre);
+};
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Changement De Jour
+Bp_Test.addEventListener("click", async () => {
+    const dateActu = new Date();
+    const JourPrecedent = Math.floor(dateActu.getDate()- 1);
+    let MoyenneJour = 0;
+
+    //Calcul Moyenne Jour
+    for (let index = (TabJour.length-1); index > 0 ; index--) {
+        MoyenneJour = MoyenneJour + TabJour[index].interSeconde; 
+    }
+
+    //Ecritrue ligne Jour Semaine Bdd
+    await setDoc(doc(db, "TabSemaine", `Jour:${JourPrecedent}`), {
+        Date : dateActu,
+        NbrC : TabJour.length,
+        MoyenneInter : (MoyenneJour / (TabJour.length-1))
+
+    })
+
+
+    //Raz Tableau jour
+   while (TabJour.length != 0) {
+        await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
+   }
+
+    //Remise a 0 Reccord intervalle provisoirement !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    await setDoc(doc(db, "GlobalData", "Record"), {
+        Intervalle : 0
+
+    })
+
+})
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
