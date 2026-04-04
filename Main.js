@@ -205,15 +205,27 @@ async function VisuTabJour(Data) {
 
     //Calcul Moyenne Jour Semaine
     let MoyenneJourSemaine = 0;
-
-    for (let index = 0; index < (TabJour.length-1) ; index++) {
+    let NbrData = 0;
+        
+        //Jour actu
+    for (let index = (TabJour.length-1); index > 0 ; index--) {
         MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].interSeconde; 
+        NbrData = NbrData + 1;
     }
-
+        //jour de la semaine
+    for (let index = (TabSemaine.length-1); index > 0  ; index--) {
+        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].MoyenneInter; 
+        NbrData = NbrData + 1;
+    }
+    
     //Refresh Object Hmtl
     Cpt_CigJour.textContent = TabJour.length;
-    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/(TabJour.length-1)))
 
+    if (NbrData !=0) {
+    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/NbrData))
+    } else {
+        SpanMoyenneJour.textContent = "0h 0m 0s";
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -316,7 +328,7 @@ async function ChgmtModeSombreClaire() {
 //Changement De Jour
 Bp_TestChgmtJour.addEventListener("click", async () => {
     const dateActu = new Date();
-    const JourPrecedent = Math.floor(dateActu.getDate()- 1);
+    const JourPrecedent = Math.floor(dateActu.getDay()-1);
     let MoyenneJour = 0;
 
     //Calcul Moyenne Jour
