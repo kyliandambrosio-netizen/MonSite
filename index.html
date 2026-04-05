@@ -44,7 +44,9 @@
 	<div class="Tab" id="Historique">
 		<h1>Historique</h1>
 		<button id="Bp_AddCig_Historique">Ajouter : 🚬</button> 
-		<table> 
+
+		<div class = "tabScroll">
+		<table id="TabVisuJour"
 			<thead>
 				<tr>
 					<th>#</th>
@@ -55,8 +57,11 @@
 
 				</tr>
 			</thead>
-			<tbody id="TabVisuJour" ></tbody>
+			<tbody>
+
+			</tbody>
 		</table>
+		</div>
 	</div>
 
 
@@ -68,7 +73,7 @@
 		<button onclick="showTab('Param')">🔧</button>
 	</div>
 
-	<script type="module" src="Main.js"></script>
+	<script type="module" src="main.js"></script>
 
 </body>
 
