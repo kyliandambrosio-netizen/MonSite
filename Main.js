@@ -178,7 +178,6 @@ async function VisuTabJour(Data) {
         //Intervalle
         const tdIntervalle = document.createElement("td");
         tdIntervalle.textContent = ligne.inter;
-        console.log(ligne.inter)
 
         //Intervalle Seconde
         const tdIntervalleSec = document.createElement("td");
@@ -255,7 +254,6 @@ setInterval(async () => {
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
     //Affichage Reccord Interval
-    console.log(LastDate)
     if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde);
     } else {
