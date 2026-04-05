@@ -85,6 +85,7 @@ const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 const SpanMoyenneJour = document.getElementById("MoyenneJour");
 const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
+const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -148,6 +149,14 @@ async function AddLigneTabJour(Type) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Ajout Cig
 AddCig.addEventListener("click", async() => {
+    const Type = "C";
+    AddLigneTabJour(Type);
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Bp Ajout Cig historique
+Bp_AddCigHistorique.addEventListener("click", async() => {
     const Type = "C";
     AddLigneTabJour(Type);
 });
