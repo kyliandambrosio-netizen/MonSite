@@ -228,7 +228,7 @@ async function SupprimerLigne(id) {
 async function calcAffDate(DateSeconde) {
     const Interheure = Math.floor((DateSeconde % 3600) / 3600);
     const Interminute = Math.floor((DateSeconde % 3600) / 60);
-    const InterSeconde = Math.floor(DateSeconde % 60);
+    const InterSeconde = DateSeconde % 60;
     const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
     return intervalle;
 }
@@ -238,8 +238,6 @@ async function calcAffDate(DateSeconde) {
 //Declenchement toutes les seconde
 setInterval(async () => {
     let LastDate = 0;
-    const DateActu = new Date();
-    let intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
 
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
@@ -249,13 +247,15 @@ setInterval(async () => {
         intervalleSeconde =0;
     }
 
-
+    const DateActu = new Date();
+    let intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     const ReccordInter = Record.Intervalle;
 
     //Affichage Intervalle denière fum
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
     //Affichage Reccord Interval
+    console.log(LastDate)
     if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde);
     } else {
