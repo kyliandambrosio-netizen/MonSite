@@ -1,0 +1,148 @@
+
+body {
+	font-family: Arial, sans-serif;
+	background: #111;
+	color: aquamarine;
+}
+
+.BpChoixPage {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	position:absolute;
+	gap: 15px;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	text-align: center;
+
+}
+ 
+.BpChoixPage button {
+	border-radius: 30px;
+	background-color: grey;
+	font-size: 160px;
+}
+
+#Home {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position:absolute;
+	gap: 5px;
+	top: 1%;
+	left: 50%;
+	width: 500px;
+	transform: translateX(-50%);
+	text-align: center;
+}
+
+#Cpt_CigJour {
+	font-size: 300px;
+}
+
+#Bp_AddCig, #Bp_AddJ{
+	font-size: 60px;
+	border-radius: 60px;
+	padding: 6px;
+}
+
+#Analyse {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position:absolute;
+	top: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+
+#Historique {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position:absolute;
+	top: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+
+@media (min-width: 1000px) {
+	.Tab {
+	text-align: center;
+	top: 50px;
+	left: 50px;
+	font-size: 40px;
+}
+	
+#Cpt_CigJour {
+	font-size: 60px;
+}
+
+.BpChoixPage button {
+	padding : 10px;
+	border-radius: 30px;
+	background-color: grey;
+	font-size: 70px;
+}
+
+}
+
+@media (hover: hover){
+#Bp_AddCig:hover {
+	background-color: green;
+	color: red;
+}
+}
+
+@media (hover: hover){
+#Bp_AddJ:hover {
+	background-color: green;
+	color: red;
+}
+}
+
+
+
+
+tr {
+	color: var(--textcolor);
+	position : static;
+	text-align : center;
+	font-size: 30px;
+}
+
+td:nth-child(4),
+th:nth-child(4) {
+	display: none;
+}
+
+table {
+	border-collapse: collapse;
+	width: 600px;
+}
+
+th, td {
+	border: 1px solid #ccc;
+	padding: 10px;
+	text-align: center;
+}
+
+th {
+	background-color: rgb(116, 114, 114);
+	font-size: 30px;
+}
+
+td {
+	background-color: rgb(148, 144, 144);
+	font-size: 20px;
+}
+
+table button {
+	background-color: rgb(148, 144, 144);
+	color: white;
+	border: none;
+	font-size: 15px;
+}
