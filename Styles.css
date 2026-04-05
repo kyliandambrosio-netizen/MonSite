@@ -35,6 +35,17 @@ body {
 	transform: translateX(-50%);
 	text-align: center;
 }
+
+#Cpt_CigJour {
+	font-size: 300px;
+}
+
+#Bp_AddCig{
+	font-size: 60px;
+	border-radius: 60px;
+	padding: 6px;
+}
+
 #Analyse {
 	display: flex;
 	flex-direction: column;
@@ -47,9 +58,7 @@ body {
 	text-align: center;
 }
 
-#Cpt_CigJour {
-	font-size: 300px;
-}
+
 
 @media (min-width: 1000px) {
 	.Tab {
@@ -71,9 +80,6 @@ body {
 }
 
 }
-
-
-
 
 @media (hover: hover){
 #Bp_AddCig:hover {
