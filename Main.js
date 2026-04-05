@@ -80,8 +80,6 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
 //Déclaration Objet Html
 const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
-const Bp_TestChgmtJour = document.getElementById("Bp_TestChgmtJour");
-const Bp_Test = document.getElementById("Bp_Test");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 const SpanMoyenneJour = document.getElementById("MoyenneJour");
@@ -268,7 +266,7 @@ setInterval(async () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
-Bp_TestChgmtJour.addEventListener("click", async () => {
+async function ChangementJour () {
     const dateActu = new Date();
     const JourPrecedent = Math.floor(dateActu.getDay()-1);
     let MoyenneJour = 0;
@@ -291,7 +289,7 @@ Bp_TestChgmtJour.addEventListener("click", async () => {
    while (TabJour.length != 0) {
         await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
    }
-})
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
