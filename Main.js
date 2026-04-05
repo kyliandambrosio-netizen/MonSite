@@ -235,17 +235,19 @@ async function calcAffDate(DateSeconde) {
 //Declenchement toutes les seconde
 setInterval(async () => {
     let LastDate = 0;
+    const DateActu = new Date();
+    let intervalleSeconde = 0;
 
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
+        intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+
     } else if (TabSemaine.length !=0) {
         LastDate = new Date(TabSemaine[(TabSemaine.length-1)].LastFum);
-    } else {
-        intervalleSeconde =0;
+        intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     }
 
-    const DateActu = new Date();
-    let intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+
     const ReccordInter = Record.Intervalle;
 
     //Affichage Intervalle denière fum
@@ -262,7 +264,7 @@ setInterval(async () => {
     //Changement de jour
     const JourActu = await TrsfDimanceJour7();
 
-   if (new Date().getHours() = 23 && Preference.JourSemaineDataSaved != JourActu) {
+   if (new Date().getHours() == 20 && Preference.JourSemaineDataSaved != JourActu) {
     ChangementJour ()
    }
 
@@ -271,7 +273,7 @@ setInterval(async () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function TrsfDimanceJour7() {
-    let JourActu = Math.floor(dateActu.getDay())
+    let JourActu = Math.floor(new Date().getDay())
     //getDay Dimanche 0, lundi 1 > transformation en dimanche 7;
     if (JourActu == 0) {
         JourActu = 7;
@@ -291,9 +293,9 @@ async function ChangementJour () {
 
     //Si jour actu = lundi alors jour precedent = 7 (dimanche)
     if (JourActu == 1) {
-        NomJour = `Jour:${7}`;
+        NomJourSemaineToSave = `Jour:${7}`;
     } else {
-        NomJour = `Jour:${JourActu-1}`;
+        NomJourSemaineToSave = `Jour:${JourActu-1}`;
     }
 
     //Calcul Moyenne Jour
@@ -301,8 +303,8 @@ async function ChangementJour () {
         MoyenneJour = MoyenneJour + TabJour[index].interSeconde; 
     }
 
-    //Ecritrue ligne Jour Semaine Bdd
-    await setDoc(doc(db, "TabSemaine", NomJour), {
+    //Ecriture ligne Jour Semaine Bdd
+    await setDoc(doc(db, "TabSemaine", NomJourSemaineToSave), {
         LastFum : TabJour[TabJour.length-1].dateTri,
         NbrC : TabJour.length,
         MoyenneInter : (MoyenneJour / (TabJour.length-1))
