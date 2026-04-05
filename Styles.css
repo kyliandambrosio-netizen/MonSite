@@ -40,7 +40,7 @@ body {
 	font-size: 300px;
 }
 
-#Bp_AddCig{
+#Bp_AddCig, #Bp_AddJ{
 	font-size: 60px;
 	border-radius: 60px;
 	padding: 6px;
