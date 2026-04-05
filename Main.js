@@ -133,6 +133,7 @@ async function AddLigneTabJour(Type) {
         
     })
         }
+
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
         date : DateActuStringComplet,
@@ -177,6 +178,7 @@ async function VisuTabJour(Data) {
         //Intervalle
         const tdIntervalle = document.createElement("td");
         tdIntervalle.textContent = ligne.inter;
+        console.log(ligne.inter)
 
         //Intervalle Seconde
         const tdIntervalleSec = document.createElement("td");
@@ -224,10 +226,10 @@ async function SupprimerLigne(id) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
-    const Interheure = new Date().getHours().toString().padStart(2, "0");
-    const Interminute = new Date().getMinutes().toString().padStart(2, "0");
-    const InterSeconde = new Date().getSeconds().toString().padStart(2, "0");
-    const intervalle = `${Interheure}h ${Interminute}m ${InterSeconde}s`;
+    const Interheure = Math.floor((DateSeconde % 3600) / 3600);
+    const Interminute = Math.floor((DateSeconde % 3600) / 60);
+    const InterSeconde = Math.floor(DateSeconde % 60);
+    const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
     return intervalle;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,19 +237,19 @@ async function calcAffDate(DateSeconde) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Declenchement toutes les seconde
 setInterval(async () => {
-
     let LastDate = 0;
+    const DateActu = new Date();
+    let intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
     } else if (TabSemaine.length !=0) {
         LastDate = new Date(TabSemaine[(TabSemaine.length-1)].LastFum);
-    }
-    else {
-        LastDate = new Date();
+    } else {
+        intervalleSeconde =0;
     }
 
-    const DateActu = new Date();
-    const intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+
     const ReccordInter = Record.Intervalle;
 
     //Affichage Intervalle denière fum
@@ -319,7 +321,7 @@ async function CalcMoyenneJourSemaine() {
     if (NbrData !=0) {
     SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/NbrData))
     } else {
-    SpanMoyenneJour.textContent = "0h 0m 0s";
+    SpanMoyenneJour.textContent = "0";
     }
 
 }
