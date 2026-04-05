@@ -32,6 +32,7 @@ body {
 	gap: 5px;
 	top: 1%;
 	left: 50%;
+	width: 500px;
 	transform: translateX(-50%);
 	text-align: center;
 }
@@ -51,11 +52,9 @@ body {
 	flex-direction: column;
 	justify-content: center;
 	position:absolute;
-	gap: 5px;
-	top: 1%;
+	top: -30px;
 	left: 50%;
 	transform: translateX(-50%);
-	text-align: center;
 }
 
 
