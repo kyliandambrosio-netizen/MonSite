@@ -58,6 +58,16 @@ body {
 }
 
 
+#Historique {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position:absolute;
+	top: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
 
 @media (min-width: 1000px) {
 	.Tab {
