@@ -260,16 +260,41 @@ setInterval(async () => {
     };
 
     //Changement de jour
+    const JourActu = await TrsfDimanceJour7();
+
+   if (new Date().getHours() = 23 && Preference.JourSemaineDataSaved != JourActu) {
+    ChangementJour ()
+   }
 
     }, 1000);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function TrsfDimanceJour7() {
+    let JourActu = Math.floor(dateActu.getDay())
+    //getDay Dimanche 0, lundi 1 > transformation en dimanche 7;
+    if (JourActu == 0) {
+        JourActu = 7;
+    }
+    return JourActu;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
 async function ChangementJour () {
+    
+    const JourActu = await TrsfDimanceJour7();
     const dateActu = new Date();
-    const JourPrecedent = Math.floor(dateActu.getDay()-1);
     let MoyenneJour = 0;
+    let NomJour = 0;
+
+    //Si jour actu = lundi alors jour precedent = 7 (dimanche)
+    if (JourActu == 1) {
+        NomJour = `Jour:${7}`;
+    } else {
+        NomJour = `Jour:${JourActu-1}`;
+    }
 
     //Calcul Moyenne Jour
     for (let index = (TabJour.length-1); index > 0 ; index--) {
@@ -277,11 +302,16 @@ async function ChangementJour () {
     }
 
     //Ecritrue ligne Jour Semaine Bdd
-    await setDoc(doc(db, "TabSemaine", `Jour:${JourPrecedent}`), {
+    await setDoc(doc(db, "TabSemaine", NomJour), {
         LastFum : TabJour[TabJour.length-1].dateTri,
         NbrC : TabJour.length,
         MoyenneInter : (MoyenneJour / (TabJour.length-1))
 
+    })
+
+    //Ecriture Jour dat saved 
+    await setDoc(doc(db, "GlobalData", "Preference"), {
+        JourSemaineDataSaved: JourActu
     })
 
 
@@ -293,7 +323,7 @@ async function ChangementJour () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Bp test droite supprimer jour
+//Calcul moyenne jour semaine
 async function CalcMoyenneJourSemaine() {
        //Calcul Moyenne Jour Semaine
     let MoyenneJourSemaine = 0;
