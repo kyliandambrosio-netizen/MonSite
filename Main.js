@@ -84,6 +84,7 @@ const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
 const SpanMoyenneJour = document.getElementById("MoyenneJour");
 const TabJourHtml = document.getElementById("TabVisuJour");
+const Bp_RazTotal = document.getElementById("RazTotal");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -262,9 +263,9 @@ setInterval(async () => {
     };
 
     //Changement de jour
-    const JourActu = await TrsfDimanceJour7();
+    const JourActu = new Date().getDate()
 
-   if (new Date().getHours() == 20 && Preference.JourSemaineDataSaved != JourActu) {
+   if (Preference.JourSemaineDataSaved != JourActu) {
     ChangementJour ()
    }
 
@@ -272,31 +273,10 @@ setInterval(async () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function TrsfDimanceJour7() {
-    let JourActu = Math.floor(new Date().getDay())
-    //getDay Dimanche 0, lundi 1 > transformation en dimanche 7;
-    if (JourActu == 0) {
-        JourActu = 7;
-    }
-    return JourActu;
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
 async function ChangementJour () {
-    
-    const JourActu = await TrsfDimanceJour7();
-    const dateActu = new Date();
+    const JourActu = new Date().getDate();
     let MoyenneJour = 0;
-    let NomJour = 0;
-
-    //Si jour actu = lundi alors jour precedent = 7 (dimanche)
-    if (JourActu == 1) {
-        NomJourSemaineToSave = `Jour:${7}`;
-    } else {
-        NomJourSemaineToSave = `Jour:${JourActu-1}`;
-    }
 
     //Calcul Moyenne Jour
     for (let index = (TabJour.length-1); index > 0 ; index--) {
@@ -304,10 +284,22 @@ async function ChangementJour () {
     }
 
     //Ecriture ligne Jour Semaine Bdd
-    await setDoc(doc(db, "TabSemaine", NomJourSemaineToSave), {
-        LastFum : TabJour[TabJour.length-1].dateTri,
+    let dateTri = 0;
+    let MoyenneJourTemp = 0;
+    const DateActuString = new Date().toISOString();
+    const SousJour = new Date();
+    SousJour.setDate(SousJour.getDate()-1);
+    const MyId = `${SousJour.toISOString()}`;
+
+    if (TabJour.length != 0) {
+        dateTri = TabJour[TabJour.length-1].dateTri;
+        MoyenneJourTemp = (MoyenneJour / (TabJour.length-1));
+    }
+
+    await setDoc(doc(db, "TabSemaine", MyId), {
+        LastFum : dateTri,
         NbrC : TabJour.length,
-        MoyenneInter : (MoyenneJour / (TabJour.length-1))
+        MoyenneInter : MoyenneJourTemp
 
     })
 
@@ -358,5 +350,23 @@ async function CalcMoyenneJourSemaine() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 window.addEventListener("DOMContentLoaded", () => {
     showTab("Home");
+})
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Remise à zéro programme suivi
+Bp_RazTotal.addEventListener("click", async() => {
+    //Raz Table Jour 
+    while (TabJour.length != 0) {     
+        await deleteDoc(doc(db, "TabJour", TabJour[0].id));
+    }
+
+    //Raz Table Semaine 
+    while (TabSemaine.length != 0) {     
+    await deleteDoc(doc(db, "TabSemaine", TabSemaine[0].id));
+    }
+
+    console.log(TabJour.length)
+
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
