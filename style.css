@@ -121,8 +121,14 @@ th:nth-child(4) {
 
 table {
 	border-collapse: collapse;
-	width: 600px;
+	width: 700px;
+}	
+
+.tabScroll {
+	height: 500px;
+	overflow: auto;
 }
+
 
 th, td {
 	border: 1px solid #ccc;
