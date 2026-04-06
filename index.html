@@ -30,8 +30,27 @@
 
 	<div class="Tab" id="Analyse">
 		<h1>Analyse</h1>
-		<p>Moyenne journalière :</p>
-		<span id="MoyenneJour">0</span>
+
+			<div id="BpChoixAnalyse">
+				<button onclick="showOngletchoixAnalyse('AnalyseSemaine')">Semaine</button>
+				<button onclick="showOngletchoixAnalyse('AnalyseMois')">Mois</button>
+				<button onclick="showOngletchoixAnalyse('AnalyseAnnee')">Annee</button>
+			</div>
+
+			<div class="Tab" id = "AnalyseSemaine" >
+				<h2>Semaine</h2>
+				<span id="MoyenneJour">0</span>
+			</div>
+
+			<div class="Tab" id = "AnalyseMois" >
+				<h2>Mois</h2>
+				<span id="MoyenneJour">0</span>
+			</div>
+
+			<div class="Tab" id = "AnalyseAnnee" >
+				<h2>Année</h2>
+				<span id="MoyenneJour">0</span>
+			</div>
 	</div>
 
 
