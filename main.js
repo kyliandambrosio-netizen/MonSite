@@ -375,47 +375,61 @@ function ChangementSemaine() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Calcul moyenne
-async function CalcMoyenne(Choix) {
+async function CalcMoyenne(ChoixAnalyse) {
        //Calcul Moyenne Jour Semaine
     let MoyenneIntervalleQuot = 0;
-    let NbrData = 0;
+    let MoyenneNbrFQuot = 0;
+    let NbrDataIntervalle = 0;
+    let NbrDataF = 0;
 
 
     //Calcul Moyenne   
         //Jour actu
-    for (let index = (TabJour.length-1); index >= 1 ; index--) {
-        MoyenneIntervalleQuot += TabJour[index].interSeconde; 
-        NbrData++;
+    for (let index = (TabJour.length-1); index >= 0 ; index--) {
+        if (index !=0) {
+            MoyenneIntervalleQuot += TabJour[index].interSeconde; 
+            NbrDataIntervalle++;
+        }
+        MoyenneNbrFQuot = TabJour.length;
     }
+    NbrDataF++;
 
         //Semaine
     for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
         MoyenneIntervalleQuot += (TabSemaine[index].MoyenneInter * (TabSemaine[index].NbrF-1)); 
-        NbrData += (TabSemaine[index].NbrF-1);
+        NbrDataIntervalle += (TabSemaine[index].NbrF-1);
+        MoyenneNbrFQuot += TabSemaine[index].NbrF;
+        NbrDataF++;
+
     }
 
         //Mois
-    if (Choix == "AnalyseMois" || Choix == "AnalyseAnnee") {
+    if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee") {
         for (let index = (TabMois.length-1); index >= 0  ; index--) {
         MoyenneIntervalleQuot += (TabMois[index].MoyenneInter * (TabMois[index].NbrF-1)); 
-        NbrData += (TabMois[index].NbrF-1);
+        NbrDataIntervalle += (TabMois[index].NbrF-1);
+        MoyenneNbrFQuot += TabMois[index].NbrF;
+        NbrDataF++;
         }
     }
     
         //Annee TODO Attention > une fois la fin d'année arriver beug car changement année pas encore géré
-    if (Choix == "AnalyseAnnee") {
+    if (ChoixAnalyse == "AnalyseAnnee") {
         for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
         MoyenneIntervalleQuot += (TabAnnee[index].MoyenneInter * TabAnnee[index].NbrF); 
-        NbrData += TabAnnee[index].NbrF;
+        NbrDataIntervalle += TabAnnee[index].NbrF;
+        MoyenneNbrFQuot += TabAnnee[index].NbrF;
+        NbrDataF+= TabAnnee[index].NbrJour;
         }
     }
 
-    if (NbrData !=0) {
-    SpanMoyenneJourIntervalle.textContent = await calcAffDate(parseInt(MoyenneIntervalleQuot/NbrData))
+    if (NbrDataIntervalle !=0) {
+        SpanMoyenneJourIntervalle.textContent = await calcAffDate(parseInt(MoyenneIntervalleQuot/NbrDataIntervalle))
     } else {
-    SpanMoyenneJourIntervalle.textContent = "0";
+        SpanMoyenneJourIntervalle.textContent = "0";
     }
 
+    SpanMoyenneJourNbrF.textContent = parseInt(MoyenneNbrFQuot/NbrDataF);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
