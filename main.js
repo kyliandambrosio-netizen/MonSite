@@ -52,6 +52,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
 
     //Refresh Object Html
     VisuTabJour(TabJour)
+    Cpt_CigJour.textContent = TabJour.length;
     })
 
     /////////////////////////////////////////////
@@ -105,7 +106,7 @@ const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
-const SpanMoyenneJour = document.getElementById("MoyenneJourSemaine");
+const SpanMoyenneJour = document.getElementById("MoyenneJour");
 const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
@@ -271,7 +272,7 @@ async function SupprimerLigne(id) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
-    const Interheure = Math.floor((DateSeconde % 3600) / 3600);
+    const Interheure = Math.floor((DateSeconde) / 3600);
     const Interminute = Math.floor((DateSeconde % 3600) / 60);
     const InterSeconde = DateSeconde % 60;
     const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
@@ -366,7 +367,7 @@ async function ChangementJour () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Semaine
 function ChangementSemaine() {
-
+    console.log("Changement de semaine TODO")
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,10 +408,6 @@ async function CalcMoyenne(Choix) {
             NbrData = NbrData + 1;
         }
     }
-
-
-    //Refresh Object Hmtl
-    Cpt_CigJour.textContent = TabJour.length;
 
     if (NbrData !=0) {
     SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneQuot/NbrData))
