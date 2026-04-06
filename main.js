@@ -34,11 +34,13 @@ const db = getFirestore();
 let TabJour = [];
 let TabSemaine = [];
 let TabMois = [];
+let TabAnnee = [];
 let Record = null;
 let Preference = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "asc"));
 const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
+const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
 
     /////////////////////////////////////////////
     //Chargement collection Tableau Jour
@@ -48,10 +50,8 @@ const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
         ...doc.data()
     }));
 
-    /////////////////////////////////////////////
     //Refresh Object Html
     VisuTabJour(TabJour)
-    CalcMoyenneJourSemaine();
     })
 
     /////////////////////////////////////////////
@@ -62,7 +62,6 @@ const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
         ...doc.data()
     }));
 
-    CalcMoyenneJourSemaine();
     })
 
     /////////////////////////////////////////////
@@ -75,6 +74,15 @@ const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
 
     })
 
+    /////////////////////////////////////////////
+    //Chargement collection Tableau Annee
+    onSnapshot(CollTabAnnee, snapshot => {
+    TabAnnee = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    })
 
     /////////////////////////////////////////////
     //Chargement collection GlobalData Record
@@ -118,12 +126,14 @@ window.showTab = async function(Page) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Changement Page
+//Changement Page > Sur Analyse > affichage Semaine / mois / annee
 window.showOngletchoixAnalyse = function(Page) { 
     const tabs = document.querySelectorAll("#Analyse .Tab");
     tabs.forEach(tab => {
         tab.style.display = tab.id === Page ? "block" : "none";
     })
+
+    CalcMoyenne(Page)
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,28 +372,48 @@ function ChangementSemaine() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Calcul moyenne jour semaine
-async function CalcMoyenneJourSemaine() {
+//Calcul moyenne
+async function CalcMoyenne(Choix) {
        //Calcul Moyenne Jour Semaine
-    let MoyenneJourSemaine = 0;
+    let MoyenneQuot = 0;
     let NbrData = 0;
-        
+
+
+    //Calcul Moyenne   
         //Jour actu
     for (let index = (TabJour.length-1); index >= 1 ; index--) {
-        MoyenneJourSemaine = MoyenneJourSemaine + TabJour[index].interSeconde; 
+        MoyenneQuot = MoyenneQuot + TabJour[index].interSeconde; 
         NbrData = NbrData + 1;
     }
-        //jour de la semaine
+
+        //Semaine
     for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
-        MoyenneJourSemaine = MoyenneJourSemaine + TabSemaine[index].MoyenneInter; 
+        MoyenneQuot = MoyenneQuot + TabSemaine[index].MoyenneInter; 
         NbrData = NbrData + 1;
+    }
+
+        //Mois
+    if (Choix == "AnalyseMois" || Choix == "AnalyseAnnee") {
+        for (let index = (TabMois.length-1); index >= 0  ; index--) {
+            MoyenneQuot = MoyenneQuot + TabMois[index].MoyenneInter; 
+            NbrData = NbrData + 1;
+        }
     }
     
+        //Annee
+    if (Choix == "AnalyseAnnee") {
+        for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
+            MoyenneQuot = MoyenneQuot + TabAnnee[index].MoyenneInter; 
+            NbrData = NbrData + 1;
+        }
+    }
+
+
     //Refresh Object Hmtl
     Cpt_CigJour.textContent = TabJour.length;
 
     if (NbrData !=0) {
-    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneJourSemaine/NbrData))
+    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneQuot/NbrData))
     } else {
     SpanMoyenneJour.textContent = "0";
     }
