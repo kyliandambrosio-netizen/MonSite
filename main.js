@@ -33,10 +33,12 @@ import { getFirestore,
 const db = getFirestore();
 let TabJour = [];
 let TabSemaine = [];
+let TabMois = [];
 let Record = null;
 let Preference = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
 const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "asc"));
+const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
 
     /////////////////////////////////////////////
     //Chargement collection Tableau Jour
@@ -46,11 +48,13 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
         ...doc.data()
     }));
 
+    /////////////////////////////////////////////
     //Refresh Object Html
     VisuTabJour(TabJour)
     CalcMoyenneJourSemaine();
     })
 
+    /////////////////////////////////////////////
     //Chargement collection Tableau Semaine
     onSnapshot(CollTabSemaine, snapshot => {
     TabSemaine = snapshot.docs.map(doc => ({
@@ -60,6 +64,17 @@ const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "a
 
     CalcMoyenneJourSemaine();
     })
+
+    /////////////////////////////////////////////
+    //Chargement collection Tableau Mois
+    onSnapshot(CollTabMois, snapshot => {
+    TabMois = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    })
+
 
     /////////////////////////////////////////////
     //Chargement collection GlobalData Record
@@ -93,6 +108,17 @@ const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
 //Changement Page
 window.showTab = function(Page) {
     const tabs = document.querySelectorAll(".Tab");
+    tabs.forEach(tab => {
+        tab.style.display = tab.id === Page ? "block" : "none";
+    })
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Changement Page
+window.showOngletchoixAnalyse = function(Page) { 
+    const tabs = document.querySelectorAll("#Analyse .Tab");
     tabs.forEach(tab => {
         tab.style.display = tab.id === Page ? "block" : "none";
     })
@@ -326,12 +352,19 @@ async function ChangementJour () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Changement De Semaine
+function ChangementSemaine() {
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Calcul moyenne jour semaine
 async function CalcMoyenneJourSemaine() {
        //Calcul Moyenne Jour Semaine
     let MoyenneJourSemaine = 0;
     let NbrData = 0;
-    let ResultatMoyenne = 0;
         
         //Jour actu
     for (let index = (TabJour.length-1); index >= 1 ; index--) {
