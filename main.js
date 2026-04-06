@@ -97,7 +97,7 @@ const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
-const SpanMoyenneJour = document.getElementById("MoyenneJour");
+const SpanMoyenneJour = document.getElementById("MoyenneJourSemaine");
 const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
@@ -106,11 +106,13 @@ const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement Page
-window.showTab = function(Page) {
+window.showTab = async function(Page) {
     const tabs = document.querySelectorAll(".Tab");
     tabs.forEach(tab => {
         tab.style.display = tab.id === Page ? "block" : "none";
     })
+
+    if(Page == "Analyse") await showOngletchoixAnalyse("AnalyseSemaine");
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
