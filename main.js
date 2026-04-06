@@ -96,8 +96,6 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
     onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
         Preference = snapshot.data();
     })
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +108,8 @@ const SpanMoyenneJourIntervalle = document.getElementById("MoyenneJourIntervalle
 const SpanMoyenneJourNbrF = document.getElementById("MoyenneJourNbrF");
 const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
-const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
+const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
+const AjoutLigneManu = document.getElementById("AjoutLigneManu");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -136,7 +135,6 @@ window.showOngletchoixAnalyse = function(Page) {
     })
 
     CalcMoyenne(Page)
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -151,7 +149,6 @@ async function AddLigneTabJour(Type) {
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
     const ReccordInter = Record.Intervalle;
-
     let LastDate = 0;
     let IntervalleHms = "0";
     let intervalleSeconde = 0;
@@ -196,9 +193,31 @@ AddCig.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Ajout Cig historique
-Bp_AddCigHistorique.addEventListener("click", async() => {
-    const Type = "C";
-    AddLigneTabJour(Type);
+Bp_AjoutLigneManu.addEventListener("click", async() => {
+    const AjoutLigneDate = new Date();
+    const [HeureUser, MinuteUser] = AjoutLigneManu.value.split(":");
+
+    AjoutLigneDate.setHours(HeureUser, MinuteUser, 0);
+
+    const AjourLigneDateString = new Date(AjoutLigneDate).toISOString();
+    const AjourLigneDateStringHour = new Date(AjoutLigneDate).getHours().toString().padStart(2, "0");
+    const AjourLigneDateStringMinute = new Date(AjoutLigneDate).getMinutes().toString().padStart(2, "0");
+    const AjourLigneDateStringSeconde = new Date(AjoutLigneDate).getSeconds().toString().padStart(2, "0");
+    const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute} : ${AjourLigneDateStringSeconde}`
+
+
+        //Ecriture Ligne Bdd
+    await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
+        date : AjourLigneDateStringComplet,
+        dateTri: AjourLigneDateString,
+        inter : 0,
+        interSeconde : 0,
+        type : "C"
+    })
+
+
+
+    
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -451,8 +470,6 @@ Bp_RazTotal.addEventListener("click", async() => {
     while (TabSemaine.length != 0) {     
     await deleteDoc(doc(db, "TabSemaine", TabSemaine[0].id));
     }
-
-    console.log(TabJour.length)
 
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
