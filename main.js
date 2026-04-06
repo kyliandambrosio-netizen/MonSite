@@ -403,7 +403,7 @@ async function CalcMoyenne(ChoixAnalyse) {
 
     }
 
-        //Mois
+        //Mois TODO
     if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee") {
         for (let index = (TabMois.length-1); index >= 0  ; index--) {
         MoyenneIntervalleQuot += (TabMois[index].MoyenneInter * (TabMois[index].NbrF-1)); 
@@ -413,7 +413,7 @@ async function CalcMoyenne(ChoixAnalyse) {
         }
     }
     
-        //Annee TODO Attention > une fois la fin d'année arriver beug car changement année pas encore géré
+        //Annee
     if (ChoixAnalyse == "AnalyseAnnee") {
         for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
         MoyenneIntervalleQuot += (TabAnnee[index].MoyenneInter * TabAnnee[index].NbrF); 
