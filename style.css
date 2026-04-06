@@ -106,40 +106,34 @@ body {
 
 
 
-
-tr {
-	color: var(--textcolor);
-	position : static;
-	text-align : center;
-	font-size: 30px;
-}
-
 td:nth-child(4),
 th:nth-child(4) {
 	display: none;
 }
 
-table {
-	border-collapse: collapse;
-	width: 700px;
-}	
-
 .tabJourScroll {
 	height: 500px;
-	overflow: auto;
+	width: 700px;
+	overflow-y: auto;
 }
 
+.tabJourScroll table {
+	border-collapse: collapse;
+	width: 100%;
+}	
 
-th, td {
+.tabJourScroll thead th {
+	top: 0;
+	background-color: rgb(148, 144, 144);
+	z-index: 10;
+}
+
+.tabJourScroll th,
+.tabJourScroll td {
 	border: 1px solid #ccc;
 	padding: 10px;
-	text-align: center;
 }
 
-th {
-	background-color: rgb(116, 114, 114);
-	font-size: 30px;
-}
 
 td {
 	background-color: rgb(148, 144, 144);
