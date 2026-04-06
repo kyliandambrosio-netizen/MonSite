@@ -106,7 +106,8 @@ const AddCig = document.getElementById("Bp_AddCig");
 const Cpt_CigJour = document.getElementById("Cpt_CigJour");
 const IntervalleCig = document.getElementById("IntervalleCig");
 const SpanRecordIntervalleCig = document.getElementById("RecordIntervalle");
-const SpanMoyenneJour = document.getElementById("MoyenneJour");
+const SpanMoyenneJourIntervalle = document.getElementById("MoyenneJourIntervalle");
+const SpanMoyenneJourNbrF = document.getElementById("MoyenneJourNbrF");
 const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AddCigHistorique = document.getElementById("Bp_AddCig_Historique");
@@ -346,7 +347,7 @@ async function ChangementJour () {
 
     await setDoc(doc(db, "TabSemaine", MyId), {
         LastFum : dateTri,
-        NbrC : TabJour.length,
+        NbrF : TabJour.length,
         MoyenneInter : MoyenneJourTemp
 
     })
@@ -376,43 +377,43 @@ function ChangementSemaine() {
 //Calcul moyenne
 async function CalcMoyenne(Choix) {
        //Calcul Moyenne Jour Semaine
-    let MoyenneQuot = 0;
+    let MoyenneIntervalleQuot = 0;
     let NbrData = 0;
 
 
     //Calcul Moyenne   
         //Jour actu
     for (let index = (TabJour.length-1); index >= 1 ; index--) {
-        MoyenneQuot = MoyenneQuot + TabJour[index].interSeconde; 
-        NbrData = NbrData + 1;
+        MoyenneIntervalleQuot += TabJour[index].interSeconde; 
+        NbrData++;
     }
 
         //Semaine
     for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
-        MoyenneQuot = MoyenneQuot + TabSemaine[index].MoyenneInter; 
-        NbrData = NbrData + 1;
+        MoyenneIntervalleQuot += (TabSemaine[index].MoyenneInter * (TabSemaine[index].NbrF-1)); 
+        NbrData += (TabSemaine[index].NbrF-1);
     }
 
         //Mois
     if (Choix == "AnalyseMois" || Choix == "AnalyseAnnee") {
         for (let index = (TabMois.length-1); index >= 0  ; index--) {
-            MoyenneQuot = MoyenneQuot + TabMois[index].MoyenneInter; 
-            NbrData = NbrData + 1;
+        MoyenneIntervalleQuot += (TabMois[index].MoyenneInter * (TabMois[index].NbrF-1)); 
+        NbrData += (TabMois[index].NbrF-1);
         }
     }
     
-        //Annee
+        //Annee TODO Attention > une fois la fin d'année arriver beug car changement année pas encore géré
     if (Choix == "AnalyseAnnee") {
         for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
-            MoyenneQuot = MoyenneQuot + TabAnnee[index].MoyenneInter; 
-            NbrData = NbrData + 1;
+        MoyenneIntervalleQuot += (TabAnnee[index].MoyenneInter * TabAnnee[index].NbrF); 
+        NbrData += TabAnnee[index].NbrF;
         }
     }
 
     if (NbrData !=0) {
-    SpanMoyenneJour.textContent = await calcAffDate(parseInt(MoyenneQuot/NbrData))
+    SpanMoyenneJourIntervalle.textContent = await calcAffDate(parseInt(MoyenneIntervalleQuot/NbrData))
     } else {
-    SpanMoyenneJour.textContent = "0";
+    SpanMoyenneJourIntervalle.textContent = "0";
     }
 
 }
