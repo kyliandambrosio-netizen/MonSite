@@ -37,7 +37,7 @@ let TabMois = [];
 let TabAnnee = [];
 let Record = null;
 let Preference = null;
-const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "asc"));
+const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "desc"));
 const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "asc"));
 const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
 const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
@@ -89,12 +89,14 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
     //Chargement collection GlobalData Record
     onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
         Record = snapshot.data();
+        localStorage.setItem("RecordIntervalleLoc", Record.RecIntervalle)
     })
 
     /////////////////////////////////////////////
     //Chargement collection GlobalData Preference
     onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
         Preference = snapshot.data();
+
     })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -149,36 +151,17 @@ async function AddLigneTabJour(Type) {
     const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
     const ReccordInter = Record.Intervalle;
-    let LastDate = 0;
     let IntervalleHms = "0";
     let intervalleSeconde = 0;
 
-    //Vérification Tableau Non Vide 
-    if (TabJour.length !=0) { 
-        //Recuperation derniere ligne pour calcule intervalle
-        LastDate = TabJour[(TabJour.length-1)].dateTri;
-
-        //Calcul intervalle
-        intervalleSeconde = Math.floor((DateActu - new Date(LastDate)) / 1000);
-        IntervalleHms = await calcAffDate(intervalleSeconde)
-    }  
-
-    //Si reccord intervalle > Ecriture reccord dans bdd
-    if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
-    await setDoc(doc(db, "GlobalData", "Record"), {
-    Intervalle : intervalleSeconde
-        
-    })
-        }
 
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
         date : DateActuStringComplet,
         dateTri: DateActuString,
-        inter : IntervalleHms,
-        interSeconde : intervalleSeconde,
         type : Type
     })
+
 
 }
 
@@ -205,18 +188,12 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
     const AjourLigneDateStringSeconde = new Date(AjoutLigneDate).getSeconds().toString().padStart(2, "0");
     const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute} : ${AjourLigneDateStringSeconde}`
 
-
-        //Ecriture Ligne Bdd
+    //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
         date : AjourLigneDateStringComplet,
         dateTri: AjourLigneDateString,
-        inter : 0,
-        interSeconde : 0,
         type : "C"
     })
-
-
-
     
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,19 +213,35 @@ async function VisuTabJour(Data) {
 
         //Index
         const tdIndex = document.createElement("td");
-        tdIndex.textContent = index+1;
+        tdIndex.textContent = (Data.length-index);
         
         //Date
         const tdDate = document.createElement("td");
         tdDate.textContent = ligne.date;
 
-        //Intervalle
+        //Calcul Intervalle + Record intervalle
         const tdIntervalle = document.createElement("td");
-        tdIntervalle.textContent = ligne.inter;
+        let DateSeconde = 0;
+        let intervalle = 0;
 
-        //Intervalle Seconde
-        const tdIntervalleSec = document.createElement("td");
-        tdIntervalleSec.textContent = ligne.IntervalleSec;
+        if (index==Data.length-1) {
+            tdIntervalle.textContent = 0;
+        } else {
+            DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
+            const Interheure = Math.floor((DateSeconde) / 3600);
+            const Interminute = Math.floor((DateSeconde % 3600) / 60);
+            const InterSeconde = DateSeconde % 60;
+            intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
+            tdIntervalle.textContent = intervalle;
+        }
+
+        //Nouveau record
+        const RecordIntervalle = localStorage.getItem("RecordIntervalleLoc");
+        if (DateSeconde > RecordIntervalle) {RecordIntervalle
+            setDoc(doc(db, "GlobalData", "Record"),  {
+                RecIntervalle : DateSeconde
+            })
+        }
 
         //Bp Suppression ligne
         const tdBtn = document.createElement("td");
@@ -261,12 +254,13 @@ async function VisuTabJour(Data) {
         tr.appendChild(tdIndex);
         tr.appendChild(tdDate);
         tr.appendChild(tdIntervalle);
-        tr.appendChild(tdIntervalleSec);
         tr.appendChild(tdBtn);
 
         TabJourHtml.appendChild(tr);
         };
+
     });
+
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,9 +274,7 @@ async function SupprimerLigne(id) {
     await setDoc(doc(db, "TabJour", TabJour[1].id), {
         date : TabJour[1].date,
         dateTri: TabJour[1].dateTri,
-        inter : 0,
-        interSeconde : TabJour[1].interSeconde,
-        type : TabJour[1].dateTri
+        type : TabJour[1].type
     })
     }
 
@@ -308,7 +300,7 @@ setInterval(async () => {
     let intervalleSeconde = 0;
 
     if (TabJour.length !=0) {
-        LastDate = new Date(TabJour[(TabJour.length-1)].dateTri);
+        LastDate = new Date(TabJour[0].dateTri);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
 
     } else if (TabSemaine.length !=0) {
@@ -317,7 +309,7 @@ setInterval(async () => {
     }
 
 
-    const ReccordInter = Record.Intervalle;
+    const ReccordInter = Record.RecIntervalle;
 
     //Affichage Intervalle denière fum
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
