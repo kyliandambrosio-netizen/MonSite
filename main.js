@@ -327,7 +327,12 @@ setInterval(async () => {
     const JourActu = new Date().getDate()
 
    if (Preference.JourSemaineDataSaved != JourActu) {
-    ChangementJour ()
+    const MemEnCour = localStorage.getItem("MemChangementJourEnCours");
+    if (MemEnCour) return;
+    
+    localStorage.setItem("MemChangementJourEnCours", true);
+    await ChangementJour ();
+    localStorage.setItem("MemChangementJourEnCours", false);
    }
 
     }, 1000);
@@ -413,7 +418,7 @@ async function CalcMoyenne(ChoixAnalyse) {
 
         }
     }
-    
+
         //Mois
     if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee") {
         for (let index = (TabMois.length-1); index >= 0  ; index--) {
