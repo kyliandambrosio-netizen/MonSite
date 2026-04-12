@@ -105,12 +105,6 @@ body {
 }
 
 
-
-td:nth-child(4),
-th:nth-child(4) {
-	display: none;
-}
-
 .tabJourScroll {
 	height: 500px;
 	width: 700px;
