@@ -261,6 +261,7 @@ async function VisuTabJour(Data) {
 
     });
 
+    localStorage.setItem("TabJourLocal", JSON.stringify(Data))
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,12 +337,9 @@ setInterval(async () => {
 //Changement De Jour
 async function ChangementJour () {
     const JourActu = new Date().getDate();
-    let MoyenneJour = 0;
 
     //Calcul Moyenne Jour
-    for (let index = (TabJour.length-1); index > 0 ; index--) {
-        MoyenneJour = MoyenneJour + TabJour[index].interSeconde; 
-    }
+    const MoyenneJour = CalcMoyenne();
 
     //Ecriture ligne Jour Semaine Bdd
     let dateTri = 0;
@@ -387,34 +385,36 @@ function ChangementSemaine() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Calcul moyenne
 async function CalcMoyenne(ChoixAnalyse) {
-       //Calcul Moyenne Jour Semaine
+    const TabJourLoc = JSON.parse(localStorage.getItem("TabJourLocal"));
     let MoyenneIntervalleQuot = 0;
     let MoyenneNbrFQuot = 0;
     let NbrDataIntervalle = 0;
     let NbrDataF = 0;
+    let ResultatMoyenne = 0;
 
 
     //Calcul Moyenne   
-        //Jour actu
-    for (let index = (TabJour.length-1); index >= 0 ; index--) {
-        if (index !=0) {
-            MoyenneIntervalleQuot += TabJour[index].interSeconde; 
+    //Jour actu
+    for (let index = (TabJourLoc.length-2); index >= 0 ; index--) {
+            MoyenneIntervalleQuot += Math.floor((new Date(TabJourLoc[index].dateTri) - new Date(TabJourLoc[index+1].dateTri)) / 1000); 
             NbrDataIntervalle++;
-        }
-        MoyenneNbrFQuot = TabJour.length;
+        
+        MoyenneNbrFQuot = TabJourLoc.length;
     }
     NbrDataF++;
 
         //Semaine
-    for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
-        MoyenneIntervalleQuot += (TabSemaine[index].MoyenneInter * (TabSemaine[index].NbrF-1)); 
-        NbrDataIntervalle += (TabSemaine[index].NbrF-1);
-        MoyenneNbrFQuot += TabSemaine[index].NbrF;
-        NbrDataF++;
+    if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee" || ChoixAnalyse == "AnalyseSemaine") {    
+        for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
+            MoyenneIntervalleQuot += (TabSemaine[index].MoyenneInter * (TabSemaine[index].NbrF-1)); 
+            NbrDataIntervalle += (TabSemaine[index].NbrF-1);
+            MoyenneNbrFQuot += TabSemaine[index].NbrF;
+            NbrDataF++;
 
+        }
     }
-
-        //Mois TODO
+    
+        //Mois
     if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee") {
         for (let index = (TabMois.length-1); index >= 0  ; index--) {
         MoyenneIntervalleQuot += (TabMois[index].MoyenneInter * (TabMois[index].NbrF-1)); 
@@ -435,12 +435,14 @@ async function CalcMoyenne(ChoixAnalyse) {
     }
 
     if (NbrDataIntervalle !=0) {
-        SpanMoyenneJourIntervalle.textContent = await calcAffDate(parseInt(MoyenneIntervalleQuot/NbrDataIntervalle))
+        ResultatMoyenne = await calcAffDate(parseInt(MoyenneIntervalleQuot/NbrDataIntervalle))
     } else {
         SpanMoyenneJourIntervalle.textContent = "0";
     }
 
+    SpanMoyenneJourIntervalle.textContent = ResultatMoyenne;
     SpanMoyenneJourNbrF.textContent = parseInt(MoyenneNbrFQuot/NbrDataF);
+    return ResultatMoyenne;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
