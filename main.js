@@ -112,7 +112,19 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
+const BpTest = document.getElementById("Bp_Test");
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Bp Test >>> Changement de jour
+BpTest.addEventListener("click", () => {
+    const DateActu = new Date().getDate();
+
+    setDoc(doc(db, "GlobalData", "Preference"), {
+        JourSemaineDataSaved: DateActu-1
+    })
+})
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,6 +238,7 @@ async function VisuTabJour(Data) {
 
         if (index==Data.length-1) {
             tdIntervalle.textContent = 0;
+            DateSeconde = localStorage.getItem("intervalleSeconde")
         } else {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
             const Interheure = Math.floor((DateSeconde) / 3600);
@@ -237,7 +250,7 @@ async function VisuTabJour(Data) {
 
         //Nouveau record
         const RecordIntervalle = localStorage.getItem("RecordIntervalleLoc");
-        if (DateSeconde > RecordIntervalle) {RecordIntervalle
+        if (DateSeconde > RecordIntervalle) {
             setDoc(doc(db, "GlobalData", "Record"),  {
                 RecIntervalle : DateSeconde
             })
@@ -314,6 +327,7 @@ setInterval(async () => {
     const ReccordInter = Record.RecIntervalle;
 
     //Affichage Intervalle denière fum
+    localStorage.setItem("intervalleSeconde", intervalleSeconde);
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
     //Affichage Reccord Interval
@@ -469,6 +483,11 @@ Bp_RazTotal.addEventListener("click", async() => {
     while (TabSemaine.length != 0) {     
     await deleteDoc(doc(db, "TabSemaine", TabSemaine[0].id));
     }
+
+    //Raz GlobalData
+    setDoc(doc(db, "GlobalData", "Record"), {
+        RecIntervalle : 0,
+    });
 
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
