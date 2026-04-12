@@ -250,7 +250,7 @@ async function VisuTabJour(Data) {
 
         //Nouveau record
         const RecordIntervalle = localStorage.getItem("RecordIntervalleLoc");
-        if (DateSeconde > RecordIntervalle) {
+        if (DateSeconde >= RecordIntervalle) {
             setDoc(doc(db, "GlobalData", "Record"),  {
                 RecIntervalle : DateSeconde
             })
