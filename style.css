@@ -141,3 +141,10 @@ table button {
 	border: none;
 	font-size: 15px;
 }
+
+
+#Bp_Test{
+	font-size: 20px;
+	border-radius: 60px;
+	padding: 6px;
+}
