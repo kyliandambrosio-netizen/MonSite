@@ -299,6 +299,7 @@ setInterval(async () => {
     let LastDate = 0;
     const DateActu = new Date();
     let intervalleSeconde = 0;
+    const MemEnCour = JSON.parse(localStorage.getItem("MemChangementJourEnCours"));
 
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[0].dateTri);
@@ -318,7 +319,7 @@ setInterval(async () => {
     //Affichage Reccord Interval
     if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde);
-    } else {
+    } else if(!MemEnCour) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
 
     };
@@ -327,12 +328,11 @@ setInterval(async () => {
     const JourActu = new Date().getDate()
 
    if (Preference.JourSemaineDataSaved != JourActu) {
-    const MemEnCour = localStorage.getItem("MemChangementJourEnCours");
     if (MemEnCour) return;
-    
-    localStorage.setItem("MemChangementJourEnCours", true);
+
+    localStorage.setItem("MemChangementJourEnCours", JSON.stringify(true));
     await ChangementJour ();
-    localStorage.setItem("MemChangementJourEnCours", false);
+    localStorage.setItem("MemChangementJourEnCours", JSON.stringify(false));
    }
 
     }, 1000);
