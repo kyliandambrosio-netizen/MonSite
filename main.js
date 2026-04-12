@@ -346,9 +346,11 @@ setInterval(async () => {
 
     //Changement de jour
     const JourActu = new Date().getDate()
-
-   if (Preference.JourSemaineDataSaved != JourActu) {
+    const MemChgmtJourEnCours = JSON.parse(localStorage.getItem("MemChgmtJour"))
+   if (Preference.JourSemaineDataSaved != JourActu && !MemChgmtJourEnCours) {
+    localStorage.setItem("MemChgmtJour", JSON.stringify(true));
     await ChangementJour ();
+    localStorage.setItem("MemChgmtJour", JSON.stringify(false));
    }
 
     }, 1000);
