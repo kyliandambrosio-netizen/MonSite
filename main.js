@@ -214,6 +214,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 //Gestion affichage jour
 async function VisuTabJour(Data) {
     const tbody = document.getElementById("TabVisuJour");
+    let ResultatRecord = 0;
 
     TabJourHtml.innerHTML ="";
     
@@ -236,9 +237,10 @@ async function VisuTabJour(Data) {
         let DateSeconde = 0;
         let intervalle = 0;
 
+
         if (index==Data.length-1) {
             tdIntervalle.textContent = 0;
-            DateSeconde = localStorage.getItem("intervalleSeconde")
+            DateSeconde = JSON.parse(localStorage.getItem("intervalleSeconde"));
         } else {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
             const Interheure = Math.floor((DateSeconde) / 3600);
@@ -249,11 +251,10 @@ async function VisuTabJour(Data) {
         }
 
         //Nouveau record
-        const RecordIntervalle = localStorage.getItem("RecordIntervalleLoc");
-        if (DateSeconde >= RecordIntervalle) {
-            setDoc(doc(db, "GlobalData", "Record"),  {
-                RecIntervalle : DateSeconde
-            })
+        const RecordIntervalle = JSON.parse(localStorage.getItem("RecordIntervalleLoc"));
+
+        if (DateSeconde > RecordIntervalle && DateSeconde > ResultatRecord) {
+            ResultatRecord = DateSeconde
         }
 
         //Bp Suppression ligne
@@ -274,6 +275,14 @@ async function VisuTabJour(Data) {
 
     });
 
+    if (ResultatRecord != 0) {
+    setDoc(doc(db, "GlobalData", "Record"),  {
+        RecIntervalle : ResultatRecord
+    })
+            console.log(ResultatRecord)
+
+    }
+    
     localStorage.setItem("TabJourLocal", JSON.stringify(Data))
 
 }
@@ -312,7 +321,6 @@ setInterval(async () => {
     let LastDate = 0;
     const DateActu = new Date();
     let intervalleSeconde = 0;
-    const MemEnCour = JSON.parse(localStorage.getItem("MemChangementJourEnCours"));
 
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[0].dateTri);
@@ -333,7 +341,7 @@ setInterval(async () => {
     //Affichage Reccord Interval
     if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde);
-    } else if(!MemEnCour) {
+    } else{
         SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
 
     };
@@ -342,11 +350,7 @@ setInterval(async () => {
     const JourActu = new Date().getDate()
 
    if (Preference.JourSemaineDataSaved != JourActu) {
-    if (MemEnCour) return;
-
-    localStorage.setItem("MemChangementJourEnCours", JSON.stringify(true));
     await ChangementJour ();
-    localStorage.setItem("MemChangementJourEnCours", JSON.stringify(false));
    }
 
     }, 1000);
