@@ -279,8 +279,6 @@ async function VisuTabJour(Data) {
     setDoc(doc(db, "GlobalData", "Record"),  {
         RecIntervalle : ResultatRecord
     })
-            console.log(ResultatRecord)
-
     }
     
     localStorage.setItem("TabJourLocal", JSON.stringify(Data))
