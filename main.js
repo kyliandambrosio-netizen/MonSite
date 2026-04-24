@@ -64,7 +64,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
     }));
 
     AffGraphique()
-    
+
     })
 
     /////////////////////////////////////////////
@@ -116,6 +116,8 @@ const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
 const BpTest = document.getElementById("Bp_Test");
 
+//Import Chart.js 
+import Chart from "https://cdn.jsdelivr.net/npm/chart.js/auto/+esm";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,17 +218,23 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 //Gestion Affichage Graphique Semaine 
 function AffGraphique() {
     const Graphique = document.getElementById('MyChart');
-
-    const chart = new chart(Graphique, {
+    const JourActu = new Date().getDate;
+    console.log()
+    const Mychart = new Chart(Graphique, {
         type: 'bar',
         data: {
             labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
             datasets: [{
-                label: 'Nombre de cigarettes',
+                label: "NbrC",
                 data: [5, 8, 3, 6, 7, 10, 4]
-            }]
-        }
+                
+            }],
+
+        },
+
     })
+
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
