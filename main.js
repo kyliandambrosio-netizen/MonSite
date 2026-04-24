@@ -63,6 +63,8 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
         ...doc.data()
     }));
 
+    AffGraphique()
+    
     })
 
     /////////////////////////////////////////////
@@ -211,6 +213,24 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Gestion Affichage Graphique Semaine 
+function AffGraphique() {
+    const Graphique = document.getElementById('MyChart');
+
+    const chart = new chart(Graphique, {
+        type: 'bar',
+        data: {
+            labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+            datasets: [{
+                label: 'Nombre de cigarettes',
+                data: [5, 8, 3, 6, 7, 10, 4]
+            }]
+        }
+    })
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion affichage jour
 async function VisuTabJour(Data) {
     const tbody = document.getElementById("TabVisuJour");
@@ -218,6 +238,7 @@ async function VisuTabJour(Data) {
 
     TabJourHtml.innerHTML ="";
     
+    //Affichage tableau jour
     Data.forEach((ligne, index) => {
 
         if (ligne.date != undefined) {
