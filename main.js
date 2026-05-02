@@ -63,8 +63,6 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
         ...doc.data()
     }));
 
-    AffGraphique()
-
     })
 
     /////////////////////////////////////////////
@@ -153,6 +151,7 @@ window.showOngletchoixAnalyse = function(Page) {
     })
 
     CalcMoyenne(Page)
+    AffGraphique(Page)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -216,7 +215,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Affichage Graphique Semaine 
-function AffGraphique() {
+function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
     const JourActu = new Date().getDate;
     console.log()
