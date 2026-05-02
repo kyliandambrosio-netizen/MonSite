@@ -114,6 +114,9 @@ const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
 const BpTest = document.getElementById("Bp_Test");
 
+//Variable Global 
+let Mychart
+
 //Import Chart.js 
 import Chart from "https://cdn.jsdelivr.net/npm/chart.js/auto/+esm";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,23 +221,31 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
     const JourActu = new Date().getDate;
-    console.log()
-    const Mychart = new Chart(Graphique, {
-        type: 'bar',
-        data: {
-            labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-            datasets: [{
-                label: "NbrC",
-                data: [5, 8, 3, 6, 7, 10, 4]
-                
-            }],
-
-        },
-
-    })
 
 
-}
+
+    //Création graphique si non existant
+    if (Graphique.style.display == "") {
+
+        Mychart = new Chart(Graphique, {
+            type: 'bar',
+            data: {
+                labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+                datasets: [{
+                    label: "NbrC",
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                    
+                }],
+
+            },
+
+
+        });
+    } 
+    Mychart.data.datasets[0].data = [TabSemaine[0].NbrF, 2, 3, 4, 5, 6, 7];
+    Mychart.update();
+
+};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -522,5 +533,5 @@ Bp_RazTotal.addEventListener("click", async() => {
         RecIntervalle : 0,
     });
 
-})
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
