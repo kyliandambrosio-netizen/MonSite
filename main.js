@@ -32,15 +32,11 @@ import { getFirestore,
 //Chargement BDD =>
 const db = getFirestore();
 let TabJour = [];
-let TabSemaine = [];
-let TabMois = [];
 let TabAnnee = [];
 let Record = null;
 let Preference = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "desc"));
-const CollTabSemaine = query(collection(db, "TabSemaine"), orderBy("LastFum", "asc"));
-const CollTabMois = query(collection(db, "TabMois"), orderBy("id", "asc"));
-const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
+const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("LastFum", "asc"));
 
     /////////////////////////////////////////////
     //Chargement collection Tableau Jour
@@ -56,26 +52,6 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
     })
 
     /////////////////////////////////////////////
-    //Chargement collection Tableau Semaine
-    onSnapshot(CollTabSemaine, snapshot => {
-    TabSemaine = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-
-    })
-
-    /////////////////////////////////////////////
-    //Chargement collection Tableau Mois
-    onSnapshot(CollTabMois, snapshot => {
-    TabMois = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-
-    })
-
-    /////////////////////////////////////////////
     //Chargement collection Tableau Annee
     onSnapshot(CollTabAnnee, snapshot => {
     TabAnnee = snapshot.docs.map(doc => ({
@@ -84,6 +60,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("id", "asc"));
     }));
 
     })
+
 
     /////////////////////////////////////////////
     //Chargement collection GlobalData Record
@@ -113,7 +90,7 @@ const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
 const BpTest = document.getElementById("Bp_Test");
-const NumJourBpTest = document.getElementById("NumJourSemaine")
+const NumJourBpTest = document.getElementById("In_NumJourSemaine");
 
 //Variable Global 
 let Mychart
@@ -221,36 +198,30 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 //Gestion Affichage Graphique Semaine / mois / année
 function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
-    let JourActu = JSON.stringify(new Date().getDay());
+    const DateActu = new Date();
+    let JourActu = DateActu.getDay();
         if (JourActu == 0) JourActu = 7
+
     let Data = [0, 0, 0, 0, 0, 0, 0];
     let Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-    let TableauPeriode = [];
+    const NbrJouraRecup = JourActu-1;
 
-    //Récuperation Tableau selon Periode
-    switch (Periode) {
-        case "Semaine" :
-            TableauPeriode = TabSemaine;
-        break; 
-
-    }
+    //Maj Data avec jour actu
+    Data[JourActu-1] = TabJour.length;
 
     //Récuperation Data
-    if (TabSemaine.length != 0) {
+    if (TabAnnee.length != 0) {
 
-        //Maj Data avec tableau semaine
-        for (let index = 0; index < 7; index++) {
+        for (let index = 0; index < 31; index++) {
 
-            if ((TabSemaine[index] != undefined) && (Data[TabSemaine[index].NumJourSemaine] != TabSemaine[index].NbrF) ) {
+            if (TabAnnee[index] != undefined) {
+                Data[TabAnnee[index].NumJourSemaine-1] = TabAnnee[index].NbrF
 
-                Data[TabSemaine[index].NumJourSemaine-1] = TabSemaine[index].NbrF
-
+            } else {
+                break;
             }
             
         }
-
-        //Maj Data avec jour actu
-        Data[JourActu-1] = TabJour.length;
     };
 
     //Création graphique si non existant
@@ -268,8 +239,6 @@ function AffGraphique(Periode) {
                 }],
 
             },
-
-
         });
     } 
     Mychart.data.datasets[0].labels = Label;
@@ -394,8 +363,8 @@ setInterval(async () => {
         LastDate = new Date(TabJour[0].dateTri);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
 
-    } else if (TabSemaine.length !=0) {
-        LastDate = new Date(TabSemaine[(TabSemaine.length-1)].LastFum);
+    } else if (TabAnnee.length !=0) {
+        LastDate = new Date(TabAnnee[(TabAnnee.length-1)].LastFum);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     }
 
@@ -407,7 +376,7 @@ setInterval(async () => {
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
     //Affichage Reccord Interval
-    if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabSemaine.length == 0)) {
+    if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabAnnee.length == 0)) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde);
     } else{
         SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
@@ -431,8 +400,10 @@ setInterval(async () => {
 async function ChangementJour () {
     const JourActu = new Date().getDate();
 
+
     //Calcul Moyenne Jour
     const MoyenneJour = CalcMoyenne();
+    
 
     //Ecriture ligne Jour Semaine Bdd
     let dateTri = 0;
@@ -447,7 +418,7 @@ async function ChangementJour () {
         MoyenneJourTemp = (MoyenneJour / (TabJour.length-1));
     }
 
-    await setDoc(doc(db, "TabSemaine", MyId), {
+    await setDoc(doc(db, "TabAnnee", MyId), {
         NumJourSemaine : JSON.stringify(SousJour.getDay()),
         LastFum : dateTri,
         NbrF : TabJour.length,
@@ -466,14 +437,6 @@ async function ChangementJour () {
         await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
    }
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Changement De Semaine
-function ChangementSemaine() {
-    console.log("Changement de semaine TODO")
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -499,32 +462,12 @@ async function CalcMoyenne(ChoixAnalyse) {
 
         //Semaine
     if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee" || ChoixAnalyse == "AnalyseSemaine") {    
-        for (let index = (TabSemaine.length-1); index >= 0  ; index--) {
-            MoyenneIntervalleQuot += (TabSemaine[index].MoyenneInter * (TabSemaine[index].NbrF-1)); 
-            NbrDataIntervalle += (TabSemaine[index].NbrF-1);
-            MoyenneNbrFQuot += TabSemaine[index].NbrF;
+        for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
+            MoyenneIntervalleQuot += (TabAnnee[index].MoyenneInter * (TabAnnee[index].NbrF-1)); 
+            NbrDataIntervalle += (TabAnnee[index].NbrF-1);
+            MoyenneNbrFQuot += TabAnnee[index].NbrF;
             NbrDataF++;
 
-        }
-    }
-
-        //Mois
-    if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee") {
-        for (let index = (TabMois.length-1); index >= 0  ; index--) {
-        MoyenneIntervalleQuot += (TabMois[index].MoyenneInter * (TabMois[index].NbrF-1)); 
-        NbrDataIntervalle += (TabMois[index].NbrF-1);
-        MoyenneNbrFQuot += TabMois[index].NbrF;
-        NbrDataF++;
-        }
-    }
-    
-        //Annee
-    if (ChoixAnalyse == "AnalyseAnnee") {
-        for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
-        MoyenneIntervalleQuot += (TabAnnee[index].MoyenneInter * TabAnnee[index].NbrF); 
-        NbrDataIntervalle += TabAnnee[index].NbrF;
-        MoyenneNbrFQuot += TabAnnee[index].NbrF;
-        NbrDataF+= TabAnnee[index].NbrJour;
         }
     }
 
@@ -556,8 +499,8 @@ Bp_RazTotal.addEventListener("click", async() => {
     }
 
     //Raz Table Semaine 
-    while (TabSemaine.length != 0) {     
-    await deleteDoc(doc(db, "TabSemaine", TabSemaine[0].id));
+    while (TabAnnee.length != 0) {     
+    await deleteDoc(doc(db, "TabAnnee", TabAnnee[0].id));
     }
 
     //Raz GlobalData
