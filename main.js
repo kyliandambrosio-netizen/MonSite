@@ -221,24 +221,14 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
     const JourActu = new Date().getDate;
-    let Data1 = 0;
-    let Data2 = 0;
-    let Data3 = 0;
-    let Data4 = 0;
-    let Data5 = 0;
-    let Data6 = 0;
-    let Data7 = 0;
+    let Data = [];
 
     //Récuperation Data Semaine
     if (TabSemaine.length != 0) {
-        Data1 = TabSemaine[0].NbrF
-        if (TabSemaine[1] != undefined) Data2 = TabSemaine[1].NbrF
-        if (TabSemaine[2] != undefined) Data3 = TabSemaine[2].NbrF
-        if (TabSemaine[3] != undefined) Data4 = TabSemaine[3].NbrF
-        if (TabSemaine[4] != undefined) Data5 = TabSemaine[4].NbrF
-        if (TabSemaine[5] != undefined) Data6 = TabSemaine[5].NbrF
-        if (TabSemaine[6] != undefined) Data7 = TabSemaine[6].NbrF
-
+        for (let index = 0; index < 7; index++) {
+            if (TabSemaine[index] != undefined) {Data[index] = TabSemaine[index].NbrF} else {Data[index] = 0}
+            
+        }
     };
 
     //Création graphique si non existant
@@ -260,7 +250,7 @@ function AffGraphique(Periode) {
 
         });
     } 
-    Mychart.data.datasets[0].data = [Data1, Data2, Data3, Data4, Data5, Data6, Data7];
+    Mychart.data.datasets[0].data = Data;
     Mychart.update();
 
 };
