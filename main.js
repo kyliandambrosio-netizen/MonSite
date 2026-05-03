@@ -113,6 +113,7 @@ const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
 const BpTest = document.getElementById("Bp_Test");
+const NumJourBpTest = document.getElementById("NumJourSemaine")
 
 //Variable Global 
 let Mychart
@@ -223,7 +224,16 @@ function AffGraphique(Periode) {
     let JourActu = JSON.stringify(new Date().getDay());
         if (JourActu == 0) JourActu = 7
     let Data = [0, 0, 0, 0, 0, 0, 0];
+    let Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+    let TableauPeriode = [];
 
+    //Récuperation Tableau selon Periode
+    switch (Periode) {
+        case "Semaine" :
+            TableauPeriode = TabSemaine;
+        break; 
+
+    }
 
     //Récuperation Data
     if (TabSemaine.length != 0) {
@@ -250,10 +260,10 @@ function AffGraphique(Periode) {
             id: 0,
             type: 'bar',
             data: {
-                labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+                labels: Label,
                 datasets: [{
                     label: "NbrC",
-                    data: [0, 0, 0, 0, 0, 0, 0]
+                    data: Data
                     
                 }],
 
@@ -262,6 +272,7 @@ function AffGraphique(Periode) {
 
         });
     } 
+    Mychart.data.datasets[0].labels = Label;
     Mychart.data.datasets[0].data = Data;
     Mychart.update();
 
