@@ -217,18 +217,30 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Gestion Affichage Graphique Semaine 
+//Gestion Affichage Graphique Semaine / mois / année
 function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
-    const JourActu = new Date().getDate;
-    let Data = [];
+    let JourActu = JSON.stringify(new Date().getDay());
+        if (JourActu == 0) JourActu = 7
+    let Data = [0, 0, 0, 0, 0, 0, 0];
 
-    //Récuperation Data Semaine
+
+    //Récuperation Data
     if (TabSemaine.length != 0) {
+
+        //Maj Data avec tableau semaine
         for (let index = 0; index < 7; index++) {
-            if (TabSemaine[index] != undefined) {Data[index] = TabSemaine[index].NbrF} else {Data[index] = 0}
+
+            if ((TabSemaine[index] != undefined) && (Data[TabSemaine[index].NumJourSemaine] != TabSemaine[index].NbrF) ) {
+
+                Data[TabSemaine[index].NumJourSemaine-1] = TabSemaine[index].NbrF
+
+            }
             
         }
+
+        //Maj Data avec jour actu
+        Data[JourActu-1] = TabJour.length;
     };
 
     //Création graphique si non existant
@@ -425,6 +437,7 @@ async function ChangementJour () {
     }
 
     await setDoc(doc(db, "TabSemaine", MyId), {
+        NumJourSemaine : JSON.stringify(SousJour.getDay()),
         LastFum : dateTri,
         NbrF : TabJour.length,
         MoyenneInter : MoyenneJourTemp
