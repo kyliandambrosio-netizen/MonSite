@@ -426,7 +426,7 @@ async function ChangementJour () {
 
     })
 
-    //Ecriture Jour dat saved 
+    //Ecriture Jour date saved 
     await setDoc(doc(db, "GlobalData", "Preference"), {
         JourSemaineDataSaved: JourActu
     })
