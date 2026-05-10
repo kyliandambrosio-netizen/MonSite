@@ -36,7 +36,7 @@ let TabAnnee = [];
 let Record = null;
 let Preference = null;
 const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "desc"));
-const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("LastFum", "asc"));
+const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"));
 
     /////////////////////////////////////////////
     //Chargement collection Tableau Jour
@@ -103,6 +103,7 @@ import Chart from "https://cdn.jsdelivr.net/npm/chart.js/auto/+esm";
 BpTest.addEventListener("click", async() => {
     const DateActu = new Date();
     DateActu.setDate(NumJourBpTest.value)
+    ChangementJour();
 
     await setDoc(doc(db, "GlobalData", "Preference"), {
         JourSemaineDataSaved: DateActu.getDate()-1
@@ -135,6 +136,14 @@ window.showOngletchoixAnalyse = function(Page) {
     CalcMoyenne(Page)
     AffGraphique(Page)
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Recherche record intervalle
+function RecordSearch() {
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +221,7 @@ function AffGraphique(Periode) {
         for (let index = 0; index < 31; index++) {
 
             if (TabAnnee[index] != undefined) {
-                Data[TabAnnee[index].NumJourSemaine-1] = TabAnnee[index].NbrF
+                Data[TabAnnee[index].NumJourSemaine-1] = TabAnnee[index].TableauJour.length
 
             } else {
                 break;
@@ -268,7 +277,7 @@ async function VisuTabJour(Data) {
         const tdDate = document.createElement("td");
         tdDate.textContent = ligne.date;
 
-        //Calcul Intervalle + Record intervalle
+        //Calcul Intervalle
         const tdIntervalle = document.createElement("td");
         let DateSeconde = 0;
         let intervalle = 0;
@@ -348,8 +357,9 @@ setInterval(async () => {
         LastDate = new Date(TabJour[0].dateTri);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
 
-    } else if (TabAnnee.length !=0 && TabAnnee[0].LastFum != 0) {
-        LastDate = new Date(TabAnnee[(TabAnnee.length-1)].LastFum);
+
+    } else if (TabAnnee.length !=0 && TabAnnee[0]?.TableauJour != undefined) {
+        LastDate = new Date(TabAnnee[(TabAnnee.length-1)].TableauJour[0].dateTri);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     }
 
@@ -393,6 +403,7 @@ async function ChangementJour () {
     //Ecriture ligne Jour Semaine Bdd
     let dateTri = 0;
     let MoyenneJourTemp = 0;
+    let CalcRecordInter = 0;
     const DateActuString = new Date().toISOString();
     const SousJour = new Date();
     SousJour.setDate(SousJour.getDate()-1);
@@ -405,10 +416,7 @@ async function ChangementJour () {
 
     await setDoc(doc(db, "TabAnnee", MyId), {
         NumJourSemaine : JSON.stringify(SousJour.getDay()),
-        LastFum : dateTri,
-        NbrF : TabJour.length,
-        MoyenneInter : MoyenneJourTemp
-
+        TableauJour : TabJour
     })
 
     //Ecriture Jour date saved 
