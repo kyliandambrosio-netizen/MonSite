@@ -59,6 +59,9 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
         ...doc.data()
     }));
 
+    //Refresh Object Html
+    VisuTabJour(TabJour)
+
     })
 
 
@@ -138,9 +141,11 @@ window.showOngletchoixAnalyse = function(Page) {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Recherche record intervalle
-function RecordSearch() {
-
-}
+//function RecordSearch() {
+ //   TabAnnee.forEach(Tab => {
+ //       if (false) break;
+ //   })
+//}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -280,20 +285,20 @@ async function VisuTabJour(Data) {
         //Calcul Intervalle
         const tdIntervalle = document.createElement("td");
         let DateSeconde = 0;
-        let intervalle = 0;
-
 
         if (index==Data.length-1) {
-            tdIntervalle.textContent = 0;
-            DateSeconde = JSON.parse(localStorage.getItem("intervalleSeconde"));
+            if (TabAnnee[0]?.TableauJour != undefined && TabAnnee[0]?.TableauJour.length != 0) {
+                DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(TabAnnee[0].TableauJour[0].dateTri)) / 1000);
+            }
         } else {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
-            const Interheure = Math.floor((DateSeconde) / 3600);
-            const Interminute = Math.floor((DateSeconde % 3600) / 60);
-            const InterSeconde = DateSeconde % 60;
-            intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
-            tdIntervalle.textContent = intervalle;
         }
+
+        const Interheure = Math.floor((DateSeconde) / 3600);
+        const Interminute = Math.floor((DateSeconde % 3600) / 60);
+        const InterSeconde = DateSeconde % 60;
+        const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
+        tdIntervalle.textContent = intervalle;
 
         //Bp Suppression ligne
         const tdBtn = document.createElement("td");
@@ -309,9 +314,9 @@ async function VisuTabJour(Data) {
         tr.appendChild(tdBtn);
 
         TabJourHtml.appendChild(tr);
-        };
 
-    });
+    };
+})
     
     localStorage.setItem("TabJourLocal", JSON.stringify(Data))
 
