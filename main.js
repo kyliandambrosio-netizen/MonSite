@@ -66,7 +66,6 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("LastFum", "asc")
     //Chargement collection GlobalData Record
     onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
         Record = snapshot.data();
-        localStorage.setItem("RecordIntervalleLoc", Record.RecIntervalle)
     })
 
     /////////////////////////////////////////////
@@ -144,11 +143,7 @@ async function AddLigneTabJour(Type) {
     const DateActuStringMinute = new Date().getMinutes().toString().padStart(2, "0");
     const DateActuStringSeconde = new Date().getSeconds().toString().padStart(2, "0");
     const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute} : ${DateActuStringSeconde}`
-    const DateActu = new Date();
     const MyId = `Ajout${DateActuString}`;
-    const ReccordInter = Record.Intervalle;
-    let IntervalleHms = "0";
-    let intervalleSeconde = 0;
 
 
     //Ecriture Ligne Bdd
@@ -160,7 +155,7 @@ async function AddLigneTabJour(Type) {
 
 
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Ajout Cig
@@ -249,14 +244,14 @@ function AffGraphique(Periode) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Gestion affichage jour
+//Gestion Tableau historique
 async function VisuTabJour(Data) {
     const tbody = document.getElementById("TabVisuJour");
     let ResultatRecord = 0;
 
     TabJourHtml.innerHTML ="";
     
-    //Affichage tableau jour
+    //Création tableau
     Data.forEach((ligne, index) => {
 
         if (ligne.date != undefined) {
@@ -289,13 +284,6 @@ async function VisuTabJour(Data) {
             tdIntervalle.textContent = intervalle;
         }
 
-        //Nouveau record
-        const RecordIntervalle = JSON.parse(localStorage.getItem("RecordIntervalleLoc"));
-
-        if (DateSeconde > RecordIntervalle && DateSeconde > ResultatRecord) {
-            ResultatRecord = DateSeconde
-        }
-
         //Bp Suppression ligne
         const tdBtn = document.createElement("td");
         const btn = document.createElement("button");
@@ -313,12 +301,6 @@ async function VisuTabJour(Data) {
         };
 
     });
-
-    if (ResultatRecord != 0) {
-    setDoc(doc(db, "GlobalData", "Record"),  {
-        RecIntervalle : ResultatRecord
-    })
-    }
     
     localStorage.setItem("TabJourLocal", JSON.stringify(Data))
 
