@@ -39,6 +39,19 @@ const CollTabJour = query(collection(db, "TabJour"), orderBy("dateTri", "desc"))
 const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"));
 
     /////////////////////////////////////////////
+    //Chargement collection GlobalData Record
+    onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
+        Record = snapshot.data();
+    })
+
+    /////////////////////////////////////////////
+    //Chargement collection GlobalData Preference
+    onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
+        Preference = snapshot.data();
+
+    })
+
+    /////////////////////////////////////////////
     //Chargement collection Tableau Jour
     onSnapshot(CollTabJour, snapshot => {
     TabJour = snapshot.docs.map(doc => ({
@@ -47,7 +60,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     }));
 
     //Refresh Object Html
-    VisuTabJour(TabJour)
+    VisuTabJour(TabJour, false)
     Cpt_CigJour.textContent = TabJour.length;
     })
 
@@ -60,23 +73,11 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     }));
 
     //Refresh Object Html
-    VisuTabJour(TabJour)
+    VisuTabJour(TabJour, false)
 
     })
 
 
-    /////////////////////////////////////////////
-    //Chargement collection GlobalData Record
-    onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
-        Record = snapshot.data();
-    })
-
-    /////////////////////////////////////////////
-    //Chargement collection GlobalData Preference
-    onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
-        Preference = snapshot.data();
-
-    })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,15 +139,6 @@ window.showOngletchoixAnalyse = function(Page) {
 
     AffGraphique(Page)
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Recherche record intervalle
-//function RecordSearch() {
- //   TabAnnee.forEach(Tab => {
- //       if (false) break;
- //   })
-//}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,6 +152,7 @@ async function AddLigneTabJour(Type) {
     const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute} : ${DateActuStringSeconde}`
     const MyId = `Ajout${DateActuString}`;
 
+    VisuTabJour(TabJour, false)
 
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
@@ -167,6 +160,8 @@ async function AddLigneTabJour(Type) {
         dateTri: DateActuString,
         type : Type
     })
+
+
 
 
 }
@@ -193,6 +188,8 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
     const AjourLigneDateStringMinute = new Date(AjoutLigneDate).getMinutes().toString().padStart(2, "0");
     const AjourLigneDateStringSeconde = new Date(AjoutLigneDate).getSeconds().toString().padStart(2, "0");
     const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute} : ${AjourLigneDateStringSeconde}`
+
+    VisuTabJour(TabJour, true)
 
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
@@ -249,12 +246,17 @@ function AffGraphique(Periode) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Tableau historique
-async function VisuTabJour(Data) {
+async function VisuTabJour(Data, RecalcRecord) {
     const tbody = document.getElementById("TabVisuJour");
-    let ResultatRecord = 0;
-
     TabJourHtml.innerHTML ="";
-    
+    let ResultatRecord = 0;
+    let RecordActu =0;
+
+    //Record Intervalle 
+    if (RecalcRecord == false) {
+        RecordActu = Record.RecIntervalle;
+    }
+
     //Création tableau
     Data.forEach((ligne, index) => {
 
@@ -282,6 +284,9 @@ async function VisuTabJour(Data) {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
         }
 
+        //Recuperation Intervalle Maxi pour Record
+        if (ResultatRecord<DateSeconde) ResultatRecord=DateSeconde;
+
         const Interheure = Math.floor((DateSeconde) / 3600);
         const Interminute = Math.floor((DateSeconde % 3600) / 60);
         const InterSeconde = DateSeconde % 60;
@@ -293,7 +298,10 @@ async function VisuTabJour(Data) {
         const btn = document.createElement("button");
         btn.textContent = "❌";
 
-        btn.onclick =  () => {SupprimerLigne(ligne.id)};
+        btn.onclick =  () => {
+            SupprimerLigne(ligne.id)
+            VisuTabJour(TabJour, true)
+        };
 
         tdBtn.appendChild(btn);
         tr.appendChild(tdIndex);
@@ -305,6 +313,13 @@ async function VisuTabJour(Data) {
 
     };
 })
+
+    //Nouveau record intervalle
+    if (RecordActu < ResultatRecord) {
+        await setDoc(doc(db, "GlobalData", "Record"), {
+            RecIntervalle: ResultatRecord
+        })
+    }
     
     localStorage.setItem("TabJourLocal", JSON.stringify(Data))
 
@@ -355,7 +370,6 @@ setInterval(async () => {
         LastDate = new Date(TabAnnee[(TabAnnee.length-1)].TableauJour[0].dateTri);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     }
-
 
     const ReccordInter = Record.RecIntervalle;
 
