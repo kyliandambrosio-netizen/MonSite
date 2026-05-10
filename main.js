@@ -363,7 +363,7 @@ setInterval(async () => {
     //Affichage Reccord Interval
     if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabAnnee.length == 0)) {
         SpanRecordIntervalleCig.textContent = await calcAffDate(intervalleSeconde);
-    } else{
+    } else if (SpanRecordIntervalleCig.textContent != ReccordInter){
         SpanRecordIntervalleCig.textContent = await calcAffDate(ReccordInter)
 
     };
