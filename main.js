@@ -399,13 +399,12 @@ setInterval(async () => {
 //Changement De Jour
 async function ChangementJour () {
     const JourActu = new Date().getDate();
-
-    //Ecriture ligne Jour Semaine Bdd
     const DateActuString = new Date().toISOString();
     const SousJour = new Date();
     SousJour.setDate(SousJour.getDate()-1);
     const MyId = `${SousJour.toISOString()}`;
 
+    //Ecriture ligne Jour Semaine Bdd
     await setDoc(doc(db, "TabAnnee", MyId), {
         NumJourSemaine : JSON.stringify(SousJour.getDay()),
         TableauJour : TabJour
