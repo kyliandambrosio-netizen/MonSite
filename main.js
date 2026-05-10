@@ -28,7 +28,6 @@ import { getFirestore,
         orderBy
      } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-
 //Chargement BDD =>
 const db = getFirestore();
 let TabJour = [];
@@ -76,7 +75,6 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     VisuTabJour(TabJour, true)
 
     })
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +122,6 @@ window.showTab = async function(Page) {
     })
 
     if(Page == "Analyse") await showOngletchoixAnalyse("AnalyseSemaine");
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,7 +135,6 @@ window.showOngletchoixAnalyse = function(Page) {
 
     AffGraphique(Page)
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,8 +153,6 @@ async function AddLigneTabJour(Type) {
         dateTri: DateActuString,
         type : Type
     })
-
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -190,8 +184,6 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
         dateTri: AjourLigneDateString,
         type : "C"
     })
-
-    
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -225,16 +217,13 @@ function AffGraphique(Periode) {
                 datasets: [{
                     label: "NbrC",
                     data: Data
-                    
                 }],
-
             },
         });
     } 
     Mychart.data.datasets[0].labels = Label;
     Mychart.data.datasets[0].data = Data;
     Mychart.update();
-
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -296,9 +285,7 @@ async function VisuTabJour(Data, RecalcRecord) {
         tr.appendChild(tdDate);
         tr.appendChild(tdIntervalle);
         tr.appendChild(tdBtn);
-
         TabJourHtml.appendChild(tr);
-
     };
 })
 
@@ -317,7 +304,6 @@ async function VisuTabJour(Data, RecalcRecord) {
 
                 //Recupération intervalle maxi annee pour record
                 if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
-
             })
         })
 
@@ -334,13 +320,11 @@ async function VisuTabJour(Data, RecalcRecord) {
     }
     
     localStorage.setItem("TabJourLocal", JSON.stringify(Data))
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function SupprimerLigne(id) {
-
     //Si suppresion ligne 1 > Raz intervalle ligne 2 avant supp ligne 1
     if (TabJour[0].id == id && TabJour.length != 1) {
     
@@ -352,7 +336,6 @@ async function SupprimerLigne(id) {
     }
 
     await deleteDoc(doc(db, "TabJour", id));
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
