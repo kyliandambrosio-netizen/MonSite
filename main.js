@@ -400,24 +400,11 @@ setInterval(async () => {
 async function ChangementJour () {
     const JourActu = new Date().getDate();
 
-
-    //Calcul Moyenne Jour
-    const MoyenneJour = CalcMoyenne();
-    
-
     //Ecriture ligne Jour Semaine Bdd
-    let dateTri = 0;
-    let MoyenneJourTemp = 0;
-    let CalcRecordInter = 0;
     const DateActuString = new Date().toISOString();
     const SousJour = new Date();
     SousJour.setDate(SousJour.getDate()-1);
     const MyId = `${SousJour.toISOString()}`;
-
-    if (TabJour.length != 0) {
-        dateTri = TabJour[TabJour.length-1].dateTri;
-        MoyenneJourTemp = (MoyenneJour / (TabJour.length-1));
-    }
 
     await setDoc(doc(db, "TabAnnee", MyId), {
         NumJourSemaine : JSON.stringify(SousJour.getDay()),
@@ -429,55 +416,10 @@ async function ChangementJour () {
         JourSemaineDataSaved: JourActu
     })
 
-
     //Raz Tableau jour
    while (TabJour.length != 0) {
         await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
    }
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Calcul moyenne
-async function CalcMoyenne(ChoixAnalyse) {
-    const TabJourLoc = JSON.parse(localStorage.getItem("TabJourLocal"));
-    let MoyenneIntervalleQuot = 0;
-    let MoyenneNbrFQuot = 0;
-    let NbrDataIntervalle = 0;
-    let NbrDataF = 0;
-    let ResultatMoyenne = 0;
-
-
-    //Calcul Moyenne   
-    //Jour actu
-    for (let index = (TabJourLoc.length-2); index >= 0 ; index--) {
-            MoyenneIntervalleQuot += Math.floor((new Date(TabJourLoc[index].dateTri) - new Date(TabJourLoc[index+1].dateTri)) / 1000); 
-            NbrDataIntervalle++;
-        
-        MoyenneNbrFQuot = TabJourLoc.length;
-    }
-    NbrDataF++;
-
-        //Semaine
-    if (ChoixAnalyse == "AnalyseMois" || ChoixAnalyse == "AnalyseAnnee" || ChoixAnalyse == "AnalyseSemaine") {    
-        for (let index = (TabAnnee.length-1); index >= 0  ; index--) {
-            MoyenneIntervalleQuot += (TabAnnee[index].MoyenneInter * (TabAnnee[index].NbrF-1)); 
-            NbrDataIntervalle += (TabAnnee[index].NbrF-1);
-            MoyenneNbrFQuot += TabAnnee[index].NbrF;
-            NbrDataF++;
-
-        }
-    }
-
-    if (NbrDataIntervalle !=0) {
-        ResultatMoyenne = await calcAffDate(parseInt(MoyenneIntervalleQuot/NbrDataIntervalle))
-    } else {
-        SpanMoyenneJourIntervalle.textContent = "0";
-    }
-
-    SpanMoyenneJourIntervalle.textContent = ResultatMoyenne;
-    SpanMoyenneJourNbrF.textContent = parseInt(MoyenneNbrFQuot/NbrDataF);
-    return ResultatMoyenne;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
