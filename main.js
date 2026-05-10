@@ -136,7 +136,6 @@ window.showOngletchoixAnalyse = function(Page) {
         tab.style.display = tab.id === Page ? "block" : "none";
     })
 
-    CalcMoyenne(Page)
     AffGraphique(Page)
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,6 +218,7 @@ function AffGraphique(Periode) {
 
     //Maj Data avec jour actu
     Data[JourActu-1] = TabJour.length;
+
 
     //Récuperation Data
     if (TabAnnee.length != 0) {
