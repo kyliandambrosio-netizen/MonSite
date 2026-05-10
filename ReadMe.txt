@@ -1,7 +1,5 @@
 Last Push : 12/04/2026 18:58
 
-- A faire
-	- Revoir calcul record intervalle
-	- Revoir methode Calcul Moyenne (* Une seul Collection pour toutes l'année*)
-	- Finir affichage graphique (Semaine / Mois / Annee)
-	
+- Record Intervalle :
+	> Fonctionnelle sur ajout BpCig classique / Ajout Ligne Historique et suppression ligne
+		Par contre le changement de jour ne fonctionne pas, il prend une valeur style 166h
