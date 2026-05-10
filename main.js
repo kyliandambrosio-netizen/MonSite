@@ -252,11 +252,6 @@ async function VisuTabJour(Data, RecalcRecord) {
     let ResultatRecord = 0;
     let RecordActu =0;
 
-    //Record Intervalle 
-    if (RecalcRecord == false) {
-        RecordActu = Record.RecIntervalle;
-    }
-
     //Création tableau
     Data.forEach((ligne, index) => {
 
@@ -284,7 +279,7 @@ async function VisuTabJour(Data, RecalcRecord) {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
         }
 
-        //Recuperation Intervalle Maxi pour Record
+        //Recuperation Intervalle Maxi journée pour Record
         if (ResultatRecord<DateSeconde) ResultatRecord=DateSeconde;
 
         const Interheure = Math.floor((DateSeconde) / 3600);
@@ -314,7 +309,28 @@ async function VisuTabJour(Data, RecalcRecord) {
     };
 })
 
-    //Nouveau record intervalle
+    //Recalcule du record apres changement tabAnnee
+    let CalcInter = 0;
+    if (RecalcRecord == true) {
+        TabAnnee.forEach((TabA, indexA) => {
+            TabA.TableauJour.forEach((TabJ, index) => {
+                //Calcule des intervalles entres cigs
+                if (index != TabA.TableauJour.length && TabA.TableauJour[index+1] != undefined) {
+                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri))
+                } else if (TabAnnee[indexA-1] != undefined){
+                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri))
+                }
+
+                //Recupération intervalle maxi annee pour record
+                if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
+            })
+        })
+
+    } else {
+        RecordActu = Record.RecIntervalle;
+    }
+
+    //Ecriture Nouveau record intervalle dans BDD
     if (RecordActu < ResultatRecord) {
         await setDoc(doc(db, "GlobalData", "Record"), {
             RecIntervalle: ResultatRecord
