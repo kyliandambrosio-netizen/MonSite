@@ -61,7 +61,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 
     //Refresh Object Html
     Cpt_CigJour.textContent = TabJour.length;
-    VisuTabJour(TabJour, false)
+    VisuTabJour(TabJour, true)
     })
 
     /////////////////////////////////////////////
@@ -304,18 +304,20 @@ async function VisuTabJour(Data, RecalcRecord) {
 
     //Recalcule du record apres changement tabAnnee
     let CalcInter = 0;
-    if (RecalcRecord == true) {
+    const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
+    if (RecalcRecord == true && ChgmtEnCours != true) {
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 //Calcule des intervalles entres cigs
-                if (index != TabA.TableauJour.length && TabA.TableauJour[index+1] != undefined) {
+                if (index != TabA.TableauJour.length-1 && TabA.TableauJour[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri))
-                } else if (TabAnnee[indexA-1] != undefined){
+                } else if (TabAnnee[indexA-1] != undefined && TabAnnee[indexA-1].TableauJour[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri))
-                }
+                } 
 
                 //Recupération intervalle maxi annee pour record
                 if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
+
             })
         })
 
@@ -323,11 +325,9 @@ async function VisuTabJour(Data, RecalcRecord) {
         RecordActu = Record.RecIntervalle;
     }
 
-    console.log(ResultatRecord, RecordActu)
-
     //Ecriture Nouveau record intervalle dans BDD
     if (RecordActu < ResultatRecord && ResultatRecord != Record.RecIntervalle) {
-        console.log("Pas bon ca")
+        console.log("Ecriture Nouveau record dans BDD")
         await setDoc(doc(db, "GlobalData", "Record"), {
             RecIntervalle: ResultatRecord
         })
