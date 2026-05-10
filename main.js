@@ -60,8 +60,8 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     }));
 
     //Refresh Object Html
-    VisuTabJour(TabJour, false)
     Cpt_CigJour.textContent = TabJour.length;
+    VisuTabJour(TabJour, false)
     })
 
     /////////////////////////////////////////////
@@ -72,11 +72,10 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
         ...doc.data()
     }));
 
-    //Refresh Object Html
-    VisuTabJour(TabJour, false)
+    //Refresh objet
+    VisuTabJour(TabJour, true)
 
     })
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -152,16 +151,12 @@ async function AddLigneTabJour(Type) {
     const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute} : ${DateActuStringSeconde}`
     const MyId = `Ajout${DateActuString}`;
 
-    VisuTabJour(TabJour, false)
-
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", MyId), {
         date : DateActuStringComplet,
         dateTri: DateActuString,
         type : Type
     })
-
-
 
 
 }
@@ -189,14 +184,13 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
     const AjourLigneDateStringSeconde = new Date(AjoutLigneDate).getSeconds().toString().padStart(2, "0");
     const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute} : ${AjourLigneDateStringSeconde}`
 
-    VisuTabJour(TabJour, true)
-
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
         date : AjourLigneDateStringComplet,
         dateTri: AjourLigneDateString,
         type : "C"
     })
+
     
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -295,7 +289,6 @@ async function VisuTabJour(Data, RecalcRecord) {
 
         btn.onclick =  () => {
             SupprimerLigne(ligne.id)
-            VisuTabJour(TabJour, true)
         };
 
         tdBtn.appendChild(btn);
@@ -330,8 +323,11 @@ async function VisuTabJour(Data, RecalcRecord) {
         RecordActu = Record.RecIntervalle;
     }
 
+    console.log(ResultatRecord, RecordActu)
+
     //Ecriture Nouveau record intervalle dans BDD
-    if (RecordActu < ResultatRecord) {
+    if (RecordActu < ResultatRecord && ResultatRecord != Record.RecIntervalle) {
+        console.log("Pas bon ca")
         await setDoc(doc(db, "GlobalData", "Record"), {
             RecIntervalle: ResultatRecord
         })
@@ -356,6 +352,7 @@ async function SupprimerLigne(id) {
     }
 
     await deleteDoc(doc(db, "TabJour", id));
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -416,6 +413,7 @@ setInterval(async () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
 async function ChangementJour () {
+    localStorage.setItem("ChgmtJourEnCours", true);
     const JourActu = new Date().getDate();
     const DateActuString = new Date().toISOString();
     const SousJour = new Date();
@@ -437,12 +435,14 @@ async function ChangementJour () {
    while (TabJour.length != 0) {
         await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
    }
+
+   localStorage.setItem("ChgmtJourEnCours", false);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Page Refresh
-window.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     showTab("Home");
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
