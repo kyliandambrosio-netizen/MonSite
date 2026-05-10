@@ -219,25 +219,13 @@ function AffGraphique(Periode) {
     //Maj Data avec jour actu
     Data[JourActu-1] = TabJour.length;
 
-
     //Récuperation Data
-    if (TabAnnee.length != 0) {
-
-        for (let index = 0; index < 31; index++) {
-
-            if (TabAnnee[index] != undefined) {
-                Data[TabAnnee[index].NumJourSemaine-1] = TabAnnee[index].TableauJour.length
-
-            } else {
-                break;
-            }
-            
-        }
-    };
+    TabAnnee.forEach(Tab => {
+        Data[Tab.NumJourSemaine-1] = Tab.TableauJour.length
+    })
 
     //Création graphique si non existant
     if (Graphique.style.display == "") {
-
         Mychart = new Chart(Graphique, {
             id: 0,
             type: 'bar',
