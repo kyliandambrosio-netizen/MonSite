@@ -100,12 +100,14 @@ import Chart from "https://cdn.jsdelivr.net/npm/chart.js/auto/+esm";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Test >>> Changement de jour
-BpTest.addEventListener("click", () => {
-    const DateActu = new Date().getDate();
+BpTest.addEventListener("click", async() => {
+    const DateActu = new Date();
+    DateActu.setDate(NumJourBpTest.value)
 
-    setDoc(doc(db, "GlobalData", "Preference"), {
-        JourSemaineDataSaved: DateActu-1
+    await setDoc(doc(db, "GlobalData", "Preference"), {
+        JourSemaineDataSaved: DateActu.getDate()-1
     })
+    NumJourBpTest.value = 0;
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -341,11 +343,12 @@ setInterval(async () => {
     const DateActu = new Date();
     let intervalleSeconde = 0;
 
+    //Calcule Intervalle en seconde
     if (TabJour.length !=0) {
         LastDate = new Date(TabJour[0].dateTri);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
 
-    } else if (TabAnnee.length !=0) {
+    } else if (TabAnnee.length !=0 && TabAnnee[0].LastFum != 0) {
         LastDate = new Date(TabAnnee[(TabAnnee.length-1)].LastFum);
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
     }
