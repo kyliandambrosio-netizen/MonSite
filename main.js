@@ -60,7 +60,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 
     //Refresh Object Html
     Cpt_CigJour.textContent = TabJour.length;
-    VisuTabJour(TabJour, true)
+    VisuTabJour(TabJour, false)
     })
 
     /////////////////////////////////////////////
@@ -143,7 +143,7 @@ window.showTab = async function(Page) {
 
     if(Page != "Historique") {
         ChoixJourHisto.textContent = IndexChoixVisuJourHisto = 0
-    };
+    } else VisuTabJour(TabJour, false);
     if(Page == "Analyse") await showOngletchoixAnalyse("AnalyseSemaine");
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -323,6 +323,7 @@ async function VisuTabJour(Data, RecalcRecord) {
     let CalcInter = 0;
     const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
     if (RecalcRecord == true && ChgmtEnCours != true) {
+
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 //Calcule des intervalles entres cigs
@@ -331,10 +332,14 @@ async function VisuTabJour(Data, RecalcRecord) {
 
                 } else if (TabAnnee[indexA-1]?.TableauJour[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri))
-                } 
+
+                } else {
+                    CalcInter =0;
+                }
 
                 //Recupération intervalle maxi annee pour record
                 if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
+
             })
         })
 
