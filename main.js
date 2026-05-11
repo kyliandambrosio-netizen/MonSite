@@ -384,6 +384,7 @@ setInterval(async () => {
     //Changement de jour
     const JourActu = new Date().getDate()
     const MemChgmtJourEnCours = JSON.parse(localStorage.getItem("MemChgmtJour"))
+
    if (Preference.JourSemaineDataSaved != JourActu && !MemChgmtJourEnCours) {
     localStorage.setItem("MemChgmtJour", JSON.stringify(true));
     await ChangementJour ();
@@ -396,7 +397,6 @@ setInterval(async () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
 async function ChangementJour () {
-    localStorage.setItem("ChgmtJourEnCours", true);
     const JourActu = new Date().getDate();
     const DateActuString = new Date().toISOString();
     const SousJour = new Date();
@@ -418,8 +418,6 @@ async function ChangementJour () {
    while (TabJour.length != 0) {
         await deleteDoc(doc(db, "TabJour", TabJour[TabJour.length-1].id));
    }
-
-   localStorage.setItem("ChgmtJourEnCours", false);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -427,6 +425,7 @@ async function ChangementJour () {
 //Page Refresh
 document.addEventListener("DOMContentLoaded", () => {
     showTab("Home");
+    localStorage.setItem("MemChgmtJour", false)
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
