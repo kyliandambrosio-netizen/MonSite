@@ -285,8 +285,10 @@ async function VisuTabJour(Data, RecalcRecord) {
         let DateSeconde = 0;
 
         if (index==Data.length-1) {
-            if (TabAnnee[0]?.TableauJour != undefined && TabAnnee[0]?.TableauJour.length != 0) {
+            if (TabAnnee[0]?.TableauJour != undefined && TabAnnee[0].TableauJour.length != 0) {
                 DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(TabAnnee[0].TableauJour[0].dateTri)) / 1000);
+            } else {
+                DateSeconde = 0;
             }
         } else {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
