@@ -141,6 +141,9 @@ window.showTab = async function(Page) {
         tab.style.display = tab.id === Page ? "block" : "none";
     })
 
+    if(Page != "Historique") {
+        ChoixJourHisto.textContent = IndexChoixVisuJourHisto = 0
+    };
     if(Page == "Analyse") await showOngletchoixAnalyse("AnalyseSemaine");
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +263,7 @@ async function VisuTabJour(Data, RecalcRecord) {
         Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
     }
 
-    ChoixJourHisto.value = IndexChoixVisuJourHisto;
+    ChoixJourHisto.textContent = IndexChoixVisuJourHisto;
 
     //Création tableau
     Data.forEach((ligne, index) => {
@@ -325,7 +328,8 @@ async function VisuTabJour(Data, RecalcRecord) {
                 //Calcule des intervalles entres cigs
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri))
-                } else if (TabAnnee[indexA-1] != undefined && TabAnnee[indexA-1].TableauJour[0] != undefined){
+
+                } else if (TabAnnee[indexA-1]?.TableauJour[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri))
                 } 
 
