@@ -155,9 +155,12 @@ table button {
 }
 
 #ChoixJourVisuTableau{
-	font-size: 20px;
+	font-size: 30px;
 	text-align: center;
-	width: 25px;
+	font-size-adjust: 200px;
+	background-color: white;
+	color: black;
+
 }
 
 #BpChoixJourMoins, #BpChoixJourPlus {
