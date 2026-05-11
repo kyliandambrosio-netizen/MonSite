@@ -144,7 +144,7 @@ async function AddLigneTabJour(Type) {
     const DateActuStringHour = new Date().getHours().toString().padStart(2, "0");
     const DateActuStringMinute = new Date().getMinutes().toString().padStart(2, "0");
     const DateActuStringSeconde = new Date().getSeconds().toString().padStart(2, "0");
-    const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute} : ${DateActuStringSeconde}`
+    const DateActuStringComplet = `${DateActuStringHour} : ${DateActuStringMinute}`
     const MyId = `Ajout${DateActuString}`;
 
     //Ecriture Ligne Bdd
@@ -176,7 +176,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
     const AjourLigneDateStringHour = new Date(AjoutLigneDate).getHours().toString().padStart(2, "0");
     const AjourLigneDateStringMinute = new Date(AjoutLigneDate).getMinutes().toString().padStart(2, "0");
     const AjourLigneDateStringSeconde = new Date(AjoutLigneDate).getSeconds().toString().padStart(2, "0");
-    const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute} : ${AjourLigneDateStringSeconde}`
+    const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute}`
 
     //Ecriture Ligne Bdd
     await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
@@ -268,7 +268,7 @@ async function VisuTabJour(Data, RecalcRecord) {
         const Interheure = Math.floor((DateSeconde) / 3600);
         const Interminute = Math.floor((DateSeconde % 3600) / 60);
         const InterSeconde = DateSeconde % 60;
-        const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
+        const intervalle = `${Interheure} h ${Interminute} min`;
         tdIntervalle.textContent = intervalle;
 
         //Bp Suppression ligne
