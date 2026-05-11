@@ -91,6 +91,10 @@ const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
 const BpTest = document.getElementById("Bp_Test");
 const NumJourBpTest = document.getElementById("In_NumJourSemaine");
+const BpJourHistoPlus = document.getElementById("BpChoixJourPlus");
+const BpJourHistoMoins = document.getElementById("BpChoixJourMoins");
+const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
+let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
 let Mychart
@@ -110,6 +114,22 @@ BpTest.addEventListener("click", async() => {
         JourSemaineDataSaved: DateActu.getDate()-1
     })
     NumJourBpTest.value = 0;
+})
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//ChoixJour Visualisation Historique
+BpJourHistoMoins.addEventListener("click", () => {
+    if (TabAnnee.length != IndexChoixVisuJourHisto) {
+    IndexChoixVisuJourHisto ++;
+    VisuTabJour(TabJour, false);
+    };
+})
+BpJourHistoPlus.addEventListener("click", () => {
+    if (IndexChoixVisuJourHisto > 0){
+    IndexChoixVisuJourHisto--;
+    VisuTabJour(TabJour, false);
+    };
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -234,6 +254,13 @@ async function VisuTabJour(Data, RecalcRecord) {
     TabJourHtml.innerHTML ="";
     let ResultatRecord = 0;
     let RecordActu =0;
+
+    //Choix jour visu tableau
+    if (IndexChoixVisuJourHisto != 0 && TabAnnee[IndexChoixVisuJourHisto-1]?.TableauJour != undefined) {
+        Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
+    }
+
+    ChoixJourHisto.value = IndexChoixVisuJourHisto;
 
     //Création tableau
     Data.forEach((ligne, index) => {
