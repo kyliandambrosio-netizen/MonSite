@@ -21,6 +21,7 @@
 import { getFirestore,
         collection, 
         setDoc,
+        updateDoc,
         onSnapshot,
         deleteDoc,
         doc,
@@ -330,7 +331,7 @@ async function VisuTabJour(Data, RecalcRecord) {
         btn.textContent = "❌";
 
         btn.onclick =  () => {
-            SupprimerLigne(ligne.id)
+            SupprimerLigne(ligne.id, index)
         };
 
         tdBtn.appendChild(btn);
@@ -385,17 +386,27 @@ async function VisuTabJour(Data, RecalcRecord) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function SupprimerLigne(id) {
+async function SupprimerLigne(id, IndexA) {
     //Choix Tableau selon index visu
     let TabJourInter = [];
 
+    //Jour Actu
+
     if (IndexChoixVisuJourHisto == 0) {
         await deleteDoc(doc(db, "TabJour", id));
+        VisuTabJour(TabJour, true);
+            
+    //Jour Dans Tab Annee
+    } else {
+        const NewTabJour = TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour.filter((val, index) => index !==IndexA);
+        await updateDoc (doc(db, "TabAnnee", TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id), {
+            TableauJour: NewTabJour
+        })
     }
 
     
 
-    VisuTabJour(TabJour, true);
+
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
