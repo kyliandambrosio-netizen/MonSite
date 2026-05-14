@@ -298,7 +298,7 @@ async function VisuTabJour(Data, RecalcRecord) {
                 
         if (index==Data.length-1) {
             for (let indexFor = (TabAnnee.length-(IndexChoixVisuJourHisto+1)); indexFor >= 0; indexFor--) {
-                console.log(indexFor)
+
                 //Recherche dernière date dans tableau Année
                 if (TabAnnee[indexFor]?.TableauJour?.[0]?.dateTri != undefined) {
                     
@@ -467,7 +467,13 @@ setInterval(async () => {
 async function ChangementJour () {
     const JourActu = new Date().getDate();
     const DateActuString = new Date().toISOString();
-    const SousJour = new Date(TabJour[0].dateTri);
+    let DateTri = 0;
+    if (TabJour[0]?.dateTri != undefined) {
+        DateTri = TabJour[0]?.dateTri
+    } else 
+        DateTri = new Date().getDate()-1;
+
+    const SousJour = new Date(DateTri);
     //SousJour.setDate(SousJour.getDate()-1);
     const MyId = `${SousJour.toISOString()}`;
 
