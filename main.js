@@ -217,6 +217,8 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
         dateTri: AjourLigneDateString,
         type : "C"
     })
+
+    VisuTabJour(TabJour, true);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -269,7 +271,7 @@ async function VisuTabJour(Data, RecalcRecord) {
     let RecordActu =0;
 
     //Choix jour visu tableau
-    if (IndexChoixVisuJourHisto != 0 && TabAnnee[IndexChoixVisuJourHisto-1]?.TableauJour != undefined) {
+    if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour != undefined) {
         Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
     }
 
@@ -293,12 +295,13 @@ async function VisuTabJour(Data, RecalcRecord) {
         //Calcul Intervalle
         const tdIntervalle = document.createElement("td");
         let DateSeconde = 0;
-
+                
         if (index==Data.length-1) {
-            for (let indexFor = TabAnnee.length-IndexChoixVisuJourHisto; indexFor >= 0; indexFor--) {
+            for (let indexFor = (TabAnnee.length-(IndexChoixVisuJourHisto+1)); indexFor >= 0; indexFor--) {
+                console.log(indexFor)
                 //Recherche dernière date dans tableau Année
                 if (TabAnnee[indexFor]?.TableauJour?.[0]?.dateTri != undefined) {
-
+                    
                 DateSeconde = Math.floor((new Date(Data[index].dateTri) 
                     - new Date(TabAnnee[indexFor].TableauJour[0].dateTri)) / 1000);
                 break;
@@ -392,6 +395,8 @@ async function SupprimerLigne(id) {
     }
 
     await deleteDoc(doc(db, "TabJour", id));
+
+    VisuTabJour(TabJour, true);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
