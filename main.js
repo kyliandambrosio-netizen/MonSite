@@ -213,11 +213,28 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
     const AjourLigneDateStringComplet = `${AjourLigneDateStringHour} : ${AjourLigneDateStringMinute}`
 
     //Ecriture Ligne Bdd
-    await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
-        date : AjourLigneDateStringComplet,
-        dateTri: AjourLigneDateString,
-        type : "C"
-    })
+        //Jour actu
+    if (IndexChoixVisuJourHisto == 0) {
+        await setDoc(doc(db, "TabJour", `Ajout${AjourLigneDateString}`), {
+            date : AjourLigneDateStringComplet,
+            dateTri: AjourLigneDateString,
+            type : "C"
+        })
+
+        //Jour dans TabAnnee
+    } else {
+        let TabAnneeInter = TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour;
+        TabAnneeInter.push({
+            date : AjourLigneDateStringComplet,
+            dateTri: AjourLigneDateString,
+            id : `Ajout${AjourLigneDateString}`,
+            type : "C"
+        })
+        console.log(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour)
+        await updateDoc (doc(db, "TabAnnee", TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id), {
+            TableauJour: TabAnneeInter
+        })
+    }
 
     VisuTabJour(TabJour, true);
 });
@@ -392,7 +409,6 @@ async function SupprimerLigne(id, IndexA) {
     let TabJourInter = [];
 
     //Jour Actu
-
     if (IndexChoixVisuJourHisto == 0) {
         await deleteDoc(doc(db, "TabJour", id));
         VisuTabJour(TabJour, true);
@@ -406,10 +422,6 @@ async function SupprimerLigne(id, IndexA) {
 
         VisuTabJour(TabJour, true);
     }
-
-    
-
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
