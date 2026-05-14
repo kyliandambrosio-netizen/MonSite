@@ -386,17 +386,14 @@ async function VisuTabJour(Data, RecalcRecord) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function SupprimerLigne(id) {
-    //Si suppresion ligne 1 > Raz intervalle ligne 2 avant supp ligne 1
-    if (TabJour[0].id == id && TabJour.length != 1) {
-    
-    await setDoc(doc(db, "TabJour", TabJour[1].id), {
-        date : TabJour[1].date,
-        dateTri: TabJour[1].dateTri,
-        type : TabJour[1].type
-    })
+    //Choix Tableau selon index visu
+    let TabJourInter = [];
+
+    if (IndexChoixVisuJourHisto == 0) {
+        await deleteDoc(doc(db, "TabJour", id));
     }
 
-    await deleteDoc(doc(db, "TabJour", id));
+    
 
     VisuTabJour(TabJour, true);
 }
