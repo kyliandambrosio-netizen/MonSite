@@ -107,8 +107,19 @@ import Chart from "https://cdn.jsdelivr.net/npm/chart.js/auto/+esm";
 //Bp Test >>> Changement de jour
 BpTest.addEventListener("click", async() => {
     const DateActu = new Date();
-    DateActu.setDate(NumJourBpTest.value)
-    ChangementJour();
+    DateActu.setDate(NumJourBpTest.value);
+    let DateRecacl = 0;
+
+    TabJour.forEach((Tab) => {
+
+        DateRecacl = new Date(Tab.dateTri);
+        DateRecacl = DateRecacl.setDate(NumJourBpTest.value);
+        console.log(JSON.stringify(DateRecacl))
+
+    });
+
+    ChangementJour(JSON.stringify(DateRecacl));
+
 
     await setDoc(doc(db, "GlobalData", "Preference"), {
         JourSemaineDataSaved: DateActu.getDate()-1
@@ -285,11 +296,19 @@ async function VisuTabJour(Data, RecalcRecord) {
         let DateSeconde = 0;
 
         if (index==Data.length-1) {
-            if (TabAnnee[0]?.TableauJour != undefined && TabAnnee[0].TableauJour.length != 0) {
-                DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(TabAnnee[0].TableauJour[0].dateTri)) / 1000);
-            } else {
-                DateSeconde = 0;
+            for (let indexFor = TabAnnee.length-IndexChoixVisuJourHisto; indexFor >= 0; indexFor--) {
+                //Recherche dernière date dans tableau Année
+                if (TabAnnee[indexFor]?.TableauJour?.[0]?.dateTri != undefined) {
+
+                DateSeconde = Math.floor((new Date(Data[index].dateTri) 
+                    - new Date(TabAnnee[indexFor].TableauJour[0].dateTri)) / 1000);
+                break;
+                }
+
+                //Aucune date dans tableau Année
+                if (indexFor == 0) DateSeconde = 0;
             }
+
         } else {
             DateSeconde = Math.floor((new Date(Data[index].dateTri) - new Date(Data[index+1].dateTri)) / 1000);
         }
@@ -400,9 +419,15 @@ setInterval(async () => {
         intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
 
 
-    } else if (TabAnnee.length !=0 && TabAnnee[0]?.TableauJour != undefined) {
-        LastDate = new Date(TabAnnee[(TabAnnee.length-1)].TableauJour[0].dateTri);
-        intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+    } else if (TabAnnee.length !=0) {
+        for (let index = TabAnnee.length-1; index >= 0; index--) {
+            if (TabAnnee[index]?.TableauJour?.[0]?.dateTri != undefined) {
+
+            LastDate = TabAnnee[index].TableauJour[0].dateTri;
+            intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
+            break;
+            }
+        }
     }
 
     const ReccordInter = Record.RecIntervalle;
@@ -420,12 +445,12 @@ setInterval(async () => {
     };
 
     //Changement de jour
-    const JourActu = new Date().getDate()
+    const JourActu = DateActu.getDate()
     const MemChgmtJourEnCours = JSON.parse(localStorage.getItem("MemChgmtJour"))
 
    if (Preference.JourSemaineDataSaved != JourActu && !MemChgmtJourEnCours) {
     localStorage.setItem("MemChgmtJour", JSON.stringify(true));
-    await ChangementJour ();
+    await ChangementJour(DateActu);
     localStorage.setItem("MemChgmtJour", JSON.stringify(false));
    }
 
@@ -434,12 +459,12 @@ setInterval(async () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
-async function ChangementJour () {
+async function ChangementJour (DateActu) {
     const JourActu = new Date().getDate();
     const DateActuString = new Date().toISOString();
-    const SousJour = new Date();
+    const SousJour = new Date(DateActu);
     SousJour.setDate(SousJour.getDate()-1);
-    const MyId = `${SousJour.toISOString()}`;
+    const MyId = `${SousJour}`;
 
     //Ecriture ligne Jour Semaine Bdd
     await setDoc(doc(db, "TabAnnee", MyId), {
