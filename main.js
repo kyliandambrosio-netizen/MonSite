@@ -350,10 +350,10 @@ async function VisuTabJour(Data, RecalcRecord) {
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 //Calcule des intervalles entres cigs
-                if (index != TabA.TableauJour.length-1 && TabA.TableauJour[index+1] != undefined) {
+                if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri))
 
-                } else if (TabAnnee[indexA-1]?.TableauJour[0] != undefined){
+                } else if (TabAnnee[indexA-1]?.TableauJour?.[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri))
 
                 } else {
