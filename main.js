@@ -112,13 +112,12 @@ BpTest.addEventListener("click", async() => {
 
     TabJour.forEach((Tab) => {
 
-        DateRecacl = new Date(Tab.dateTri);
-        DateRecacl = DateRecacl.setDate(NumJourBpTest.value);
-        console.log(JSON.stringify(DateRecacl))
+        DateRecacl = new Date(Tab.dateTri).setDate(NumJourBpTest.value-1);
+        Tab.dateTri = new Date(DateRecacl).toISOString();
 
     });
 
-    ChangementJour(JSON.stringify(DateRecacl));
+    ChangementJour();
 
 
     await setDoc(doc(db, "GlobalData", "Preference"), {
@@ -423,7 +422,7 @@ setInterval(async () => {
         for (let index = TabAnnee.length-1; index >= 0; index--) {
             if (TabAnnee[index]?.TableauJour?.[0]?.dateTri != undefined) {
 
-            LastDate = TabAnnee[index].TableauJour[0].dateTri;
+            LastDate = new Date(TabAnnee[index].TableauJour[0].dateTri);
             intervalleSeconde = Math.floor((DateActu - LastDate) / 1000);
             break;
             }
@@ -433,6 +432,7 @@ setInterval(async () => {
     const ReccordInter = Record.RecIntervalle;
 
     //Affichage Intervalle denière fum
+
     localStorage.setItem("intervalleSeconde", intervalleSeconde);
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
 
@@ -450,7 +450,7 @@ setInterval(async () => {
 
    if (Preference.JourSemaineDataSaved != JourActu && !MemChgmtJourEnCours) {
     localStorage.setItem("MemChgmtJour", JSON.stringify(true));
-    await ChangementJour(DateActu);
+    await ChangementJour();
     localStorage.setItem("MemChgmtJour", JSON.stringify(false));
    }
 
@@ -459,16 +459,16 @@ setInterval(async () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Changement De Jour
-async function ChangementJour (DateActu) {
+async function ChangementJour () {
     const JourActu = new Date().getDate();
     const DateActuString = new Date().toISOString();
-    const SousJour = new Date(DateActu);
-    SousJour.setDate(SousJour.getDate()-1);
-    const MyId = `${SousJour}`;
+    const SousJour = new Date(TabJour[0].dateTri);
+    //SousJour.setDate(SousJour.getDate()-1);
+    const MyId = `${SousJour.toISOString()}`;
 
     //Ecriture ligne Jour Semaine Bdd
     await setDoc(doc(db, "TabAnnee", MyId), {
-        NumJourSemaine : JSON.stringify(SousJour.getDay()),
+        NumJourSemaine : SousJour.getDay(),
         TableauJour : TabJour
     })
 
