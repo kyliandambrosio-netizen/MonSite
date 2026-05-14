@@ -95,6 +95,7 @@ const NumJourBpTest = document.getElementById("In_NumJourSemaine");
 const BpJourHistoPlus = document.getElementById("BpChoixJourPlus");
 const BpJourHistoMoins = document.getElementById("BpChoixJourMoins");
 const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
+const JourChoixJourHisto = document.getElementById("JourChoixJourVisuTableau");
 let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
@@ -237,9 +238,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
             type : "C"
         })
         
-        console.log((TabAnneeInter[0].dateTri), "si")
         TabAnneeInter.sort((a, b) => new Date(b.dateTri) - new Date(a.dateTri));
-        console.log(TabAnneeInter)
         await updateDoc (doc(db, "TabAnnee", TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id), {
             TableauJour: TabAnneeInter
         })
@@ -296,16 +295,23 @@ async function VisuTabJour(Data, RecalcRecord) {
     TabJourHtml.innerHTML ="";
     let ResultatRecord = 0;
     let RecordActu =0;
+    let DateVisu = 0;
 
     //Choix jour visu tableau
     if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] != undefined) {
         Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
-        const DateVisu = (TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour[0].datetri);
-        ChoixJourHisto.textContent = new Date(DateVisu).getDate();
-        console.log(DateVisu)
+        DateVisu = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour[0].dateTri;
+        ChoixJourHisto.textContent = `${new Date(DateVisu).getDate()} / ${new Date(DateVisu).getMonth()} 
+                                        / ${new Date(DateVisu).getFullYear()}`;
+        JourChoixJourHisto.textContent = `${new Date(DateVisu).toLocaleDateString("fr-FR", { weekday: "long"})}`
+
+    } else if (IndexChoixVisuJourHisto == 0) {
+        ChoixJourHisto.textContent = `${new Date().getDate()} / ${new Date().getMonth()} 
+                                        / ${new Date().getFullYear()}`;
+        JourChoixJourHisto.textContent = `${new Date().toLocaleDateString("fr-FR", { weekday: "long"})}`
     }
 
-    
+
 
     //Création tableau
     Data.forEach((ligne, index) => {
@@ -377,7 +383,6 @@ async function VisuTabJour(Data, RecalcRecord) {
     const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
 
     if (RecalcRecord == true && ChgmtEnCours != true) {
-        console.log("RecalculeRecord")
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 
