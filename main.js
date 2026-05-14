@@ -298,11 +298,14 @@ async function VisuTabJour(Data, RecalcRecord) {
     let RecordActu =0;
 
     //Choix jour visu tableau
-    if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour != undefined) {
+    if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] != undefined) {
         Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
+        const DateVisu = (TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour[0].datetri);
+        ChoixJourHisto.textContent = new Date(DateVisu).getDate();
+        console.log(DateVisu)
     }
 
-    ChoixJourHisto.textContent = IndexChoixVisuJourHisto;
+    
 
     //Création tableau
     Data.forEach((ligne, index) => {
