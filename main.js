@@ -201,7 +201,13 @@ AddCig.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bp Ajout Cig historique
 Bp_AjoutLigneManu.addEventListener("click", async() => {
-    const AjoutLigneDate = new Date();
+    let AjoutLigneDate = 0;
+    if (IndexChoixVisuJourHisto == 0 || !TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0]) {
+        AjoutLigneDate = new Date();
+    } else  {
+        AjoutLigneDate = new Date(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour[0].dateTri);
+    }
+
     const [HeureUser, MinuteUser] = AjoutLigneManu.value.split(":");
 
     AjoutLigneDate.setHours(HeureUser, MinuteUser, 0);
@@ -230,7 +236,10 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
             id : `Ajout${AjourLigneDateString}`,
             type : "C"
         })
-        console.log(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour)
+        
+        console.log((TabAnneeInter[0].dateTri), "si")
+        TabAnneeInter.sort((a, b) => new Date(b.dateTri) - new Date(a.dateTri));
+        console.log(TabAnneeInter)
         await updateDoc (doc(db, "TabAnnee", TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id), {
             TableauJour: TabAnneeInter
         })
