@@ -356,8 +356,8 @@ async function VisuTabJour(Data, RecalcRecord) {
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri)) / 1000
 
-                } else if (TabAnnee[indexA+1]?.TableauJour?.[0] != undefined){
-                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA+1].TableauJour[0].dateTri)) / 1000
+                } else if (TabAnnee[indexA-1]?.TableauJour?.[0] != undefined){
+                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri)) / 1000
                 
                 } else {
                     CalcInter =0;
@@ -366,7 +366,7 @@ async function VisuTabJour(Data, RecalcRecord) {
                 //Recupération intervalle maxi annee pour record
 
                 if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
-                console.log(ResultatRecord, CalcInter)
+   
             })
         })
 
