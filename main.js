@@ -348,9 +348,10 @@ async function VisuTabJour(Data, RecalcRecord) {
     const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
 
     if (RecalcRecord == true && ChgmtEnCours != true) {
-
+        console.log("RecalculeRecord")
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
+                
                 //Calcule des intervalles entres cigs
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri)) / 1000
@@ -365,7 +366,7 @@ async function VisuTabJour(Data, RecalcRecord) {
                 //Recupération intervalle maxi annee pour record
 
                 if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
-
+                console.log(ResultatRecord, CalcInter)
             })
         })
 
@@ -402,6 +403,8 @@ async function SupprimerLigne(id, IndexA) {
         await updateDoc (doc(db, "TabAnnee", TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id), {
             TableauJour: NewTabJour
         })
+
+        VisuTabJour(TabJour, true);
     }
 
     
