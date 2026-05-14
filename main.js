@@ -345,22 +345,24 @@ async function VisuTabJour(Data, RecalcRecord) {
     //Recalcule du record apres changement tabAnnee
     let CalcInter = 0;
     const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
+
     if (RecalcRecord == true && ChgmtEnCours != true) {
 
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 //Calcule des intervalles entres cigs
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
-                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri))
+                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri)) / 1000
 
-                } else if (TabAnnee[indexA-1]?.TableauJour?.[0] != undefined){
-                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri))
-
+                } else if (TabAnnee[indexA+1]?.TableauJour?.[0] != undefined){
+                    CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA+1].TableauJour[0].dateTri)) / 1000
+                
                 } else {
                     CalcInter =0;
                 }
 
                 //Recupération intervalle maxi annee pour record
+
                 if (ResultatRecord < CalcInter) ResultatRecord = CalcInter;
 
             })
