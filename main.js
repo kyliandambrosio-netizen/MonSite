@@ -90,8 +90,6 @@ const TabJourHtml = document.getElementById("TabVisuJour");
 const Bp_RazTotal = document.getElementById("RazTotal");
 const Bp_AjoutLigneManu = document.getElementById("Bp_AddCig_Historique");
 const AjoutLigneManu = document.getElementById("AjoutLigneManu");
-const BpTest = document.getElementById("Bp_Test");
-const NumJourBpTest = document.getElementById("In_NumJourSemaine");
 const BpJourHistoPlus = document.getElementById("BpChoixJourPlus");
 const BpJourHistoMoins = document.getElementById("BpChoixJourMoins");
 const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
@@ -103,30 +101,6 @@ let Mychart
 
 //Import Chart.js 
 import Chart from "https://cdn.jsdelivr.net/npm/chart.js/auto/+esm";
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Bp Test >>> Changement de jour
-BpTest.addEventListener("click", async() => {
-    const DateActu = new Date();
-    DateActu.setDate(NumJourBpTest.value);
-    let DateRecacl = 0;
-
-    TabJour.forEach((Tab) => {
-
-        DateRecacl = new Date(Tab.dateTri).setDate(NumJourBpTest.value-1);
-        Tab.dateTri = new Date(DateRecacl).toISOString();
-
-    });
-
-    ChangementJour();
-
-
-    await setDoc(doc(db, "GlobalData", "Preference"), {
-        JourSemaineDataSaved: DateActu.getDate()-1
-    })
-    NumJourBpTest.value = 0;
-})
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,14 +232,14 @@ function AffGraphique(Periode) {
 
     let Data = [0, 0, 0, 0, 0, 0, 0];
     let Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-    const NbrJouraRecup = JourActu-1;
 
     //Maj Data avec jour actu
     Data[JourActu-1] = TabJour.length;
 
-    //Récuperation Data
+    //Récuperation Data Tab Annee
+    
     TabAnnee.forEach(Tab => {
-        Data[Tab.NumJourSemaine-1] = Tab.TableauJour.length
+        Data[new Date(Tab.TableauJour[0]?.dateTri).getDay()-1] = Tab.TableauJour.length
     })
 
     //Création graphique si non existant
@@ -301,12 +275,12 @@ async function VisuTabJour(Data, RecalcRecord) {
     if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] != undefined) {
         Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
         DateVisu = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour[0].dateTri;
-        ChoixJourHisto.textContent = `${new Date(DateVisu).getDate()} / ${new Date(DateVisu).getMonth()} 
+        ChoixJourHisto.textContent = `${new Date(DateVisu).getDate().toString().padStart(2, "0")} / ${new Date(DateVisu).getMonth().toString().padStart(2, "0")} 
                                         / ${new Date(DateVisu).getFullYear()}`;
         JourChoixJourHisto.textContent = `${new Date(DateVisu).toLocaleDateString("fr-FR", { weekday: "long"})}`
 
     } else if (IndexChoixVisuJourHisto == 0) {
-        ChoixJourHisto.textContent = `${new Date().getDate()} / ${new Date().getMonth()} 
+        ChoixJourHisto.textContent = `${new Date().getDate().toString().padStart(2, "0")} / ${new Date().getMonth().toString().padStart(2, "0")} 
                                         / ${new Date().getFullYear()}`;
         JourChoixJourHisto.textContent = `${new Date().toLocaleDateString("fr-FR", { weekday: "long"})}`
     }
@@ -516,14 +490,14 @@ async function ChangementJour () {
         DateTri = new Date().getDate()-1;
 
     const SousJour = new Date(DateTri);
-    //SousJour.setDate(SousJour.getDate()-1);
     const MyId = `${SousJour.toISOString()}`;
 
     //Ecriture ligne Jour Semaine Bdd
-    await setDoc(doc(db, "TabAnnee", MyId), {
-        NumJourSemaine : SousJour.getDay(),
-        TableauJour : TabJour
-    })
+    if (TabJour.length != 0) {
+        await setDoc(doc(db, "TabAnnee", MyId), {
+            TableauJour : TabJour
+        })
+    }
 
     //Ecriture Jour date saved 
     await setDoc(doc(db, "GlobalData", "Preference"), {
