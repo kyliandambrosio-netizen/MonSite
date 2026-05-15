@@ -227,8 +227,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
     const DateActu = new Date();
-    let JourActu = DateActu.getDay();
-        if (JourActu == 0) JourActu = 7
+    let JourActu = 0
     let Data = [];
     let Label = [];
     let index = 0;
@@ -236,25 +235,35 @@ function AffGraphique(Periode) {
     let Mois = 0;
     let MoisActu =0;
     let MinTab = 0;
-    let MaxTab = 20; 
+    let MaxTab = 15; 
     let StepTab = 5;
 
     switch (Periode) {
         case "AnalyseSemaine":
             Data = [0, 0, 0, 0, 0, 0, 0];
             Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            JourActu = DateActu.getDay();
+                if (JourActu == 0) JourActu = 7
 
             //Maj Data avec jour actu
             Data[JourActu-1] = TabJour.length;
 
             //Récuperation Data Tab Annee
-            TabAnnee.forEach(Tab => {
-            Data[new Date(Tab.TableauJour[0]?.dateTri).getDay()-1] = Tab.TableauJour.length
-            })
+           
+            for (let index = TabAnnee.length-1; index >= ((TabAnnee.length-1)-(7 -(JourActu-1))); index--) {
+
+                if (TabAnnee[index].TableauJour[0]?.dateTri) {
+
+                    let JourCalc = new Date(TabAnnee[index].TableauJour[0]?.dateTri).getDay();
+                        if (JourCalc == 0) JourCalc = 7   
+
+                    Data[JourCalc-1] = TabAnnee[index].TableauJour.length
+                }
+            }
 
             //Bornage Y graphique
             MinTab = 0;
-            MaxTab = 20; 
+            MaxTab = 15; 
             StepTab = 5; 
             break;
 
@@ -278,7 +287,7 @@ function AffGraphique(Periode) {
 
             //Bornage Y graphique
             MinTab = 0;
-            MaxTab = 20; 
+            MaxTab = 15; 
             StepTab = 5; 
 
             break;
