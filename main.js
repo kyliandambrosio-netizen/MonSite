@@ -229,18 +229,71 @@ function AffGraphique(Periode) {
     const DateActu = new Date();
     let JourActu = DateActu.getDay();
         if (JourActu == 0) JourActu = 7
+    let Data = [];
+    let Label = [];
+    let index = 0;
+    let JourMois = 0;
+    let Mois = 0;
+    let MoisActu =0;
+    switch (Periode) {
+        case "AnalyseSemaine":
+            Data = [0, 0, 0, 0, 0, 0, 0];
+            Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
-    let Data = [0, 0, 0, 0, 0, 0, 0];
-    let Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            //Maj Data avec jour actu
+            Data[JourActu-1] = TabJour.length;
 
-    //Maj Data avec jour actu
-    Data[JourActu-1] = TabJour.length;
+            //Récuperation Data Tab Annee
+            TabAnnee.forEach(Tab => {
+            Data[new Date(Tab.TableauJour[0]?.dateTri).getDay()-1] = Tab.TableauJour.length
+            })
 
-    //Récuperation Data Tab Annee
-    
-    TabAnnee.forEach(Tab => {
-        Data[new Date(Tab.TableauJour[0]?.dateTri).getDay()-1] = Tab.TableauJour.length
-    })
+            break;
+
+        case "AnalyseMois":
+            //Initialisation labels
+            for (let index = 1; index <= 31; index++) {Label[index] = index}
+
+            //Jour Actu
+            Data[new Date().getDate()] = TabJour.length;
+
+            //Récuperation Data Tab Annee
+            TabAnnee.forEach((Tab) => {
+                JourMois = new Date(Tab.TableauJour[0]?.dateTri).getDate()  || 0;
+                Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth()  || 0;
+                MoisActu = new Date().getMonth();
+
+                if (Mois == MoisActu) {
+                    Data[JourMois] = Tab.TableauJour.length
+                }
+            })
+
+            break;
+
+        case "AnalyseAnnee":
+            MoisActu = new Date().getMonth();
+            console.log(MoisActu)
+
+            //Récuperation Data Tab Annee
+            for (let index = 1; index <= 12; index++) {
+                let NbrCigMois = 0;
+
+                Label[index-1] = index
+
+                TabAnnee.forEach((Tab) => {
+                    Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth() || 0;
+
+                    if (Mois == index) NbrCigMois += Tab.TableauJour.length
+
+                })
+
+                if (index == MoisActu) NbrCigMois += TabJour.length
+
+                Data[index] = NbrCigMois;
+            }
+
+            break;
+    }
 
     //Création graphique si non existant
     if (Graphique.style.display == "") {
@@ -256,8 +309,9 @@ function AffGraphique(Periode) {
             },
         });
     } 
-    Mychart.data.datasets[0].labels = Label;
+    Mychart.data.labels = Label;
     Mychart.data.datasets[0].data = Data;
+    Mychart.resize();
     Mychart.update();
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
