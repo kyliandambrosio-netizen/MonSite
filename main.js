@@ -235,6 +235,10 @@ function AffGraphique(Periode) {
     let JourMois = 0;
     let Mois = 0;
     let MoisActu =0;
+    let MinTab = 0;
+    let MaxTab = 20; 
+    let StepTab = 5;
+
     switch (Periode) {
         case "AnalyseSemaine":
             Data = [0, 0, 0, 0, 0, 0, 0];
@@ -248,6 +252,10 @@ function AffGraphique(Periode) {
             Data[new Date(Tab.TableauJour[0]?.dateTri).getDay()-1] = Tab.TableauJour.length
             })
 
+            //Bornage Y graphique
+            MinTab = 0;
+            MaxTab = 20; 
+            StepTab = 5; 
             break;
 
         case "AnalyseMois":
@@ -268,11 +276,15 @@ function AffGraphique(Periode) {
                 }
             })
 
+            //Bornage Y graphique
+            MinTab = 0;
+            MaxTab = 20; 
+            StepTab = 5; 
+
             break;
 
         case "AnalyseAnnee":
             MoisActu = new Date().getMonth();
-            console.log(MoisActu)
 
             //Récuperation Data Tab Annee
             for (let index = 1; index <= 12; index++) {
@@ -292,6 +304,11 @@ function AffGraphique(Periode) {
                 Data[index] = NbrCigMois;
             }
 
+            //Bornage Y graphique
+            MinTab = 0;
+            MaxTab = 300; 
+            StepTab = 75; 
+
             break;
     }
 
@@ -307,12 +324,26 @@ function AffGraphique(Periode) {
                     data: Data
                 }],
             },
+            options : {
+                scales: {
+                    y: {
+                        min: MinTab,
+                        max: MaxTab,
+                        ticks: {
+                            stepSize : StepTab
+                        }
+                    }
+                }
+            }
         });
-    } 
-    Mychart.data.labels = Label;
-    Mychart.data.datasets[0].data = Data;
-    Mychart.resize();
-    Mychart.update();
+    } else {
+        Mychart.data.labels = Label;
+        Mychart.data.datasets[0].data = Data;
+        Mychart.options.scales.y.max = MaxTab
+        Mychart.options.scales.y.ticks.stepSize = StepTab
+        Mychart.resize();
+        Mychart.update();
+    }
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
