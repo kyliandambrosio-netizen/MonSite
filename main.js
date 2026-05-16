@@ -97,6 +97,7 @@ const BpJourHistoMoins = document.getElementById("BpChoixJourMoins");
 const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
 const JourChoixJourHisto = document.getElementById("JourChoixJourVisuTableau");
 const ParamIntervalle = document.getElementById("ParamIntervalle");
+const BpParamIntervalle = document.getElementById("BpValideParamIntervale");
 const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
