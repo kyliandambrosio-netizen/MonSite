@@ -159,6 +159,23 @@ body {
 		width: 300px;
 		
 	}
+
+	#Param button, input{
+		font-size: 40px;
+		padding: 0;
+		width: 300px;
+	}
+
+	#Param input{
+		border-radius: 13px;
+	}
+
+	#MoyenneJourIntervalle, #MoyenneJourNbrF{
+		padding-left: 20px;
+		padding-bottom: 0;
+		padding-top: 0;
+	}
+	
 }
 
 /*Ordinateur*/
@@ -303,11 +320,11 @@ body {
 
 /*Tous device*/
 .MoyenneNbr{
-	display: flex;
+	display: inline-flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	margin-top: 10px;
+	margin-top: 1px;
 	padding: 0;
 }
 
