@@ -401,7 +401,7 @@ async function AffGraphique(Periode) {
     
 
     for (let index = 0; index < DataForMoyenne.length; index++) CalcMoyenneInter =+ DataForMoyenne[index];
-        console.log(CalcMoyenneInter / IndexMoyenne)
+        console.log(CalcMoyenneInter , IndexMoyenne)
     SpanMoyenneJourIntervalle.textContent = await calcAffDate(CalcMoyenneInter / IndexMoyenne);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -501,6 +501,8 @@ async function VisuTabJour(Data, RecalcRecord) {
     const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
 
     if (RecalcRecord == true && ChgmtEnCours != true) {
+        DataForMoyenne = [];
+        IndexMoyenne = 0;
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 
@@ -514,7 +516,7 @@ async function VisuTabJour(Data, RecalcRecord) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri)) / 1000
                 
                 } else {
-                    CalcInter =0;
+                    CalcInter = 0;
                 }
 
                 //Recupération intervalle maxi annee pour record
