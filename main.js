@@ -51,6 +51,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 
         //Refresh Object Html
         ParamIntervalle.value = `${Preference.IntervalleVoulu[0]}:${Preference.IntervalleVoulu[1]}`;
+        ParamNbrSemaine.value = Preference.NbrMoyVoulu;
     })
 
     /////////////////////////////////////////////
@@ -98,6 +99,8 @@ const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
 const JourChoixJourHisto = document.getElementById("JourChoixJourVisuTableau");
 const ParamIntervalle = document.getElementById("ParamIntervalle");
 const BpParamIntervalle = document.getElementById("BpValideParamIntervale");
+const ParamNbrSemaine = document.getElementById("ParamNbrSemaine");
+const BpParamNbrSemaine = document.getElementById("BpValideParamNbrSemaine");
 const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
@@ -707,21 +710,29 @@ BpParamIntervalle.addEventListener("click", () => {
     const [ParamInterH, ParamInterM] = ParamIntervalle.value.split(":");
     const ParamInterHInter = ParamInterH * 3600; //Convertion heure en seconde
     const ParamInterMInter = ParamInterM * 60; //Convertion Minute en seconde
-    const InterUser = ParamInterHInter + ParamInterMInter;
-    ParamInterHInter.toString().padStart(2, "0");
-    ParamInterMInter.toString().padStart(2, "0");
 
     //Ecriture nouvelle data dans Bdd
     if (Preference.IntervalleVoulu != [ParamInterH, ParamInterM]) {
-        Preference.IntervalleVoulu = InterUser
         updateDoc(doc(db, "GlobalData", "Preference"), {
             IntervalleVoulu : [ParamInterH, ParamInterM],
         });
 
         BpParamIntervalle.style.backgroundColor = "white"   
     }
+})
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Gestion Parametre Nbr moyenne semaine voulu
+BpParamNbrSemaine.addEventListener("click", () => {
+    //Ecriture nouvelle data dans Bdd
+    if (Preference.NbrMoySemaineVoulu != ParamNbrSemaine.value) {
+        updateDoc(doc(db, "GlobalData", "Preference"), {
+            NbrMoyVoulu : ParamNbrSemaine.value,
+        });
+
+        BpParamNbrSemaine.style.backgroundColor = "white"   
+    }
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -732,6 +743,16 @@ ParamIntervalle.addEventListener("change", (e) => {
 
     if (Preference.IntervalleVoulu != [ParamInterH, ParamInterM]) {
         BpParamIntervalle.style.backgroundColor = "red"      
+    }
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Visu Modification non valider Reglage > Intervalle voulu
+ParamNbrSemaine.addEventListener("change", (e) => {
+    if (Preference.NbrMoySemaineVoulu != ParamNbrSemaine.value) {
+        BpParamNbrSemaine.style.backgroundColor = "red"      
     }
 })
 
@@ -784,9 +805,21 @@ function Moyenne(Periode) {
     const Interheure = Math.floor((ResultatInter) / 3600).toString().padStart(2, "0");
     const Interminute = Math.floor((ResultatInter % 3600) / 60).toString().padStart(2, "0");
     const intervalle = `${Interheure} h ${Interminute} m`;
+    const IntervalleActu = localStorage.getItem("intervalleSeconde")
+
 
     SpanMoyenneJourNbrF.textContent = (Math.round(CalcMoyenneNbrF / NbrDataNbrF * 10)) / 10;
+    if (SpanMoyenneJourNbrF.textContent <= Preference.NbrMoyVoulu) {
+        SpanMoyenneJourNbrF.style.color = "green";
+    } else {
+        SpanMoyenneJourNbrF.style.color = "red";
+    }
     SpanMoyenneJourIntervalle.textContent = intervalle;
+    if (ResultatInter >= IntervalleActu) {
+        SpanMoyenneJourIntervalle.style.color = "green";
+    } else {
+        SpanMoyenneJourIntervalle.style.color = "red";
+    }
 
 }
 
