@@ -3,187 +3,33 @@ body {
 	font-family: Arial, sans-serif;
 	background: #111;
 	color: aquamarine;
+	min-height: 100vh;
 }
 
-.BpChoixPage {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	position:absolute;
-	gap: 15px;
-	bottom: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	text-align: center;
-
-}
- 
-.BpChoixPage button {
-	border-radius: 30px;
-	background-color: grey;
-	font-size: 160px;
-}
-
-#Home {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	position:absolute;
-	gap: 5px;
-	top: 10%;
-	left: 50%;
-	width: 500px;
-	transform: translateX(-50%);
-	text-align: center;
-}
-
-
-#Cpt_CigJour {
-	font-size: 300px;
-}
-
-#Bp_AddCig, #Bp_AddJ{
-	font-size: 300px;
-	border-radius: 300px;
-	padding: 6px;
-}
-
-
-#Analyse {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	position:absolute;
-	top: -40px;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-
-#Historique {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	position:absolute;
-	top: -30px;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-
-@media (min-width: 1000px) {
-		.Tab {
-		text-align: center;
-		top: 50px;
-		left: 50px;
-		font-size: 40px;
-	}
-		
-	#Cpt_CigJour {
-		font-size: 60px;
-	}
-
-	.BpChoixPage button {
-		padding : 10px;
-		border-radius: 30px;
-		background-color: grey;
-		font-size: 70px;
-	}
-
-	#Home {
+/*SmartPhone*/
+@media (max-width: 1000px) {
+	.Container{
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		position:absolute;
 		gap: 5px;
-		top: 1%;
-		left: 50%;
-		width: 500px;
-		transform: translateX(-50%);
+		top: 10%;
+		width: 100vw;
+		height: 100vh;
 		text-align: center;
 	}
+}
 
-	#Bp_AddCig, #Bp_AddJ{
-		font-size: 60px;
-		border-radius: 60px;
-		padding: 6px;
+/*Ordinateur*/
+@media (min-width: 1000px) {
+	.Container{
+		display: flex;
+		flex-direction: column;
+		position:absolute;
+		gap: 5px;
+		top: 10%;
+		width: 100vw;
+		height: 100vh;
+		text-align: center;
 	}
-
-}
-
-@media (hover: hover){
-#Bp_AddCig:hover, #Bp_AddJ:hover {
-	background-color: green;
-	color: red;
-}
-}
-
-
-
-.tabJourScroll {
-	height: 500px;
-	width: 700px;
-	overflow-y: auto;
-}
-
-.tabJourScroll table {
-	border-collapse: collapse;
-	width: 100%;
-}	
-
-.tabJourScroll thead th {
-	top: 0;
-	background-color: rgb(148, 144, 144);
-	z-index: 10;
-}
-
-.tabJourScroll th,
-.tabJourScroll td {
-	border: 1px solid #ccc;
-	padding: 10px;
-}
-
-
-td {
-	background-color: rgb(148, 144, 144);
-	font-size: 20px;
-}
-
-table button {
-	background-color: rgb(148, 144, 144);
-	color: white;
-	border: none;
-	font-size: 15px;
-}
-
-
-#Bp_Test{
-	font-size: 20px;
-	border-radius: 60px;
-	padding: 6px;
-}
-
-
-#MyChart{
-	height: 300px;
-}
-
-#ChoixJourVisuTableau{
-	font-size: 30px;
-	text-align: center;
-	width: 20px;
-	background-color: white;
-	color: black;
-
-}
-
-#BpChoixJourMoins, #BpChoixJourPlus {
-	height: 30px;;
-}
-
-#Bp_AddCig_Historique, #AjoutLigneManu{
-	font-size: 25px;
-	text-align: center;
-	vertical-align: middle;
-	border-radius: 20%;
 }
