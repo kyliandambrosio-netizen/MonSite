@@ -8,20 +8,77 @@ body {
 
 /*SmartPhone*/
 @media (max-width: 1000px) {
+	h1{
+		font-size: 170px;
+	}
+
 	.Container{
 		display: flex;
 		flex-direction: column;
 		position:absolute;
-		gap: 5px;
-		top: 10%;
+		gap: 100px;
+		top: -6%;
 		width: 100vw;
-		height: 100vh;
+		height: 80vh;
 		text-align: center;
 	}
+
+	.Container p{
+		font-size: 60px;
+	}
+
+	.Container span{
+		font-size: 75px;
+	}
+
+	.Container #Cpt_CigJour{
+		font-size: 200px;
+	}
+
+	.Container #Bp_AddCig{
+		height: 200px;
+		width: 200px;
+
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+
+		border-radius: 100%;
+		background-color: orangered;
+		color: #111;
+
+		font-size: 100px;
+	}
+
+	.BpChoixPage{
+		display: flex;
+		flex-direction: row;
+		position:absolute;
+		font-size: 200px;
+		gap: 20px;
+		top: 88%;
+		width: 100vw;
+		height: 20vh;
+		text-align: center;
+	}
+
+	.BpChoixPage button{
+		border-radius: 50px;
+		background-color: grey;
+		font-size: 150px;
+		width: 350px;
+		height: 200px;
+	}
+
+
 }
 
 /*Ordinateur*/
 @media (min-width: 1000px) {
+	h1{
+		font-size: 100px;
+	}
+
 	.Container{
 		display: flex;
 		flex-direction: column;
