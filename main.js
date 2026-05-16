@@ -271,6 +271,8 @@ function AffGraphique(Periode) {
     let MinTab = 0;
     let MaxTab = 15; 
     let StepTab = 5;
+    let MoyenneNbrF = 0;
+    let NbrMoyenneNbrF = 0;
 
     switch (Periode) {
         case "AnalyseSemaine":
@@ -281,16 +283,20 @@ function AffGraphique(Periode) {
 
             //Maj Data avec jour actu
             Data[JourActu-1] = TabJour.length;
+            MoyenneNbrF += TabJour.length;
+            NbrMoyenneNbrF ++;
 
             //Récuperation Data Tab Annee
-            const NbrLigneRecu = ((TabAnnee.length-1)-(JourActu-2));
-            for (let index = TabAnnee.length-1; index >= NbrLigneRecu; index--) {
+            const NbrLigneRecup = ((TabAnnee.length-1)-(JourActu-2));
+            for (let index = TabAnnee.length-1; index >= NbrLigneRecup; index--) {
 
                 if (TabAnnee[index].TableauJour[0]?.dateTri && index >= 0) {
                     let JourCalc = new Date(TabAnnee[index].TableauJour[0]?.dateTri).getDay();
                         if (JourCalc == 0) JourCalc = 7   
 
                     Data[JourCalc-1] = TabAnnee[index].TableauJour.length
+                    MoyenneNbrF += TabAnnee[index].TableauJour.length;
+                    NbrMoyenneNbrF ++;
                 }
             }
 
@@ -386,6 +392,9 @@ function AffGraphique(Periode) {
         Mychart.resize();
         Mychart.update();
     }
+
+    //Ecriture objet Moyenne
+    SpanMoyenneJourNbrF.textContent = (Math.round((MoyenneNbrF / NbrMoyenneNbrF) * 10) / 10);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
