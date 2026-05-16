@@ -651,9 +651,10 @@ async function ChangementJour () {
     let DateTri = 0;
     if (TabJour[0]?.dateTri != undefined) {
         DateTri = TabJour[0]?.dateTri
+    } else {
         TabJour = [];
-    } else 
         DateTri = new Date().getDate()-1;
+    }
 
     const SousJour = new Date(DateTri);
     const MyId = `${SousJour.toISOString()}`;
@@ -664,7 +665,7 @@ async function ChangementJour () {
     })
 
     //Ecriture Jour date saved 
-    await setDoc(doc(db, "GlobalData", "Preference"), {
+    await updateDoc(doc(db, "GlobalData", "Preference"), {
         JourSemaineDataSaved: JourActu
     })
 
