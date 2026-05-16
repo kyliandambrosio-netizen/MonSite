@@ -10,18 +10,19 @@ body {
 @media (max-width: 1000px) {
 	h1{
 		font-size: 150px;
+		margin-top: 55px;
+		padding: 0;
 	}
 
 	.Container{
 		display: flex;
 		flex-direction: column;
 		position:absolute;
-		gap: 100px;
 		top: -2%;
 		width: 100vw;
 		height: 40vh;
 		text-align: center;
-	}
+		}
 
 	.Container p{
 		font-size: 60px;
@@ -75,7 +76,6 @@ body {
 		flex-direction: row;
 		position:absolute;
 		font-size: 200px;
-		gap: 20px;
 		bottom: -14%;
 		width: 100vw;
 		height: 20vh;
@@ -97,6 +97,9 @@ body {
 @media (min-width: 1000px) {
 	h1{
 		font-size: 80px;
+		margin-top: 40px;
+		margin-bottom: 30px;;
+		padding: 0;
 	}
 
 	.Container{
@@ -105,14 +108,17 @@ body {
 		position:absolute;
 		justify-content: center;
 		align-items: center;
+		margin : 0;
 		top: -2%;
 		width: 100vw;
 		height: 40vh;
 		text-align: center;
+		
 	}
 
 	.Container p{
 		font-size: 40px;
+		margin: 30px;
 	}
 
 	.Container span{
@@ -156,10 +162,10 @@ body {
 
 	#MyChart{
 		position: relative;
-		left: 33.6%;
+		left: 28%;
 		max-width: 600px;
 		height: 400px;
-		max-height: 400px;
+		max-height: 400px;;
 	}
 
 	.BpChoixPage{
@@ -169,7 +175,7 @@ body {
 		align-items: center;
 		position:absolute;
 		gap: 20px;
-		bottom: -4%;
+		bottom: -7%;
 		width: 100vw;
 		height: 20vh;
 		text-align: center;
@@ -191,6 +197,8 @@ body {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	margin-top: 10px;
+	padding: 0;
 }
 
 .MoyenneInter{
@@ -198,5 +206,6 @@ body {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: -10px
+	margin-top: 0;
+	padding: 0;
 }
