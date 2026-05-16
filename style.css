@@ -129,7 +129,7 @@ body {
 	.tabJourScroll table {
 	border-collapse: collapse;
 	width: 100%;
-	margin-bottom: 20px;
+	margin-top: auto;
 }
 
 	.Container #BpChoixJourMoins, #BpChoixJourPlus{
@@ -157,6 +157,7 @@ body {
 		font-size: 40px;
 		border-radius: 13px;
 		width: 300px;
+		
 	}
 }
 
@@ -295,7 +296,7 @@ body {
 	.tabJourScroll table {
 	border-collapse: collapse;
 	width: 100%;
-	margin-top: 161px;
+	margin-top: auto;
 }
 
 }
