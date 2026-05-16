@@ -126,6 +126,31 @@ body {
 		font-size: 40px;
 	}	
 
+	.Container #BpChoixJourMoins, #BpChoixJourPlus{
+		font-size: 40px;
+		width: 250px;
+	}
+
+	.Container #JourChoixJourVisuTableau{
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		width: 150px;
+		font-size: 90px;
+		padding: 130px;
+		padding-bottom: 0;
+	}
+
+	.Container #Bp_AddCig_Historique{
+		font-size: 40px;
+		width: 300px;
+	}
+
+	.Container #AjoutLigneManu{
+		font-size: 40px;
+		border-radius: 13px;
+		width: 300px;
+	}
 }
 
 /*Ordinateur*/
