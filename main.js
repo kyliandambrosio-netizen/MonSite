@@ -103,7 +103,6 @@ const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 let IndexChoixVisuJourHisto = 0;
 let DataForMoyenne = [];
-let IndexMoyenne = 0;
 
 //Variable Global 
 let Mychart
@@ -276,7 +275,7 @@ async function AffGraphique(Periode) {
     let MoyenneNbrF = 0;
     let NbrMoyenneNbrF = 0;
     let CalcMoyenneInter = 0;
-
+    
     switch (Periode) {
         case "AnalyseSemaine":
             Data = [0, 0, 0, 0, 0, 0, 0];
@@ -399,10 +398,8 @@ async function AffGraphique(Periode) {
     //Ecriture objets Moyennes
     SpanMoyenneJourNbrF.textContent = (Math.round((MoyenneNbrF / NbrMoyenneNbrF) * 10) / 10);
     
-
-    for (let index = 0; index < DataForMoyenne.length; index++) CalcMoyenneInter =+ DataForMoyenne[index];
-        console.log(CalcMoyenneInter , IndexMoyenne)
-    SpanMoyenneJourIntervalle.textContent = await calcAffDate(CalcMoyenneInter / IndexMoyenne);
+    for (let index = 0; index < DataForMoyenne.length; index++) CalcMoyenneInter += DataForMoyenne[index]
+    SpanMoyenneJourIntervalle.textContent = await calcAffDate(CalcMoyenneInter / DataForMoyenne.length);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -502,7 +499,6 @@ async function VisuTabJour(Data, RecalcRecord) {
 
     if (RecalcRecord == true && ChgmtEnCours != true) {
         DataForMoyenne = [];
-        IndexMoyenne = 0;
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 
@@ -510,7 +506,6 @@ async function VisuTabJour(Data, RecalcRecord) {
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri)) / 1000
                     DataForMoyenne.push(CalcInter)
-                    IndexMoyenne ++;
 
                 } else if (TabAnnee[indexA-1]?.TableauJour?.[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri)) / 1000
