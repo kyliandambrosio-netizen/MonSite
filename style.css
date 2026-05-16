@@ -19,7 +19,7 @@ body {
 		gap: 100px;
 		top: -2%;
 		width: 100vw;
-		height: 80vh;
+		height: 40vh;
 		text-align: center;
 	}
 
@@ -61,7 +61,13 @@ body {
 
 	#BpChoixAnalyse button{
 		font-size: 55px;
+		border-radius: 15px;
+		width: 250px;
 		color: #111;
+	}
+
+	#ContGraphique{
+		position: relative;
 	}
 
 	.BpChoixPage{
@@ -90,17 +96,87 @@ body {
 /*Ordinateur*/
 @media (min-width: 1000px) {
 	h1{
-		font-size: 100px;
+		font-size: 80px;
 	}
 
 	.Container{
 		display: flex;
 		flex-direction: column;
 		position:absolute;
-		gap: 5px;
-		top: 10%;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+		top: -2%;
 		width: 100vw;
-		height: 100vh;
+		height: 40vh;
 		text-align: center;
+	}
+
+	.Container p{
+		font-size: 40px;
+	}
+
+	.Container span{
+		font-size: 40px;
+	}
+
+	.Container #Cpt_CigJour{
+		font-size: 75px;
+	}
+
+	.Container #Bp_AddCig{
+		height: 100px;
+		width: 100px;
+
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+
+		border-radius: 100%;
+		background-color: orangered;
+		color: #111;
+
+		font-size: 50px;
+	}
+
+	#BpChoixAnalyse {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: 30px;
+
+	}
+
+	#BpChoixAnalyse button{
+		font-size: 30px;
+		border-radius: 15px;
+		width: 200px;
+		color: #111;
+	}
+
+	#ContGraphique{
+		position: relative;
+	}
+
+	.BpChoixPage{
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		position:absolute;
+		gap: 20px;
+		bottom: -3%;
+		width: 100vw;
+		height: 20vh;
+		text-align: center;
+	}
+
+	.BpChoixPage button{
+		border-radius: 10px;
+		background-color: grey;
+		font-size: 60px;
+		width: 100px;
+		height: 100px;
 	}
 }
