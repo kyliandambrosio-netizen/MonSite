@@ -90,6 +90,41 @@ body {
 		height: 125px;
 	}
 
+	.Container .tabJourScroll{
+	display: inline-flex;
+	border-collapse: collapse;
+	align-items: center;
+	justify-content: center;
+	height: 450px;
+	width: 850px;
+	overflow-y: auto;
+}	
+
+	.tabJourScroll thead th {
+		top: 0;
+		background-color: rgb(148, 144, 144);
+		z-index: 10;
+	}
+
+	.tabJourScroll th,
+	.tabJourScroll td {
+		border: 1px solid #ccc;
+		padding: 15px;
+	}
+
+
+	td {
+		background-color: rgb(148, 144, 144);
+		font-size: 40px;
+		margin: 0;
+	}
+
+	table button {
+		background-color: rgb(148, 144, 144);
+		color: white;
+		border: none;
+		font-size: 40px;
+	}	
 
 }
 
@@ -189,6 +224,42 @@ body {
 		height: 65px;
 	}
 
+	.Container .tabJourScroll{
+	display: inline-flex;
+	border-collapse: collapse;
+	align-items: center;
+	justify-content: center;
+	height: 450px;
+	width: 850px;
+	overflow-y: auto;
+}	
+
+	.tabJourScroll thead th {
+		top: 0;
+		background-color: rgb(148, 144, 144);
+		z-index: 10;
+	}
+
+	.tabJourScroll th,
+	.tabJourScroll td {
+		border: 1px solid #ccc;
+		padding: 15px;
+	}
+
+
+	td {
+		background-color: rgb(148, 144, 144);
+		font-size: 20px;
+		margin: 0;
+	}
+
+	table button {
+		background-color: rgb(148, 144, 144);
+		color: white;
+		border: none;
+		font-size: 25px;
+	}
+
 }
 
 /*Tous device*/
@@ -208,4 +279,9 @@ body {
 	justify-content: center;
 	margin-top: 0;
 	padding: 0;
+}
+
+.tabJourScroll table {
+	border-collapse: collapse;
+	width: 100%;
 }
