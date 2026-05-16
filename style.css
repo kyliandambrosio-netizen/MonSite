@@ -30,20 +30,21 @@ body {
 	justify-content: center;
 	position:absolute;
 	gap: 5px;
-	top: 1%;
+	top: 10%;
 	left: 50%;
 	width: 500px;
 	transform: translateX(-50%);
 	text-align: center;
 }
 
+
 #Cpt_CigJour {
 	font-size: 300px;
 }
 
 #Bp_AddCig, #Bp_AddJ{
-	font-size: 60px;
-	border-radius: 60px;
+	font-size: 300px;
+	border-radius: 300px;
 	padding: 6px;
 }
 
@@ -71,39 +72,52 @@ body {
 
 
 @media (min-width: 1000px) {
-	.Tab {
-	text-align: center;
-	top: 50px;
-	left: 50px;
-	font-size: 40px;
-}
-	
-#Cpt_CigJour {
-	font-size: 60px;
-}
+		.Tab {
+		text-align: center;
+		top: 50px;
+		left: 50px;
+		font-size: 40px;
+	}
+		
+	#Cpt_CigJour {
+		font-size: 60px;
+	}
 
-.BpChoixPage button {
-	padding : 10px;
-	border-radius: 30px;
-	background-color: grey;
-	font-size: 70px;
-}
+	.BpChoixPage button {
+		padding : 10px;
+		border-radius: 30px;
+		background-color: grey;
+		font-size: 70px;
+	}
+
+	#Home {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		position:absolute;
+		gap: 5px;
+		top: 1%;
+		left: 50%;
+		width: 500px;
+		transform: translateX(-50%);
+		text-align: center;
+	}
+
+	#Bp_AddCig, #Bp_AddJ{
+		font-size: 60px;
+		border-radius: 60px;
+		padding: 6px;
+	}
 
 }
 
 @media (hover: hover){
-#Bp_AddCig:hover {
+#Bp_AddCig:hover, #Bp_AddJ:hover {
 	background-color: green;
 	color: red;
 }
 }
 
-@media (hover: hover){
-#Bp_AddJ:hover {
-	background-color: green;
-	color: red;
-}
-}
 
 
 .tabJourScroll {
