@@ -97,7 +97,9 @@ const BpJourHistoMoins = document.getElementById("BpChoixJourMoins");
 const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
 const JourChoixJourHisto = document.getElementById("JourChoixJourVisuTableau");
 const ParamIntervalle = document.getElementById("ParamIntervalle");
-const BpParamIntervalle = document.getElementById("BpValideParamIntervale");
+const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
+const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
+const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
@@ -147,6 +149,33 @@ window.showOngletchoixAnalyse = function(Page) {
     })
 
     AffGraphique(Page)
+
+    //Visualisation choix analyse en cours 
+    switch (Page) {
+        case "AnalyseSemaine":
+            BpChoixAnalyseSem.style.backgroundColor = "lightgreen";
+            BpChoixAnalyseMois.style.backgroundColor = "white";
+            BpChoixAnalyseAnn.style.backgroundColor = "white";
+            break;
+
+        case "AnalyseMois":
+            BpChoixAnalyseSem.style.backgroundColor = "white";
+            BpChoixAnalyseMois.style.backgroundColor = "lightgreen";
+            BpChoixAnalyseAnn.style.backgroundColor = "white";
+            break;
+
+        case "AnalyseAnnee":
+            BpChoixAnalyseSem.style.backgroundColor = "white";
+            BpChoixAnalyseMois.style.backgroundColor = "white";
+            BpChoixAnalyseAnn.style.backgroundColor = "lightgreen";
+            break;
+    
+        default:
+            BpChoixAnalyseSem.style.backgroundColor = "white";
+            BpChoixAnalyseMois.style.backgroundColor = "white";
+            BpChoixAnalyseAnn.style.backgroundColor = "white";
+            break;
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
