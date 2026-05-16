@@ -622,6 +622,7 @@ async function ChangementJour () {
     let DateTri = 0;
     if (TabJour[0]?.dateTri != undefined) {
         DateTri = TabJour[0]?.dateTri
+        TabJour = [];
     } else 
         DateTri = new Date().getDate()-1;
 
@@ -629,11 +630,9 @@ async function ChangementJour () {
     const MyId = `${SousJour.toISOString()}`;
 
     //Ecriture ligne Jour Semaine Bdd
-    if (TabJour.length != 0) {
-        await setDoc(doc(db, "TabAnnee", MyId), {
-            TableauJour : TabJour
-        })
-    }
+    await setDoc(doc(db, "TabAnnee", MyId), {
+        TableauJour : TabJour
+    })
 
     //Ecriture Jour date saved 
     await setDoc(doc(db, "GlobalData", "Preference"), {
