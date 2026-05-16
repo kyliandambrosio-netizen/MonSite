@@ -708,7 +708,7 @@ ParamIntervalle.addEventListener("change", (e) => {
     const [ParamInterH, ParamInterM] = ParamIntervalle.value.split(":");
 
     if (Preference.IntervalleVoulu != [ParamInterH, ParamInterM]) {
-        BpParamIntervalle.style.backgroundColor = "red"     
+        BpParamIntervalle.style.backgroundColor = "red"      
     }
 })
 
