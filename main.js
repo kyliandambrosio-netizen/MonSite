@@ -249,11 +249,10 @@ function AffGraphique(Periode) {
             Data[JourActu-1] = TabJour.length;
 
             //Récuperation Data Tab Annee
-           
-            for (let index = TabAnnee.length-1; index >= ((TabAnnee.length-1)-(7 -(JourActu-1))); index--) {
+            const NbrLigneRecu = ((TabAnnee.length-1)-(JourActu-2));
+            for (let index = TabAnnee.length-1; index >= NbrLigneRecu; index--) {
 
-                if (TabAnnee[index].TableauJour[0]?.dateTri) {
-
+                if (TabAnnee[index].TableauJour[0]?.dateTri && index >= 0) {
                     let JourCalc = new Date(TabAnnee[index].TableauJour[0]?.dateTri).getDay();
                         if (JourCalc == 0) JourCalc = 7   
 
