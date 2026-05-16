@@ -9,7 +9,7 @@ body {
 /*SmartPhone*/
 @media (max-width: 1000px) {
 	h1{
-		font-size: 170px;
+		font-size: 150px;
 	}
 
 	.Container{
@@ -17,7 +17,7 @@ body {
 		flex-direction: column;
 		position:absolute;
 		gap: 100px;
-		top: -6%;
+		top: -2%;
 		width: 100vw;
 		height: 80vh;
 		text-align: center;
