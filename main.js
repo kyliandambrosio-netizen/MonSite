@@ -270,14 +270,12 @@ async function AffGraphique(Periode) {
     let MoisActu =0;
     let MinTab = 0;
     let MaxTab = 15; 
-    let LongBarre = 50;
     let StepTab = 5;
     
     switch (Periode) {
         case "AnalyseSemaine":
             Data = [0, 0, 0, 0, 0, 0, 0];
-            LongBarre = 50;
-            Label = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            Label = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
             JourActu = DateActu.getDay();
                 if (JourActu == 0) JourActu = 7
 
@@ -303,7 +301,6 @@ async function AffGraphique(Periode) {
             break;
 
         case "AnalyseMois":
-            LongBarre = 10;
             //Initialisation labels
             for (let index = 1; index <= 31; index++) {Label[index] = index}
 
@@ -329,7 +326,6 @@ async function AffGraphique(Periode) {
             break;
 
         case "AnalyseAnnee":
-            LongBarre = 50;
             MoisActu = new Date().getMonth();
 
             //Récuperation Data Tab Annee
@@ -368,16 +364,38 @@ async function AffGraphique(Periode) {
                 datasets: [{
                     label: "NbrC",
                     data: Data,
-                    barThickness: LongBarre
+                    backgroundColor: "red",
+                    color: "white"
                 }],
             },
             options : {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
                 scales: {
                     y: {
                         min: MinTab,
                         max: MaxTab,
                         ticks: {
-                            stepSize : StepTab
+                            stepSize : StepTab,
+                            color: "aquamarine",
+                            font: {
+                                size: 40
+                            }
+                        },
+                        grid:{
+                            color: "aquamarine"
+                        }
+                    },
+
+                    x: {
+                        ticks: {
+                            color: "aquamarine",
+                            font:{
+                                size: 40
+                            }
                         }
                     }
                 }
@@ -386,7 +404,6 @@ async function AffGraphique(Periode) {
     } else {
         Mychart.data.labels = Label;
         Mychart.data.datasets[0].data = Data;
-         Mychart.data.datasets[0].barThickness = LongBarre;
         Mychart.options.scales.y.max = MaxTab
         Mychart.options.scales.y.ticks.stepSize = StepTab
         Mychart.resize();
