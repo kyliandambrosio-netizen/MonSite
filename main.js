@@ -421,8 +421,8 @@ async function VisuTabJour(Data, RecalcRecord) {
         //Recuperation Intervalle Maxi journée pour Record
         if (ResultatRecord<DateSeconde) ResultatRecord=DateSeconde;
 
-        const Interheure = Math.floor((DateSeconde) / 3600);
-        const Interminute = Math.floor((DateSeconde % 3600) / 60);
+        const Interheure = (Math.floor((DateSeconde) / 3600)).toString().padStart(2, "0");
+        const Interminute = (Math.floor((DateSeconde % 3600) / 60)).toString().padStart(2, "0");
         const InterSeconde = DateSeconde % 60;
         const intervalle = `${Interheure} h ${Interminute} min`;
         tdIntervalle.textContent = intervalle;
