@@ -757,7 +757,13 @@ function Moyenne(Periode) {
             break;
     }
 
+    const ResultatInter = CalcMoyenneInter / NbrDataInter;
+    const Interheure = Math.floor((ResultatInter) / 3600).toString().padStart(2, "0");
+    const Interminute = Math.floor((ResultatInter % 3600) / 60).toString().padStart(2, "0");
+    const intervalle = `${Interheure} h ${Interminute} m`;
+
     SpanMoyenneJourNbrF.textContent = (Math.round(CalcMoyenneNbrF / NbrDataNbrF * 10)) / 10;
+    SpanMoyenneJourIntervalle.textContent = intervalle;
 
 }
 
