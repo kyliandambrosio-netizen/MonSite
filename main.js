@@ -396,6 +396,7 @@ async function AffGraphique(Periode) {
     }
 
     //Ecriture objets Moyennes
+    console.log(MoyenneNbrF, NbrMoyenneNbrF)
     SpanMoyenneJourNbrF.textContent = (Math.round((MoyenneNbrF / NbrMoyenneNbrF) * 10) / 10);
     
     for (let index = 0; index < DataForMoyenne.length; index++) CalcMoyenneInter += DataForMoyenne[index]
@@ -411,6 +412,7 @@ async function VisuTabJour(Data, RecalcRecord) {
     let ResultatRecord = 0;
     let RecordActu =0;
     let DateVisu = 0;
+    DataForMoyenne = [];
 
     //Choix jour visu tableau
     if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] != undefined) {
@@ -455,6 +457,8 @@ async function VisuTabJour(Data, RecalcRecord) {
                     
                 DateSeconde = Math.floor((new Date(Data[index].dateTri) 
                     - new Date(TabAnnee[indexFor].TableauJour[0].dateTri)) / 1000);
+
+                DataForMoyenne.push(DateSeconde)
                 break;
                 }
 
@@ -498,7 +502,6 @@ async function VisuTabJour(Data, RecalcRecord) {
     const ChgmtEnCours = localStorage.getItem("ChgmtJourEnCours")
 
     if (RecalcRecord == true && ChgmtEnCours != true) {
-        DataForMoyenne = [];
         TabAnnee.forEach((TabA, indexA) => {
             TabA.TableauJour.forEach((TabJ, index) => {
                 
@@ -561,7 +564,7 @@ async function SupprimerLigne(id, IndexA) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
-    const Interheure = Math.floor((DateSeconde) / 3600);
+    const Interheure = Math.floor((DateSeconde) / 3600).toString().padStart(2, "0");
     const Interminute = Math.floor((DateSeconde % 3600) / 60).toString().padStart(2, "0");
     const InterSeconde = Math.round(DateSeconde % 60).toString().padStart(2, "0");
     const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
