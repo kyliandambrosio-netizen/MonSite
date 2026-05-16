@@ -49,6 +49,8 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     onSnapshot(doc(db, "GlobalData", "Preference"), snapshot => {
         Preference = snapshot.data();
 
+        //Refresh Object Html
+        ParamIntervalle.value = `${Preference.IntervalleVoulu[0]}:${Preference.IntervalleVoulu[1]}`;
     })
 
     /////////////////////////////////////////////
@@ -94,6 +96,8 @@ const BpJourHistoPlus = document.getElementById("BpChoixJourPlus");
 const BpJourHistoMoins = document.getElementById("BpChoixJourMoins");
 const ChoixJourHisto = document.getElementById("ChoixJourVisuTableau");
 const JourChoixJourHisto = document.getElementById("JourChoixJourVisuTableau");
+const ParamIntervalle = document.getElementById("ParamIntervalle");
+const BpParamIntervalle = document.getElementById("BpValideParamIntervale");
 let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
@@ -544,11 +548,20 @@ setInterval(async () => {
     }
 
     const ReccordInter = Record.RecIntervalle;
+    let [ParamInterH, ParamInterM] = ParamIntervalle.value.split(":");
+    
+    ParamInterH *= 3600; //Convertion heure en seconde
+    ParamInterM *= 60; //Convertion Minute en seconde
 
     //Affichage Intervalle denière fum
-
     localStorage.setItem("intervalleSeconde", intervalleSeconde);
     IntervalleCig.textContent = await calcAffDate(intervalleSeconde)
+
+    if (intervalleSeconde >= (ParamInterH + ParamInterM)) {
+        IntervalleCig.style.color = "Green";
+    } else {
+        IntervalleCig.style.color = "Red";
+    }
 
     //Affichage Reccord Interval
     if (intervalleSeconde >= ReccordInter || (TabJour.length == 0 && TabAnnee.length == 0)) {
@@ -632,3 +645,39 @@ Bp_RazTotal.addEventListener("click", async() => {
 
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Gestion Parametre intervalle voulu 
+BpParamIntervalle.addEventListener("click", () => {
+    const [ParamInterH, ParamInterM] = ParamIntervalle.value.split(":");
+    const ParamInterHInter = ParamInterH * 3600; //Convertion heure en seconde
+    const ParamInterMInter = ParamInterM * 60; //Convertion Minute en seconde
+    const InterUser = ParamInterHInter + ParamInterMInter;
+    ParamInterHInter.toString().padStart(2, "0");
+    ParamInterMInter.toString().padStart(2, "0");
+
+    //Ecriture nouvelle data dans Bdd
+    if (Preference.IntervalleVoulu != [ParamInterH, ParamInterM]) {
+        Preference.IntervalleVoulu = InterUser
+        updateDoc(doc(db, "GlobalData", "Preference"), {
+            IntervalleVoulu : [ParamInterH, ParamInterM],
+        });
+
+        BpParamIntervalle.style.backgroundColor = "white"   
+    }
+
+    
+})
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Visu Modification non valider Reglage > Intervalle voulu
+ParamIntervalle.addEventListener("change", (e) => {
+    const [ParamInterH, ParamInterM] = ParamIntervalle.value.split(":");
+
+    if (Preference.IntervalleVoulu != [ParamInterH, ParamInterM]) {
+        BpParamIntervalle.style.backgroundColor = "red"     
+    }
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
