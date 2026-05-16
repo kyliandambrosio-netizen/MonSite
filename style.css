@@ -95,7 +95,7 @@ body {
 	border-collapse: collapse;
 	align-items: center;
 	justify-content: center;
-	height: 450px;
+	height: 650px;
 	width: 850px;
 	overflow-y: auto;
 }	
@@ -126,6 +126,12 @@ body {
 		font-size: 40px;
 	}	
 
+	.tabJourScroll table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 20px;
+}
+
 	.Container #BpChoixJourMoins, #BpChoixJourPlus{
 		font-size: 40px;
 		width: 250px;
@@ -139,6 +145,7 @@ body {
 		font-size: 90px;
 		padding: 130px;
 		padding-bottom: 0;
+		padding-top: 0;
 	}
 
 	.Container #Bp_AddCig_Historique{
@@ -254,7 +261,7 @@ body {
 	border-collapse: collapse;
 	align-items: center;
 	justify-content: center;
-	height: 450px;
+	height: 500px;
 	width: 850px;
 	overflow-y: auto;
 }	
@@ -285,6 +292,12 @@ body {
 		font-size: 25px;
 	}
 
+	.tabJourScroll table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-top: 161px;
+}
+
 }
 
 /*Tous device*/
@@ -304,9 +317,4 @@ body {
 	justify-content: center;
 	margin-top: 0;
 	padding: 0;
-}
-
-.tabJourScroll table {
-	border-collapse: collapse;
-	width: 100%;
 }
