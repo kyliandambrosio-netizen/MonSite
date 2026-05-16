@@ -155,8 +155,12 @@ body {
 		color: #111;
 	}
 
-	#ContGraphique{
+	#MyChart{
 		position: relative;
+		left: 33.6%;
+		max-width: 600px;
+		height: 400px;
+		max-height: 400px;
 	}
 
 	.BpChoixPage{
@@ -178,5 +182,9 @@ body {
 		font-size: 60px;
 		width: 100px;
 		height: 100px;
+	}
+
+	.Moyenne{
+		position: relative;
 	}
 }
