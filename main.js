@@ -102,7 +102,6 @@ const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 let IndexChoixVisuJourHisto = 0;
-let DataForMoyenne = [];
 
 //Variable Global 
 let Mychart
@@ -272,9 +271,6 @@ async function AffGraphique(Periode) {
     let MinTab = 0;
     let MaxTab = 15; 
     let StepTab = 5;
-    let MoyenneNbrF = 0;
-    let NbrMoyenneNbrF = 0;
-    let CalcMoyenneInter = 0;
     
     switch (Periode) {
         case "AnalyseSemaine":
@@ -285,8 +281,6 @@ async function AffGraphique(Periode) {
 
             //Maj Data avec jour actu
             Data[JourActu-1] = TabJour.length;
-            MoyenneNbrF += TabJour.length;
-            NbrMoyenneNbrF ++;
 
             //Récuperation Data Tab Annee
             const NbrLigneRecup = ((TabAnnee.length-1)-(JourActu-2));
@@ -297,8 +291,6 @@ async function AffGraphique(Periode) {
                         if (JourCalc == 0) JourCalc = 7   
 
                     Data[JourCalc-1] = TabAnnee[index].TableauJour.length
-                    MoyenneNbrF += TabAnnee[index].TableauJour.length;
-                    NbrMoyenneNbrF ++;
                 }
             }
 
@@ -395,12 +387,8 @@ async function AffGraphique(Periode) {
         Mychart.update();
     }
 
-    //Ecriture objets Moyennes
-    console.log(MoyenneNbrF, NbrMoyenneNbrF)
-    SpanMoyenneJourNbrF.textContent = (Math.round((MoyenneNbrF / NbrMoyenneNbrF) * 10) / 10);
-    
-    for (let index = 0; index < DataForMoyenne.length; index++) CalcMoyenneInter += DataForMoyenne[index]
-    SpanMoyenneJourIntervalle.textContent = await calcAffDate(CalcMoyenneInter / DataForMoyenne.length);
+    //Calcule Moyenne
+    Moyenne(Periode)
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -412,7 +400,6 @@ async function VisuTabJour(Data, RecalcRecord) {
     let ResultatRecord = 0;
     let RecordActu =0;
     let DateVisu = 0;
-    DataForMoyenne = [];
 
     //Choix jour visu tableau
     if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] != undefined) {
@@ -457,8 +444,6 @@ async function VisuTabJour(Data, RecalcRecord) {
                     
                 DateSeconde = Math.floor((new Date(Data[index].dateTri) 
                     - new Date(TabAnnee[indexFor].TableauJour[0].dateTri)) / 1000);
-
-                DataForMoyenne.push(DateSeconde)
                 break;
                 }
 
@@ -508,7 +493,6 @@ async function VisuTabJour(Data, RecalcRecord) {
                 //Calcule des intervalles entres cigs
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri)) / 1000
-                    DataForMoyenne.push(CalcInter)
 
                 } else if (TabAnnee[indexA-1]?.TableauJour?.[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri)) / 1000
@@ -727,5 +711,54 @@ ParamIntervalle.addEventListener("change", (e) => {
         BpParamIntervalle.style.backgroundColor = "red"     
     }
 })
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Calcule Moyenne
+function Moyenne(Periode) {
+    let CalcMoyenneNbrF = TabJour.length; //Initialisation avec tableau jour actu
+    let NbrDataNbrF = 1; //Initialisation avec tableau jour actu
+    let CalcMoyenneInter = 0;
+    let NbrDataInter = TabJour.length - 1; //Initialisation avec tableau jour actu sans la première inter de la journée
+    let CalcInter = 0;
+    let JourActu = new Date().getDay();
+        if (JourActu == 0) JourActu = 7
+    let NbrLigneRecup = 0;
+
+    //CaluleMoyenneJourActu
+    TabJour.forEach((Tab, i) => {
+        if (TabJour[i+1]?.dateTri && i != TabJour.length-1) {
+            CalcInter = Math.floor(new Date(Tab.dateTri) - new Date(TabJour[i+1].dateTri)) / 1000
+            CalcMoyenneInter += CalcInter; 
+        }
+    })
+
+    switch (Periode) {
+        case "AnalyseSemaine":
+            NbrLigneRecup = ((TabAnnee.length-1)-(JourActu-2));
+
+            for (let index = (TabAnnee.length-1); index >= NbrLigneRecup; index--) {
+                if (TabAnnee[index]?.TableauJour[0]?.dateTri) {
+                    NbrDataNbrF ++;
+                    CalcMoyenneNbrF += TabAnnee[index].TableauJour.length
+
+                    TabAnnee[index].TableauJour.forEach((TabAJ, j) => {
+                        if (TabAJ[j+1]?.dateTri && j != TabA.TableauJour.length-1) {
+                            CalcInter = Math.floor(new Date(TabAJ.dateTri) - new Date(TabAnnee[index].TableauJour[j+1].dateTri)) / 1000
+                            CalcMoyenneInter += CalcInter; 
+                            NbrDataInter ++;
+                        }
+                    })
+                }
+
+            }
+            
+            break;
+    }
+
+    SpanMoyenneJourNbrF.textContent = (Math.round(CalcMoyenneNbrF / NbrDataNbrF * 10)) / 10;
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
