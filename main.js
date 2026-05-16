@@ -548,7 +548,7 @@ async function SupprimerLigne(id, IndexA) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
-    const Interheure = Math.floor((DateSeconde) / 3600).toString().padStart(2, "0");
+    const Interheure = Math.floor((DateSeconde) / 3600);
     const Interminute = Math.floor((DateSeconde % 3600) / 60).toString().padStart(2, "0");
     const InterSeconde = Math.round(DateSeconde % 60).toString().padStart(2, "0");
     const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
