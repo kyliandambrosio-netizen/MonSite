@@ -102,6 +102,8 @@ const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 let IndexChoixVisuJourHisto = 0;
+let DataForMoyenne = [];
+let IndexMoyenne = 0;
 
 //Variable Global 
 let Mychart
@@ -258,7 +260,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Affichage Graphique Semaine / mois / année
-function AffGraphique(Periode) {
+async function AffGraphique(Periode) {
     const Graphique = document.getElementById('MyChart');
     const DateActu = new Date();
     let JourActu = 0
@@ -273,6 +275,7 @@ function AffGraphique(Periode) {
     let StepTab = 5;
     let MoyenneNbrF = 0;
     let NbrMoyenneNbrF = 0;
+    let CalcMoyenneInter = 0;
 
     switch (Periode) {
         case "AnalyseSemaine":
@@ -393,8 +396,13 @@ function AffGraphique(Periode) {
         Mychart.update();
     }
 
-    //Ecriture objet Moyenne
+    //Ecriture objets Moyennes
     SpanMoyenneJourNbrF.textContent = (Math.round((MoyenneNbrF / NbrMoyenneNbrF) * 10) / 10);
+    
+
+    for (let index = 0; index < DataForMoyenne.length; index++) CalcMoyenneInter =+ DataForMoyenne[index];
+        console.log(CalcMoyenneInter / IndexMoyenne)
+    SpanMoyenneJourIntervalle.textContent = await calcAffDate(CalcMoyenneInter / IndexMoyenne);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -499,6 +507,8 @@ async function VisuTabJour(Data, RecalcRecord) {
                 //Calcule des intervalles entres cigs
                 if (index != TabA.TableauJour.length-1 && TabA.TableauJour?.[index+1] != undefined) {
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabA.TableauJour[index+1].dateTri)) / 1000
+                    DataForMoyenne.push(CalcInter)
+                    IndexMoyenne ++;
 
                 } else if (TabAnnee[indexA-1]?.TableauJour?.[0] != undefined){
                     CalcInter = Math.floor(new Date(TabJ.dateTri) - new Date(TabAnnee[indexA-1].TableauJour[0].dateTri)) / 1000
@@ -555,8 +565,8 @@ async function SupprimerLigne(id, IndexA) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function calcAffDate(DateSeconde) {
     const Interheure = Math.floor((DateSeconde) / 3600);
-    const Interminute = Math.floor((DateSeconde % 3600) / 60);
-    const InterSeconde = Math.round(DateSeconde % 60);
+    const Interminute = Math.floor((DateSeconde % 3600) / 60).toString().padStart(2, "0");
+    const InterSeconde = Math.round(DateSeconde % 60).toString().padStart(2, "0");
     const intervalle = `${Interheure} h ${Interminute} min ${InterSeconde} s`;
     return intervalle;
 }
