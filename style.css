@@ -184,8 +184,6 @@ body {
 		font-size: 120px;
 		padding-top: 7%;
 	}	
-
-	
 }
 
 /*Ordinateur*/
@@ -333,6 +331,14 @@ body {
 		font-size: 40px;
 		padding-top: 4%;
 	}
+
+	#JourActuelle{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 60px;
+		padding-top: 5%;
+	}	
 
 }
 
