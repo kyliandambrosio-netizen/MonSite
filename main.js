@@ -862,3 +862,32 @@ function Moyenne(Periode) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Switch gauche droite graphique pour changement periode
+const GraphiqueSwipe = document.getElementById("MyChart");
+
+let StartSwipX = 0 ;
+
+GraphiqueSwipe.addEventListener("touchstart", (e) => {
+    console.log("Start")
+    StartSwipX = e.touches[0].clientX;
+})
+
+GraphiqueSwipe.addEventListener("touchend", (e) => {
+    let EndSwipX = e.changedTouches[0].clientX;
+    let diff = StartX - EndSwipX;
+
+    //Swip gauche
+    if (diff > 50) {
+        console.log("Swip Gauche");
+        BpChoixAnalyseMois.style.color = "red"
+
+    //Swip Droite
+    } else {
+        console.log("Swip Droite");
+        BpChoixAnalyseMois.style.color = "blue"
+    }
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
