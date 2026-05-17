@@ -275,7 +275,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Affichage Graphique Semaine / mois / année
-async function AffGraphique(Periode) {
+async function AffGraphique(Periode, IndexVisuPeriode) {
     const Graphique = document.getElementById('MyChart');
     const DateActu = new Date();
     let JourActu = 0
@@ -869,25 +869,28 @@ const GraphiqueSwipe = document.getElementById("MyChart");
 
 let StartSwipX = 0 ;
 
-GraphiqueSwipe.addEventListener("touchstart", (e) => {
+GraphiqueSwipe.addEventListener("pointerdown", (e) => {
     console.log("Start")
-    StartSwipX = e.touches[0].clientX;
+    StartSwipX = e.clientX;
 })
 
-GraphiqueSwipe.addEventListener("touchend", (e) => {
-    let EndSwipX = e.changedTouches[0].clientX;
-    let diff = StartX - EndSwipX;
+GraphiqueSwipe.addEventListener("pointerup", (e) => {
+    let EndSwipX = e.clientX;
+    let diff = StartSwipX - EndSwipX;
+    let IndexVisuGraph = localStorage.getItem("IndexVisuGraphique") || 0;
+
+    //Swip droite
+    if (diff > 50) {
+        if (IndexVisuGraph > 0) IndexVisuGraph --;
 
     //Swip gauche
-    if (diff > 50) {
-        console.log("Swip Gauche");
-        BpChoixAnalyseMois.style.color = "red"
-
-    //Swip Droite
-    } else {
-        console.log("Swip Droite");
-        BpChoixAnalyseMois.style.color = "blue"
+    } else if (diff < -50) {
+        IndexVisuGraph ++; 
     }
+
+    localStorage.setItem("IndexVisuGraphique", IndexVisuGraph)
+    AffGraphique("AnalyseSemaine", IndexVisuGraph) 
+    console.log(IndexVisuGraph)
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
