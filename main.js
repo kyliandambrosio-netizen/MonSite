@@ -77,8 +77,21 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 
     //Refresh objet
     VisuTabJour(TabJour, true)
-
+    AffDateActu()
     })
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Affichage Date Actuelle
+function AffDateActu() {
+    const JourLettreActu = new Date().toLocaleDateString("fr-FR", { weekday: "long"});
+    const JourActu = new Date().getDate().toString().padStart(2, "0");
+    const MoisActu = new Date().getMonth().toString().padStart(2, "0");
+    const AnneeActu = new Date().getFullYear();
+    const DateActu = `${JourLettreActu} <br> ${JourActu} / ${MoisActu} / ${AnneeActu}`
+
+    VisuJourActuUi.innerHTML = DateActu;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,6 +117,7 @@ const BpParamNbrSemaine = document.getElementById("BpValideParamNbrSemaine");
 const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
+const VisuJourActuUi = document.getElementById("JourActuelle");
 let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
@@ -805,7 +819,6 @@ function Moyenne(Periode) {
             LigneStop = ((TabAnnee.length-1)-(DayOfYears-1));
                 if (LigneStop < 0) LigneStop = 0;
             LigneStart = (TabAnnee.length-1);
-            console.log(LigneStart, LigneStop)
         break;
     }
 
