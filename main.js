@@ -330,6 +330,7 @@ async function AffGraphique(Periode) {
 
         case "AnalyseAnnee":
             MoisActu = new Date().getMonth();
+            const AnneeActu = new Date().getFullYear();
 
             //Récuperation Data Tab Annee
             for (let index = 1; index <= 12; index++) {
@@ -339,8 +340,8 @@ async function AffGraphique(Periode) {
 
                 TabAnnee.forEach((Tab) => {
                     Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth() || 0;
-
-                    if (Mois == index) NbrCigMois += Tab.TableauJour.length
+                    const Annee = new Date(Tab.TableauJour[0]?.dateTri).getFullYear() || 0;
+                    if (Mois == index && Annee == AnneeActu) NbrCigMois += Tab.TableauJour.length
 
                 })
 
@@ -769,6 +770,7 @@ function Moyenne(Periode) {
     let CalcInter = 0;
     let JourActu = new Date().getDay();
         if (JourActu == 0) JourActu = 7
+    let JourMoisActu = new Date().getDate();
     let LigneStop = 0;
     let LigneStart = 0;
 
@@ -788,11 +790,25 @@ function Moyenne(Periode) {
             break;
 
         case "AnalyseMois": 
+            LigneStop = ((TabAnnee.length-1)-(JourMoisActu-1));
+            LigneStart = (TabAnnee.length-1);
 
+        break;
+
+        case "AnalyseAnnee": 
+            const Today = new Date();
+            const Start = new Date(Today.getFullYear(), 0, 0)
+            const diff = Today - Start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const DayOfYears = Math.floor(diff / oneDay);
+
+            LigneStop = ((TabAnnee.length-1)-(DayOfYears-1));
+                if (LigneStop < 0) LigneStop = 0;
+            LigneStart = (TabAnnee.length-1);
+            console.log(LigneStart, LigneStop)
         break;
     }
 
-    console.log(LigneStart, LigneStop)
     //Calcule Nombre et intervalle dans tabAnnee
     for (let index = LigneStart; index >= LigneStop; index--) {
         if (TabAnnee[index]?.TableauJour[0]?.dateTri) {
