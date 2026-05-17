@@ -176,7 +176,14 @@ body {
 		padding-bottom: 0;
 		padding-top: 0;
 	}
-	
+
+	#JourActuelle{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 120px;
+		padding-top: 7%;
+	}	
 }
 
 /*Ordinateur*/
@@ -205,6 +212,13 @@ body {
 	.Container p{
 		font-size: 40px;
 		margin: 30px;
+		padding: 0px;
+	}
+
+	.Home p{
+		font-size: 40px;
+		margin: 30px;
+		padding: 5px;
 	}
 
 	.Container span{
@@ -316,6 +330,22 @@ body {
 	width: 100%;
 	margin-top: auto;
 }
+
+	#JourActuelle{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 40px;
+		padding-top: 4%;
+	}
+
+	#JourActuelle{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 60px;
+		padding-top: 5%;
+	}	
 
 }
 

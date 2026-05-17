@@ -77,8 +77,21 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 
     //Refresh objet
     VisuTabJour(TabJour, true)
-
+    AffDateActu()
     })
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Affichage Date Actuelle
+function AffDateActu() {
+    const JourLettreActu = new Date().toLocaleDateString("fr-FR", { weekday: "long"});
+    const JourActu = new Date().getDate().toString().padStart(2, "0");
+    const MoisActu = new Date().getMonth().toString().padStart(2, "0");
+    const AnneeActu = new Date().getFullYear();
+    const DateActu = `${JourLettreActu} <br> ${JourActu} / ${MoisActu} / ${AnneeActu}`
+
+    VisuJourActuUi.innerHTML = DateActu;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,6 +117,7 @@ const BpParamNbrSemaine = document.getElementById("BpValideParamNbrSemaine");
 const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
+const VisuJourActuUi = document.getElementById("JourActuelle");
 let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
@@ -261,7 +275,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Affichage Graphique Semaine / mois / année
-async function AffGraphique(Periode) {
+async function AffGraphique(Periode, IndexVisuPeriode) {
     const Graphique = document.getElementById('MyChart');
     const DateActu = new Date();
     let JourActu = 0
@@ -330,6 +344,7 @@ async function AffGraphique(Periode) {
 
         case "AnalyseAnnee":
             MoisActu = new Date().getMonth();
+            const AnneeActu = new Date().getFullYear();
 
             //Récuperation Data Tab Annee
             for (let index = 1; index <= 12; index++) {
@@ -339,8 +354,8 @@ async function AffGraphique(Periode) {
 
                 TabAnnee.forEach((Tab) => {
                     Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth() || 0;
-
-                    if (Mois == index) NbrCigMois += Tab.TableauJour.length
+                    const Annee = new Date(Tab.TableauJour[0]?.dateTri).getFullYear() || 0;
+                    if (Mois == index && Annee == AnneeActu) NbrCigMois += Tab.TableauJour.length
 
                 })
 
@@ -763,13 +778,16 @@ ParamNbrSemaine.addEventListener("change", (e) => {
 //Calcule Moyenne
 function Moyenne(Periode) {
     let CalcMoyenneNbrF = TabJour.length; //Initialisation avec tableau jour actu
-    let NbrDataNbrF = 1; //Initialisation avec tableau jour actu
+    let NbrDataNbrF = 0; //Initialisation avec tableau jour actu
+        if (TabJour.length > 0) {NbrDataNbrF = 1};
     let CalcMoyenneInter = 0;
     let NbrDataInter = TabJour.length - 1; //Initialisation avec tableau jour actu sans la première inter de la journée
     let CalcInter = 0;
     let JourActu = new Date().getDay();
         if (JourActu == 0) JourActu = 7
-    let NbrLigneRecup = 0;
+    let JourMoisActu = new Date().getDate();
+    let LigneStop = 0;
+    let LigneStart = 0;
 
     //CaluleMoyenneJourActu
     TabJour.forEach((Tab, i) => {
@@ -781,33 +799,53 @@ function Moyenne(Periode) {
 
     switch (Periode) {
         case "AnalyseSemaine":
-            NbrLigneRecup = ((TabAnnee.length-1)-(JourActu-2));
-
-            for (let index = (TabAnnee.length-1); index >= NbrLigneRecup; index--) {
-                if (TabAnnee[index]?.TableauJour[0]?.dateTri) {
-                    NbrDataNbrF ++;
-                    CalcMoyenneNbrF += TabAnnee[index].TableauJour.length
-
-                    TabAnnee[index].TableauJour.forEach((TabAJ, j) => {
-                        if (TabAJ[j+1]?.dateTri && j != TabA.TableauJour.length-1) {
-                            CalcInter = Math.floor(new Date(TabAJ.dateTri) - new Date(TabAnnee[index].TableauJour[j+1].dateTri)) / 1000
-                            CalcMoyenneInter += CalcInter; 
-                            NbrDataInter ++;
-                        }
-                    })
-                }
-
-            }
-            
+            LigneStop = ((TabAnnee.length-1)-(JourActu-2));
+            LigneStart = (TabAnnee.length-1);
+        
             break;
+
+        case "AnalyseMois": 
+            LigneStop = ((TabAnnee.length-1)-(JourMoisActu-1));
+            LigneStart = (TabAnnee.length-1);
+
+        break;
+
+        case "AnalyseAnnee": 
+            const Today = new Date();
+            const Start = new Date(Today.getFullYear(), 0, 0)
+            const diff = Today - Start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const DayOfYears = Math.floor(diff / oneDay);
+
+            LigneStop = ((TabAnnee.length-1)-(DayOfYears-1));
+                if (LigneStop < 0) LigneStop = 0;
+            LigneStart = (TabAnnee.length-1);
+        break;
     }
 
+    //Calcule Nombre et intervalle dans tabAnnee
+    for (let index = LigneStart; index >= LigneStop; index--) {
+        if (TabAnnee[index]?.TableauJour[0]?.dateTri) {
+            NbrDataNbrF ++;
+            CalcMoyenneNbrF += TabAnnee[index].TableauJour.length
+
+            TabAnnee[index].TableauJour.forEach((TabAJ, j) => {
+                if (TabAnnee[index].TableauJour[j+1]?.dateTri && j != TabAnnee[index].TableauJour.length-1) {
+                    CalcInter = Math.floor(new Date(TabAJ.dateTri) - new Date(TabAnnee[index].TableauJour[j+1].dateTri)) / 1000
+                    CalcMoyenneInter += CalcInter; 
+                    NbrDataInter ++;
+                }
+            })
+        }
+    }
+
+
+    //Calcule Final + Affichage moyenne 
     const ResultatInter = CalcMoyenneInter / NbrDataInter;
     const Interheure = Math.floor((ResultatInter) / 3600).toString().padStart(2, "0");
     const Interminute = Math.floor((ResultatInter % 3600) / 60).toString().padStart(2, "0");
     const intervalle = `${Interheure} h ${Interminute} m`;
     const IntervalleActu = localStorage.getItem("intervalleSeconde")
-
 
     SpanMoyenneJourNbrF.textContent = (Math.round(CalcMoyenneNbrF / NbrDataNbrF * 10)) / 10;
     if (SpanMoyenneJourNbrF.textContent <= Preference.NbrMoyVoulu) {
@@ -823,5 +861,37 @@ function Moyenne(Periode) {
     }
 
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Switch gauche droite graphique pour changement periode
+const GraphiqueSwipe = document.getElementById("MyChart");
+
+let StartSwipX = 0 ;
+
+GraphiqueSwipe.addEventListener("pointerdown", (e) => {
+    console.log("Start")
+    StartSwipX = e.clientX;
+})
+
+GraphiqueSwipe.addEventListener("pointerup", (e) => {
+    let EndSwipX = e.clientX;
+    let diff = StartSwipX - EndSwipX;
+    let IndexVisuGraph = localStorage.getItem("IndexVisuGraphique") || 0;
+
+    //Swip droite
+    if (diff > 50) {
+        if (IndexVisuGraph > 0) IndexVisuGraph --;
+
+    //Swip gauche
+    } else if (diff < -50) {
+        IndexVisuGraph ++; 
+    }
+
+    localStorage.setItem("IndexVisuGraphique", IndexVisuGraph)
+    AffGraphique("AnalyseSemaine", IndexVisuGraph) 
+    console.log(IndexVisuGraph)
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
