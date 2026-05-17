@@ -763,6 +763,7 @@ ParamNbrSemaine.addEventListener("change", (e) => {
 function Moyenne(Periode) {
     let CalcMoyenneNbrF = TabJour.length; //Initialisation avec tableau jour actu
     let NbrDataNbrF = 1; //Initialisation avec tableau jour actu
+        if (TabJour.length <= 1) {NbrDataNbrF = 0};
     let CalcMoyenneInter = 0;
     let NbrDataInter = TabJour.length - 1; //Initialisation avec tableau jour actu sans la première inter de la journée
     let CalcInter = 0;
@@ -778,26 +779,29 @@ function Moyenne(Periode) {
         }
     })
 
+
+
     switch (Periode) {
         case "AnalyseSemaine":
             NbrLigneRecup = ((TabAnnee.length-1)-(JourActu-2));
-
-            for (let index = (TabAnnee.length-1); index >= NbrLigneRecup; index--) {
+        
+        for (let index = (TabAnnee.length-1); index >= NbrLigneRecup; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri) {
                     NbrDataNbrF ++;
                     CalcMoyenneNbrF += TabAnnee[index].TableauJour.length
 
                     TabAnnee[index].TableauJour.forEach((TabAJ, j) => {
-                        if (TabAJ[j+1]?.dateTri && j != TabA.TableauJour.length-1) {
+                        if (TabAnnee[index].TableauJour[j+1]?.dateTri && j != TabAnnee[index].TableauJour.length-1) {
                             CalcInter = Math.floor(new Date(TabAJ.dateTri) - new Date(TabAnnee[index].TableauJour[j+1].dateTri)) / 1000
                             CalcMoyenneInter += CalcInter; 
                             NbrDataInter ++;
+
                         }
                     })
                 }
 
             }
-            
+
             break;
     }
 
