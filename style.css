@@ -212,6 +212,13 @@ body {
 	.Container p{
 		font-size: 40px;
 		margin: 30px;
+		padding: 0px;
+	}
+
+	.Home p{
+		font-size: 40px;
+		margin: 30px;
+		padding: 10px;
 	}
 
 	.Container span{
