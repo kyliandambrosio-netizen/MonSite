@@ -176,6 +176,15 @@ body {
 		padding-bottom: 0;
 		padding-top: 0;
 	}
+
+	#JourActuelle{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 120px;
+		padding-top: 7%;
+	}	
+
 	
 }
 
@@ -316,6 +325,14 @@ body {
 	width: 100%;
 	margin-top: auto;
 }
+
+	#JourActuelle{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 40px;
+		padding-top: 4%;
+	}
 
 }
 
