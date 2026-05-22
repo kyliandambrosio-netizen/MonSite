@@ -118,6 +118,10 @@ const BpChoixAnalyseSem = document.getElementById("BpChoixAnalyseSem");
 const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 const VisuJourActuUi = document.getElementById("JourActuelle");
+const ChoixVisuGraph = document.getElementById("VisuGraph");
+const ChoixVisuGraphBpMoins = document.getElementById("Bp_VisuGraph_Moins");
+const ChoixVisuGraphBpPlus = document.getElementById("Bp_VisuGraph_Plus");
+
 let IndexChoixVisuJourHisto = 0;
 
 //Variable Global 
@@ -167,6 +171,8 @@ window.showOngletchoixAnalyse = function(Page) {
     })
 
     AffGraphique(Page)
+    localStorage.setItem("ChoixPeriodeGraph", Page);
+    ChoixVisuGraph.textContent = 0;
 
     //Visualisation choix analyse en cours 
     switch (Page) {
@@ -195,6 +201,32 @@ window.showOngletchoixAnalyse = function(Page) {
             break;
     }
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Choix visu numéro (semaine/mois/Année) graphique
+ChoixVisuGraphBpPlus.addEventListener("click", () => {
+    const Periode = localStorage.getItem("ChoixPeriodeGraph");
+
+    if (ChoixVisuGraph.textContent == 0) {
+        return;
+    } else {
+        ChoixVisuGraph.textContent--
+    }
+
+    AffGraphique(Periode, ChoixVisuGraph.textContent);
+
+})
+
+ChoixVisuGraphBpMoins.addEventListener("click", () => {
+        const Periode = localStorage.getItem("ChoixPeriodeGraph");
+
+        ChoixVisuGraph.textContent++
+
+        AffGraphique(Periode, ChoixVisuGraph.textContent);
+})
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -855,7 +887,6 @@ function Moyenne(Periode) {
     }
 
     SpanMoyenneJourIntervalle.textContent = intervalle;
-    console.log([Interheure, Interminute], Preference.IntervalleVoulu)
     if ([Interheure, Interminute] >= Preference.IntervalleVoulu) {
         SpanMoyenneJourIntervalle.style.color = "green";
     } else {
