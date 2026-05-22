@@ -170,7 +170,6 @@ window.showOngletchoixAnalyse = function(Page) {
 
     AffGraphique(Page)
     localStorage.setItem("ChoixPeriodeGraph", Page);
-    ChoixVisuGraph.textContent = 0;
     localStorage.setItem("IndexVisuGraphique", 0)
 
     //Visualisation choix analyse en cours 
@@ -309,22 +308,38 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             //Maj Data avec jour actu
             Data[JourActu-1] = TabJour.length;
 
-            //Récuperation Data Tab Annee
+            
+            //Recherche linge start/stop
             let LigneStop = ((TabAnnee.length-1)-(JourActu-1));
             let LigneStart = TabAnnee.length-1;
 
             if ( IndexVisuPeriode != 0) {
                 LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
-                LigneStop = LigneStart - (7 * IndexVisuPeriode);
+                LigneStop = LigneStart - 7;
             }
 
-            if (LigneStop < 0 && LigneStart >= 0) {
-                localStorage.setItem("FinDataGraphique", true)
+            if (LigneStart < 0) return;
+            if (LigneStop < 0) {
+                localStorage.setItem("FinDataGraphique", true);
                 LigneStop = -1;
+            } else {
+                localStorage.setItem("FinDataGraphique", false)
             }
 
-            console.log(LigneStart, LigneStop, IndexVisuPeriode)
+            //Affichage intervalle semaine selectionnée
+            
+            const DateJourStop = TabAnnee[LigneStop+1].id;
+            const DateJourStart = TabAnnee[LigneStart].id;
+            const DateJourStopJ = new Date(DateJourStop).getDate().toString().padStart(2, "0");
+            const DateJourStopM = new Date(DateJourStop).getMonth().toString().padStart(2, "0");
+            const DateJourStopA = new Date(DateJourStop).getFullYear().toString().slice(-2);
+            const DateJourStartJ = new Date(DateJourStart).getDate().toString().padStart(2, "0");
+            const DateJourStartM = new Date(DateJourStart).getMonth().toString().padStart(2, "0");
+            const DateJourStartA = new Date(DateJourStart).getFullYear().toString().slice(-2);
 
+            ChoixVisuGraph.textContent = `${DateJourStopJ}/${DateJourStopM}/${DateJourStopA} > ${DateJourStartJ}/${DateJourStartM}/${DateJourStartA}`
+console.log(ChoixVisuGraph.textContent)
+            //Récuperation Data Tab Annee
             for (let index = LigneStart; index > LigneStop; index--) {
 
                 if (TabAnnee[index].TableauJour[0]?.dateTri && index >= 0) {
@@ -902,6 +917,7 @@ GraphiqueSwipe.addEventListener("pointerup", (e) => {
     let EndSwipX = e.clientX;
     let diff = StartSwipX - EndSwipX;
     let IndexVisuGraph = localStorage.getItem("IndexVisuGraphique") || 0;
+    const PageActuAnalyse = localStorage.getItem("ChoixPeriodeGraph");
 
     //Swip droite
     if (diff > 50) {
@@ -910,12 +926,15 @@ GraphiqueSwipe.addEventListener("pointerup", (e) => {
     //Swip gauche
     } else if (diff < -50) {
         const FinDataGraphique = localStorage.getItem("FinDataGraphique")
-        if (!FinDataGraphique) IndexVisuGraph ++; 
+        if (FinDataGraphique == 'false') {
+            IndexVisuGraph ++; 
+            
+        }
+                    
     }
-
+    
     localStorage.setItem("IndexVisuGraphique", IndexVisuGraph)
-    AffGraphique("AnalyseSemaine", IndexVisuGraph)
-    ChoixVisuGraph.textContent = IndexVisuGraph
+    AffGraphique(PageActuAnalyse, IndexVisuGraph)
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
