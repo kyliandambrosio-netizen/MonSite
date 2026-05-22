@@ -332,6 +332,9 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             if ( IndexVisuPeriode != 0) {
                 LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
                 LigneStop = LigneStart - 7;
+                DateJourStart = TabAnnee[LigneStart].id;
+            } else {
+                DateJourStart = new Date();
             }
 
             if (LigneStart < 0) {
@@ -348,7 +351,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
 
             //Récuperation Data Tab Annee
             DateJourStop = TabAnnee[LigneStop+1].id;
-            DateJourStart = TabAnnee[LigneStart].id;
+
 
             for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -374,6 +377,9 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             if ( IndexVisuPeriode != 0) {
                 LigneStart = LigneStop - (31 * (IndexVisuPeriode-1));
                 LigneStop = LigneStart - 31;
+                DateJourStart = TabAnnee[LigneStart].id;
+            } else {
+                DateJourStart = new Date();
             }
   
 
@@ -398,7 +404,6 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
 
             //Récuperation Data Tab Annee
             DateJourStop = TabAnnee[LigneStop+1].id;
-            DateJourStart = TabAnnee[LigneStart].id;
 
              for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -989,8 +994,6 @@ GraphiqueSwipe.addEventListener("pointerup", (e) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Bouton Création Jour Manu
 BpCreationJour.addEventListener("click", async() => {
     const CalcJourIsoStr = new Date(JourCreeManu.value).toISOString();
@@ -999,3 +1002,4 @@ BpCreationJour.addEventListener("click", async() => {
         TableauJour:[]
     })
 })
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
