@@ -296,6 +296,10 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
     let MinTab = 0;
     let MaxTab = 15; 
     let StepTab = 5;
+    let DateJourStop = 0;
+    let DateJourStart = 0;
+    let LigneStop = 0;
+    let LigneStart = 0;
     const MoisActu = new Date().getMonth();
     const AnneeActu = new Date().getFullYear();
     switch (Periode) {
@@ -309,40 +313,32 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             Data[JourActu-1] = TabJour.length;
 
             
-            //Recherche linge start/stop
-            let LigneStop = ((TabAnnee.length-1)-(JourActu-1));
-            let LigneStart = TabAnnee.length-1;
-
+            //Recherche ligne start/stop
+            LigneStart = TabAnnee.length-1;
+            LigneStop = (LigneStart-(JourActu-1));
             if ( IndexVisuPeriode != 0) {
                 LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
                 LigneStop = LigneStart - 7;
             }
 
-            if (LigneStart < 0) return;
-            if (LigneStop < 0) {
+            if (LigneStart < 0) {
+                localStorage.setItem("FinDataGraphique", true);
+                IndexVisuPeriode --;
+                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
+                LigneStop = LigneStart - 7;
+            } else if(LigneStop < 0) {
                 localStorage.setItem("FinDataGraphique", true);
                 LigneStop = -1;
             } else {
                 localStorage.setItem("FinDataGraphique", false)
             }
 
-            //Affichage intervalle semaine selectionnée
-            
-            const DateJourStop = TabAnnee[LigneStop+1].id;
-            const DateJourStart = TabAnnee[LigneStart].id;
-            const DateJourStopJ = new Date(DateJourStop).getDate().toString().padStart(2, "0");
-            const DateJourStopM = new Date(DateJourStop).getMonth().toString().padStart(2, "0");
-            const DateJourStopA = new Date(DateJourStop).getFullYear().toString().slice(-2);
-            const DateJourStartJ = new Date(DateJourStart).getDate().toString().padStart(2, "0");
-            const DateJourStartM = new Date(DateJourStart).getMonth().toString().padStart(2, "0");
-            const DateJourStartA = new Date(DateJourStart).getFullYear().toString().slice(-2);
-
-            ChoixVisuGraph.textContent = `${DateJourStopJ}/${DateJourStopM}/${DateJourStopA} > ${DateJourStartJ}/${DateJourStartM}/${DateJourStartA}`
-console.log(ChoixVisuGraph.textContent)
             //Récuperation Data Tab Annee
-            for (let index = LigneStart; index > LigneStop; index--) {
+            DateJourStop = TabAnnee[LigneStop+1].id;
+            DateJourStart = TabAnnee[LigneStart].id;
 
-                if (TabAnnee[index].TableauJour[0]?.dateTri && index >= 0) {
+            for (let index = LigneStart; index > LigneStop; index--) {
+                if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
                     let JourCalc = new Date(TabAnnee[index].TableauJour[0]?.dateTri).getDay();
                         if (JourCalc == 0) JourCalc = 7   
 
@@ -357,23 +353,41 @@ console.log(ChoixVisuGraph.textContent)
             break;
 
         case "AnalyseMois":
-            //Initialisation labels
+
+            //Recherche ligne start/stop
+            JourActu = new Date().getDate();
+            LigneStart = TabAnnee.length-1;
+            LigneStop = (LigneStart-(JourActu-1));
+            if ( IndexVisuPeriode != 0) {
+                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
+                LigneStop = LigneStart - 7;
+            }
+  
+
+            if (LigneStart < 0) {
+                localStorage.setItem("FinDataGraphique", true);
+                IndexVisuPeriode --;
+                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
+                LigneStop = LigneStart - 7;
+            } else if(LigneStop < 0) {
+                localStorage.setItem("FinDataGraphique", true);
+                LigneStop = -1;
+            } else {
+                localStorage.setItem("FinDataGraphique", false)
+            }
+
+            //Initialisation Graph
             for (let index = 1; index <= 31; index++) {Label[index] = index}
 
             //Jour Actu
             Data[new Date().getDate()] = TabJour.length;
-
+          console.log(LigneStart, LigneStop, IndexVisuPeriode)
             //Récuperation Data Tab Annee
-
-            TabAnnee.forEach((Tab) => {
-                JourMois = new Date(Tab.TableauJour[0]?.dateTri).getDate()  || 0;
-                Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth()  || 0;
-                Annee = new Date(Tab.TableauJour[0]?.dateTri).getFullYear()  || 0;
-
-                if (Mois == MoisActu && Annee==AnneeActu) {
-                    Data[JourMois] = Tab.TableauJour.length
+             for (let index = LigneStart; index > LigneStop; index--) {
+                if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
+                     Data[index+1] = TabAnnee[index].TableauJour.length
                 }
-            })
+            }
 
             //Bornage Y graphique
             MinTab = 0;
@@ -465,6 +479,16 @@ console.log(ChoixVisuGraph.textContent)
         Mychart.resize();
         Mychart.update();
     }
+
+    //Affichage intervalle semaine selectionnée
+    const DateJourStopJ = new Date(DateJourStop).getDate().toString().padStart(2, "0");
+    const DateJourStopM = new Date(DateJourStop).getMonth().toString().padStart(2, "0");
+    const DateJourStopA = new Date(DateJourStop).getFullYear().toString().slice(-2);
+    const DateJourStartJ = new Date(DateJourStart).getDate().toString().padStart(2, "0");
+    const DateJourStartM = new Date(DateJourStart).getMonth().toString().padStart(2, "0");
+    const DateJourStartA = new Date(DateJourStart).getFullYear().toString().slice(-2);
+
+    ChoixVisuGraph.textContent = `${DateJourStopJ}/${DateJourStopM}/${DateJourStopA} > ${DateJourStartJ}/${DateJourStartM}/${DateJourStartA}`
 
     //Calcule Moyenne
     Moyenne(Periode)
