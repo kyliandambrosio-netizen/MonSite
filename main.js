@@ -119,8 +119,6 @@ const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 const VisuJourActuUi = document.getElementById("JourActuelle");
 const ChoixVisuGraph = document.getElementById("VisuGraph");
-const ChoixVisuGraphBpMoins = document.getElementById("Bp_VisuGraph_Moins");
-const ChoixVisuGraphBpPlus = document.getElementById("Bp_VisuGraph_Plus");
 
 let IndexChoixVisuJourHisto = 0;
 
@@ -173,6 +171,7 @@ window.showOngletchoixAnalyse = function(Page) {
     AffGraphique(Page)
     localStorage.setItem("ChoixPeriodeGraph", Page);
     ChoixVisuGraph.textContent = 0;
+    localStorage.setItem("IndexVisuGraphique", 0)
 
     //Visualisation choix analyse en cours 
     switch (Page) {
@@ -202,30 +201,6 @@ window.showOngletchoixAnalyse = function(Page) {
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Choix visu numéro (semaine/mois/Année) graphique
-ChoixVisuGraphBpPlus.addEventListener("click", () => {
-    const Periode = localStorage.getItem("ChoixPeriodeGraph");
-
-    if (ChoixVisuGraph.textContent == 0) {
-        return;
-    } else {
-        ChoixVisuGraph.textContent--
-    }
-
-    AffGraphique(Periode, ChoixVisuGraph.textContent);
-
-})
-
-ChoixVisuGraphBpMoins.addEventListener("click", () => {
-        const Periode = localStorage.getItem("ChoixPeriodeGraph");
-
-        ChoixVisuGraph.textContent++
-
-        AffGraphique(Periode, ChoixVisuGraph.textContent);
-})
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -308,6 +283,7 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Gestion Affichage Graphique Semaine / mois / année
 async function AffGraphique(Periode, IndexVisuPeriode) {
+    if (IndexVisuPeriode == undefined) IndexVisuPeriode = 0;
     const Graphique = document.getElementById('MyChart');
     const DateActu = new Date();
     let JourActu = 0
@@ -334,9 +310,22 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             Data[JourActu-1] = TabJour.length;
 
             //Récuperation Data Tab Annee
-            const LigneStop = ((TabAnnee.length-1)-(JourActu-2));
-            const LigneStart = TabAnnee.length-1;
-            for (let index = LigneStart; index >= LigneStop; index--) {
+            let LigneStop = ((TabAnnee.length-1)-(JourActu-1));
+            let LigneStart = TabAnnee.length-1;
+
+            if ( IndexVisuPeriode != 0) {
+                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
+                LigneStop = LigneStart - (7 * IndexVisuPeriode);
+            }
+
+            if (LigneStop < 0 && LigneStart >= 0) {
+                localStorage.setItem("FinDataGraphique", true)
+                LigneStop = -1;
+            }
+
+            console.log(LigneStart, LigneStop, IndexVisuPeriode)
+
+            for (let index = LigneStart; index > LigneStop; index--) {
 
                 if (TabAnnee[index].TableauJour[0]?.dateTri && index >= 0) {
                     let JourCalc = new Date(TabAnnee[index].TableauJour[0]?.dateTri).getDay();
@@ -906,7 +895,6 @@ const GraphiqueSwipe = document.getElementById("MyChart");
 let StartSwipX = 0 ;
 
 GraphiqueSwipe.addEventListener("pointerdown", (e) => {
-    console.log("Start")
     StartSwipX = e.clientX;
 })
 
@@ -921,12 +909,13 @@ GraphiqueSwipe.addEventListener("pointerup", (e) => {
 
     //Swip gauche
     } else if (diff < -50) {
-        IndexVisuGraph ++; 
+        const FinDataGraphique = localStorage.getItem("FinDataGraphique")
+        if (!FinDataGraphique) IndexVisuGraph ++; 
     }
 
     localStorage.setItem("IndexVisuGraphique", IndexVisuGraph)
-    AffGraphique("AnalyseSemaine", IndexVisuGraph) 
-    console.log(IndexVisuGraph)
+    AffGraphique("AnalyseSemaine", IndexVisuGraph)
+    ChoixVisuGraph.textContent = IndexVisuGraph
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
