@@ -241,9 +241,14 @@ AddCig.addEventListener("click", async() => {
 //Bp Ajout Cig historique
 Bp_AjoutLigneManu.addEventListener("click", async() => {
     let AjoutLigneDate = 0;
-    if (IndexChoixVisuJourHisto == 0 || !TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0]) {
+    if (IndexChoixVisuJourHisto == 0) {
         AjoutLigneDate = new Date();
-    } else  {
+
+    } else if (!TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0] == false) {
+        AjoutLigneDate = new Date(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id);
+        console.log(!TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0])
+
+    } else if(IndexChoixVisuJourHisto == 0)  {
         AjoutLigneDate = new Date(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour[0].dateTri);
     }
 
