@@ -316,11 +316,13 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
     let index = 0;
     let JourMois = 0;
     let Mois = 0;
-    let MoisActu =0;
+    let Annee = 0;
+    let AnActu = 0;
     let MinTab = 0;
     let MaxTab = 15; 
     let StepTab = 5;
-    
+    const MoisActu = new Date().getMonth();
+    const AnneeActu = new Date().getFullYear();
     switch (Periode) {
         case "AnalyseSemaine":
             Data = [0, 0, 0, 0, 0, 0, 0];
@@ -332,8 +334,9 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             Data[JourActu-1] = TabJour.length;
 
             //Récuperation Data Tab Annee
-            const NbrLigneRecup = ((TabAnnee.length-1)-(JourActu-2));
-            for (let index = TabAnnee.length-1; index >= NbrLigneRecup; index--) {
+            const LigneStop = ((TabAnnee.length-1)-(JourActu-2));
+            const LigneStart = TabAnnee.length-1;
+            for (let index = LigneStart; index >= LigneStop; index--) {
 
                 if (TabAnnee[index].TableauJour[0]?.dateTri && index >= 0) {
                     let JourCalc = new Date(TabAnnee[index].TableauJour[0]?.dateTri).getDay();
@@ -357,12 +360,13 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             Data[new Date().getDate()] = TabJour.length;
 
             //Récuperation Data Tab Annee
+
             TabAnnee.forEach((Tab) => {
                 JourMois = new Date(Tab.TableauJour[0]?.dateTri).getDate()  || 0;
                 Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth()  || 0;
-                MoisActu = new Date().getMonth();
+                Annee = new Date(Tab.TableauJour[0]?.dateTri).getFullYear()  || 0;
 
-                if (Mois == MoisActu) {
+                if (Mois == MoisActu && Annee==AnneeActu) {
                     Data[JourMois] = Tab.TableauJour.length
                 }
             })
@@ -375,8 +379,6 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             break;
 
         case "AnalyseAnnee":
-            MoisActu = new Date().getMonth();
-            const AnneeActu = new Date().getFullYear();
 
             //Récuperation Data Tab Annee
             for (let index = 1; index <= 12; index++) {
