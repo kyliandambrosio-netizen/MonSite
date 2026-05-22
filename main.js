@@ -359,7 +359,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             LigneStart = TabAnnee.length-1;
             LigneStop = (LigneStart-(JourActu-1));
             if ( IndexVisuPeriode != 0) {
-                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
+                LigneStart = LigneStop - (31 * (IndexVisuPeriode-1));
                 LigneStop = LigneStart - 7;
             }
   
