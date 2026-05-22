@@ -127,6 +127,7 @@ const VisuJourActuUi = document.getElementById("JourActuelle");
 const ChoixVisuGraph = document.getElementById("VisuGraph");
 const BpCreationJour = document.getElementById("BpValideCreeJour");
 const JourCreeManu = document.getElementById("JourCreeManu");
+const BpAjoutDataProvisoire = document.getElementById("BpProvisoireAjoutData");
 
 let IndexChoixVisuJourHisto = 0;
 
@@ -506,10 +507,10 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
 
     //Affichage intervalle semaine selectionnée
     const DateJourStopJ = new Date(DateJourStop).getDate().toString().padStart(2, "0");
-    const DateJourStopM = new Date(DateJourStop).getMonth().toString().padStart(2, "0");
+    const DateJourStopM = (new Date(DateJourStop).getMonth()+1).toString().padStart(2, "0");
     const DateJourStopA = new Date(DateJourStop).getFullYear().toString().slice(-2);
     const DateJourStartJ = new Date(DateJourStart).getDate().toString().padStart(2, "0");
-    const DateJourStartM = new Date(DateJourStart).getMonth().toString().padStart(2, "0");
+    const DateJourStartM = (new Date(DateJourStart).getMonth()+1).toString().padStart(2, "0");
     const DateJourStartA = new Date(DateJourStart).getFullYear().toString().slice(-2);
 
     ChoixVisuGraph.textContent = `${DateJourStopJ}/${DateJourStopM}/${DateJourStopA} > ${DateJourStartJ}/${DateJourStartM}/${DateJourStartA}`
