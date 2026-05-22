@@ -42,6 +42,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     //Chargement collection GlobalData Record
     onSnapshot(doc(db, "GlobalData", "Record"), snapshot => {
         Record = snapshot.data();
+        localStorage.setItem("RecordLoaded", true)
     })
 
     /////////////////////////////////////////////
@@ -244,11 +245,10 @@ Bp_AjoutLigneManu.addEventListener("click", async() => {
     if (IndexChoixVisuJourHisto == 0) {
         AjoutLigneDate = new Date();
 
-    } else if (!TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0] == false) {
+    } else if (!TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0]) {
         AjoutLigneDate = new Date(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].id);
-        console.log(!TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto]?.TableauJour?.[0])
 
-    } else if(IndexChoixVisuJourHisto == 0)  {
+    } else if(IndexChoixVisuJourHisto != 0)  {
         AjoutLigneDate = new Date(TabAnnee[TabAnnee.length - IndexChoixVisuJourHisto].TableauJour[0].dateTri);
     }
 
@@ -314,6 +314,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
     let LigneStart = 0;
     const MoisActu = new Date().getMonth();
     const AnneeActu = new Date().getFullYear();
+
     switch (Periode) {
         case "AnalyseSemaine":
             Data = [0, 0, 0, 0, 0, 0, 0];
@@ -372,7 +373,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             LigneStop = (LigneStart-(JourActu-1));
             if ( IndexVisuPeriode != 0) {
                 LigneStart = LigneStop - (31 * (IndexVisuPeriode-1));
-                LigneStop = LigneStart - 7;
+                LigneStop = LigneStart - 31;
             }
   
 
@@ -388,18 +389,24 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                 localStorage.setItem("FinDataGraphique", false)
             }
 
+
             //Initialisation Graph
             for (let index = 1; index <= 31; index++) {Label[index] = index}
 
             //Jour Actu
-            Data[new Date().getDate()] = TabJour.length;
+            if (IndexVisuPeriode == 0) Data[new Date().getDate()] = TabJour.length;
 
             //Récuperation Data Tab Annee
+            DateJourStop = TabAnnee[LigneStop+1].id;
+            DateJourStart = TabAnnee[LigneStart].id;
+
              for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
-                     Data[index+1] = TabAnnee[index].TableauJour.length
+                    const IndexData = new Date(TabAnnee[index].id).getDate();
+                    Data[IndexData] = TabAnnee[index].TableauJour.length
                 }
             }
+
 
             //Bornage Y graphique
             MinTab = 0;
@@ -679,6 +686,7 @@ async function calcAffDate(DateSeconde) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Declenchement toutes les seconde
 setInterval(async () => {
+    if (localStorage.getItem("TabAnneeLoaded") != "true" || localStorage.getItem("RecordLoaded") != "true") return;
     let LastDate = 0;
     const DateActu = new Date();
     let intervalleSeconde = 0;
