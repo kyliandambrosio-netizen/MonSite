@@ -64,7 +64,7 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 
     //Refresh Object Html
     Cpt_CigJour.textContent = TabJour.length;
-    VisuTabJour(TabJour, false)
+    if (localStorage.getItem("TabAnneeLoaded") == "true") VisuTabJour(TabJour, false)
     })
 
     /////////////////////////////////////////////
@@ -78,6 +78,8 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
     //Refresh objet
     VisuTabJour(TabJour, true)
     AffDateActu()
+
+    localStorage.setItem("TabAnneeLoaded", true)
     })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,12 +88,15 @@ const CollTabAnnee = query(collection(db, "TabAnnee"), orderBy("__name__", "asc"
 function AffDateActu() {
     const JourLettreActu = new Date().toLocaleDateString("fr-FR", { weekday: "long"});
     const JourActu = new Date().getDate().toString().padStart(2, "0");
-    const MoisActu = new Date().getMonth().toString().padStart(2, "0");
+    let MoisCalcActu = new Date();
+    MoisCalcActu.setMonth(new Date().getMonth()+1)
+    const MoisActu = new Date(MoisCalcActu).getMonth().toString().padStart(2, "0");
     const AnneeActu = new Date().getFullYear();
     const DateActu = `${JourLettreActu} <br> ${JourActu} / ${MoisActu} / ${AnneeActu}`
-
     VisuJourActuUi.innerHTML = DateActu;
+
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +124,8 @@ const BpChoixAnalyseMois = document.getElementById("BpChoixAnalyseMois");
 const BpChoixAnalyseAnn = document.getElementById("BpChoixAnalyseAnn");
 const VisuJourActuUi = document.getElementById("JourActuelle");
 const ChoixVisuGraph = document.getElementById("VisuGraph");
+const BpCreationJour = document.getElementById("BpValideCreeJour");
+const JourCreeManu = document.getElementById("JourCreeManu");
 
 let IndexChoixVisuJourHisto = 0;
 
@@ -381,7 +388,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
 
             //Jour Actu
             Data[new Date().getDate()] = TabJour.length;
-          console.log(LigneStart, LigneStop, IndexVisuPeriode)
+
             //Récuperation Data Tab Annee
              for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -508,17 +515,22 @@ async function VisuTabJour(Data, RecalcRecord) {
     if (IndexChoixVisuJourHisto != 0 && TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] != undefined) {
         Data = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour
         DateVisu = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].TableauJour[0].dateTri;
-        ChoixJourHisto.textContent = `${new Date(DateVisu).getDate().toString().padStart(2, "0")} / ${new Date(DateVisu).getMonth().toString().padStart(2, "0")} 
+        ChoixJourHisto.textContent = `${new Date(DateVisu).getDate().toString().padStart(2, "0")} / ${(new Date(DateVisu).getMonth()+1).toString().padStart(2, "0")} 
                                         / ${new Date(DateVisu).getFullYear()}`;
         JourChoixJourHisto.textContent = `${new Date(DateVisu).toLocaleDateString("fr-FR", { weekday: "long"})}`
 
     } else if (IndexChoixVisuJourHisto == 0) {
-        ChoixJourHisto.textContent = `${new Date().getDate().toString().padStart(2, "0")} / ${new Date().getMonth().toString().padStart(2, "0")} 
+        ChoixJourHisto.textContent = `${new Date().getDate().toString().padStart(2, "0")} / ${(new Date().getMonth()+1).toString().padStart(2, "0")} 
                                         / ${new Date().getFullYear()}`;
         JourChoixJourHisto.textContent = `${new Date().toLocaleDateString("fr-FR", { weekday: "long"})}`
+
+    } else if (TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)]?.TableauJour?.[0] == undefined) {
+        Data = [];
+        DateVisu = TabAnnee[TabAnnee.length - (IndexChoixVisuJourHisto)].id;
+        ChoixJourHisto.textContent = `${new Date(DateVisu).getDate().toString().padStart(2, "0")} / ${(new Date(DateVisu).getMonth()+1).toString().padStart(2, "0")} 
+                                        / ${new Date(DateVisu).getFullYear()}`;
+        JourChoixJourHisto.textContent = `${new Date(DateVisu).toLocaleDateString("fr-FR", { weekday: "long"})}`
     }
-
-
 
     //Création tableau
     Data.forEach((ligne, index) => {
@@ -962,3 +974,15 @@ GraphiqueSwipe.addEventListener("pointerup", (e) => {
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Bouton Création Jour Manu
+BpCreationJour.addEventListener("click", async() => {
+    const CalcJourIsoStr = new Date(JourCreeManu.value).toISOString();
+
+    await setDoc(doc(db, "TabAnnee", CalcJourIsoStr), {
+        TableauJour:[]
+    })
+})
