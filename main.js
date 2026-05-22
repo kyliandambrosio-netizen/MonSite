@@ -853,8 +853,10 @@ function Moyenne(Periode) {
     } else {
         SpanMoyenneJourNbrF.style.color = "red";
     }
+
     SpanMoyenneJourIntervalle.textContent = intervalle;
-    if (ResultatInter >= IntervalleActu) {
+    console.log([Interheure, Interminute], Preference.IntervalleVoulu)
+    if ([Interheure, Interminute] >= Preference.IntervalleVoulu) {
         SpanMoyenneJourIntervalle.style.color = "green";
     } else {
         SpanMoyenneJourIntervalle.style.color = "red";
