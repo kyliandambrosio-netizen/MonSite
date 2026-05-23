@@ -367,6 +367,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
         case "AnalyseMois":
 
             //Recherche ligne start/stop
+            localStorage.setItem("FinDataGraphique", false)
             JourActu = new Date().getDate();
             LigneStart = TabAnnee.length-1;
             LigneStop = (LigneStart-(JourActu-1));
@@ -379,15 +380,13 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                         const RecupNumJour = new Date(TabAnnee[LigneStart].id).getDate();
                         LigneStop = LigneStart - RecupNumJour;
                     }       
-                    
+                        console.log(LigneStop)
                     if(LigneStop < 0) {
                         localStorage.setItem("FinDataGraphique", true);
                         LigneStop = -1;
                         break;
 
-                    }else {
-                        localStorage.setItem("FinDataGraphique", false)
-                    }  
+                    }
                 }
                 DateJourStart = TabAnnee[LigneStart].id;
             } else {
@@ -421,14 +420,13 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
         case "AnalyseAnnee":
             //Recherche ligne start/stop
             const NumJOurAnnee = await GetDayOfYears();
-
+            localStorage.setItem("FinDataGraphique", false)
             LigneStart = TabAnnee.length-1;
             LigneStop = (LigneStart-(NumJOurAnnee-1));
             
                 for (let index = 0; index <= IndexVisuPeriode; index++) {
                     if (LigneStop>=0) {
                         LigneStart = LigneStop;
-                        console.log(LigneStart)
                         const RecupNumJour = new Date(TabAnnee[LigneStart].id).getDate();
                         LigneStop = LigneStart - RecupNumJour;
                     }
@@ -438,9 +436,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                         LigneStop = -1;
                         break;
 
-                    }else {
-                        localStorage.setItem("FinDataGraphique", false)
-                    }                   
+                    }             
                 }
                 DateJourStart = TabAnnee[LigneStart].id;
 
@@ -542,6 +538,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
 
     //Calcule Moyenne
     Moyenne(Periode)
+
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
