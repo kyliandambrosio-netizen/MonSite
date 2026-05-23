@@ -376,11 +376,9 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                 for (let index = 1; index <= IndexVisuPeriode; index++) {
                     if (LigneStop>=0) {
                         LigneStart = LigneStop;
-                        console.log(LigneStart)
                         const RecupNumJour = new Date(TabAnnee[LigneStart].id).getDate();
                         LigneStop = LigneStart - RecupNumJour;
                     }       
-                        console.log(LigneStop)
                     if(LigneStop < 0) {
                         localStorage.setItem("FinDataGraphique", true);
                         LigneStop = -1;
