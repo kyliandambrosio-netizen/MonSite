@@ -407,7 +407,6 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                 }
             }
 
-
             //Bornage Y graphique
             MinTab = 0;
             MaxTab = 15; 
@@ -438,11 +437,20 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                 }
                 DateJourStart = TabAnnee[LigneStart].id;
 
-            if (IndexVisuPeriode != 0) {
+            if (IndexVisuPeriode == 0) {
                 DateJourStart = new Date();
             }
 
             //Récuperation Data Tab Annee
+            DateJourStop = TabAnnee[LigneStop+1].id;
+
+             for (let index = LigneStart; index > LigneStop; index--) {
+                if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
+                    const IndexData = new Date(TabAnnee[index].id).getMonth();
+                    Data[IndexData] = TabAnnee[index].TableauJour.length
+                }
+            }
+
             for (let index = 1; index <= 12; index++) {
                 let NbrCigMois = 0;
 
@@ -451,7 +459,9 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                 TabAnnee.forEach((Tab) => {
                     Mois = new Date(Tab.TableauJour[0]?.dateTri).getMonth() || 0;
                     const Annee = new Date(Tab.TableauJour[0]?.dateTri).getFullYear() || 0;
-                    if (Mois == index && Annee == AnneeActu) NbrCigMois += Tab.TableauJour.length
+                    if (Mois == index && Annee == AnneeActu) {
+                        NbrCigMois += Tab.TableauJour.length
+                    }
 
                 })
 
@@ -891,10 +901,10 @@ ParamNbrSemaine.addEventListener("change", (e) => {
 //Calcule Moyenne
 function Moyenne(Periode) {
     let CalcMoyenneNbrF = TabJour.length; //Initialisation avec tableau jour actu
-    let NbrDataNbrF = 0; //Initialisation avec tableau jour actu
-        if (TabJour.length > 0) {NbrDataNbrF = 1};
+    let NbrDataNbrF = 1; //Initialisation avec tableau jour actu
     let CalcMoyenneInter = 0;
-    let NbrDataInter = TabJour.length - 1; //Initialisation avec tableau jour actu sans la première inter de la journée
+    let NbrDataInter = 0;
+        if (TabJour.length > 0) NbrDataInter.length - 1;
     let CalcInter = 0;
     let JourActu = new Date().getDay();
         if (JourActu == 0) JourActu = 7
