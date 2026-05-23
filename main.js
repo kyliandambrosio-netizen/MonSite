@@ -338,21 +338,16 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
                 DateJourStart = new Date();
             }
 
-            if (LigneStart < 0) {
-                localStorage.setItem("FinDataGraphique", true);
-                IndexVisuPeriode --;
-                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
-                LigneStop = LigneStart - 7;
-            } else if(LigneStop < 0) {
+            if(LigneStop < 0) {
                 localStorage.setItem("FinDataGraphique", true);
                 LigneStop = -1;
+
             } else {
                 localStorage.setItem("FinDataGraphique", false)
             }
 
             //Récuperation Data Tab Annee
             DateJourStop = TabAnnee[LigneStop+1].id;
-
 
             for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -375,27 +370,29 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             JourActu = new Date().getDate();
             LigneStart = TabAnnee.length-1;
             LigneStop = (LigneStart-(JourActu-1));
+
             if ( IndexVisuPeriode != 0) {
-                LigneStart = LigneStop - (31 * (IndexVisuPeriode-1));
-                LigneStop = LigneStart - 31;
+                for (let index = 1; index <= IndexVisuPeriode; index++) {
+                    if (LigneStop>=0) {
+                        LigneStart = LigneStop;
+                        console.log(LigneStart)
+                        const RecupNumJour = new Date(TabAnnee[LigneStart].id).getDate();
+                        LigneStop = LigneStart - RecupNumJour;
+                    }       
+                    
+                    if(LigneStop < 0) {
+                        localStorage.setItem("FinDataGraphique", true);
+                        LigneStop = -1;
+                        break;
+
+                    }else {
+                        localStorage.setItem("FinDataGraphique", false)
+                    }  
+                }
                 DateJourStart = TabAnnee[LigneStart].id;
             } else {
                 DateJourStart = new Date();
             }
-  
-
-            if (LigneStart < 0) {
-                localStorage.setItem("FinDataGraphique", true);
-                IndexVisuPeriode --;
-                LigneStart = LigneStop - (7 * (IndexVisuPeriode-1));
-                LigneStop = LigneStart - 7;
-            } else if(LigneStop < 0) {
-                localStorage.setItem("FinDataGraphique", true);
-                LigneStop = -1;
-            } else {
-                localStorage.setItem("FinDataGraphique", false)
-            }
-
 
             //Initialisation Graph
             for (let index = 1; index <= 31; index++) {Label[index] = index}
@@ -422,6 +419,34 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             break;
 
         case "AnalyseAnnee":
+            //Recherche ligne start/stop
+            const NumJOurAnnee = await GetDayOfYears();
+
+            LigneStart = TabAnnee.length-1;
+            LigneStop = (LigneStart-(NumJOurAnnee-1));
+            
+                for (let index = 0; index <= IndexVisuPeriode; index++) {
+                    if (LigneStop>=0) {
+                        LigneStart = LigneStop;
+                        console.log(LigneStart)
+                        const RecupNumJour = new Date(TabAnnee[LigneStart].id).getDate();
+                        LigneStop = LigneStart - RecupNumJour;
+                    }
+
+                    if(LigneStop < 0) {
+                        localStorage.setItem("FinDataGraphique", true);
+                        LigneStop = -1;
+                        break;
+
+                    }else {
+                        localStorage.setItem("FinDataGraphique", false)
+                    }                   
+                }
+                DateJourStart = TabAnnee[LigneStart].id;
+
+            if (IndexVisuPeriode != 0) {
+                DateJourStart = new Date();
+            }
 
             //Récuperation Data Tab Annee
             for (let index = 1; index <= 12; index++) {
@@ -1004,3 +1029,13 @@ BpCreationJour.addEventListener("click", async() => {
     })
 })
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Recherche Jour de l'année
+function GetDayOfYears() {
+            const today = new Date();
+            const start = new Date(today.getFullYear(), 0, 0);
+            const diff = today - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay)
+}
