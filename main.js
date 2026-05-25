@@ -928,7 +928,8 @@ function Moyenne(Periode, LigneStart, LigneStop, IndexVisuGraph) {
         TabJour.forEach((Tab, i) => {
             if (TabJour[i+1]?.dateTri && i != TabJour.length-1) {
                 CalcInter = Math.floor(new Date(Tab.dateTri) - new Date(TabJour[i+1].dateTri)) / 1000
-                CalcMoyenneInter += CalcInter; 
+                CalcMoyenneInter += CalcInter;
+                NbrDataInter ++; 
             }
         })
     }
@@ -949,6 +950,8 @@ function Moyenne(Periode, LigneStart, LigneStop, IndexVisuGraph) {
         }
     }
 
+
+
     //Calcule Final + Affichage moyenne 
     const ResultatInter = CalcMoyenneInter / NbrDataInter;
     const Interheure = Math.floor((ResultatInter) / 3600).toString().padStart(2, "0");
@@ -962,6 +965,7 @@ function Moyenne(Periode, LigneStart, LigneStop, IndexVisuGraph) {
     } else {
         SpanMoyenneJourNbrF.style.color = "red";
     }
+
     if (SpanMoyenneJourIntervalle.textContent != intervalle && Interminute != "NaN") {
         SpanMoyenneJourIntervalle.textContent = intervalle;
     } else {
