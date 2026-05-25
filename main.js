@@ -966,7 +966,7 @@ function Moyenne(Periode, LigneStart, LigneStop, IndexVisuGraph) {
         SpanMoyenneJourNbrF.style.color = "red";
     }
 
-    if (SpanMoyenneJourIntervalle.textContent != intervalle && Interminute != "NaN") {
+    if (Interminute != "NaN") {
         SpanMoyenneJourIntervalle.textContent = intervalle;
     } else {
         SpanMoyenneJourIntervalle.textContent = 0;
