@@ -347,7 +347,11 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             }
 
             //Récuperation Data Tab Annee
-            DateJourStop = TabAnnee[LigneStop+1].id;
+            if (TabAnnee[LigneStop+1]?.id) {
+                DateJourStop = TabAnnee[LigneStop+1].id;
+            } else {
+                DateJourStop = new Date();
+            }
 
             for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -398,7 +402,11 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             if (IndexVisuPeriode == 0) Data[new Date().getDate()] = TabJour.length;
 
             //Récuperation Data Tab Annee
-            DateJourStop = TabAnnee[LigneStop+1].id;
+            if (TabAnnee[LigneStop+1]?.id) {
+                DateJourStop = TabAnnee[LigneStop+1].id;
+            } else {
+                DateJourStop = new Date();
+            }
 
              for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -442,7 +450,11 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
             }
 
             //Récuperation Data Tab Annee
-            DateJourStop = TabAnnee[LigneStop+1].id;
+            if (TabAnnee[LigneStop+1]?.id) {
+                DateJourStop = TabAnnee[LigneStop+1].id;
+            } else {
+                DateJourStop = new Date();
+            }
 
              for (let index = LigneStart; index > LigneStop; index--) {
                 if (TabAnnee[index]?.TableauJour[0]?.dateTri && index >= 0) {
@@ -976,8 +988,13 @@ function Moyenne(Periode) {
     } else {
         SpanMoyenneJourNbrF.style.color = "red";
     }
+    if (SpanMoyenneJourIntervalle.textContent != intervalle && Interminute != "NaN") {
+        SpanMoyenneJourIntervalle.textContent = intervalle;
+    } else {
+        SpanMoyenneJourIntervalle.textContent = 0;
+    }
 
-    SpanMoyenneJourIntervalle.textContent = intervalle;
+
     if ([Interheure, Interminute] >= Preference.IntervalleVoulu) {
         SpanMoyenneJourIntervalle.style.color = "green";
     } else {
