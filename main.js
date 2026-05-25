@@ -557,7 +557,7 @@ async function AffGraphique(Periode, IndexVisuPeriode) {
     ChoixVisuGraph.textContent = `${DateJourStopJ}/${DateJourStopM}/${DateJourStopA} > ${DateJourStartJ}/${DateJourStartM}/${DateJourStartA}`
 
     //Calcule Moyenne
-    Moyenne(Periode)
+    Moyenne(Periode, LigneStart, LigneStop, IndexVisuPeriode)
 
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -911,55 +911,30 @@ ParamNbrSemaine.addEventListener("change", (e) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Calcule Moyenne
-function Moyenne(Periode) {
-    let CalcMoyenneNbrF = TabJour.length; //Initialisation avec tableau jour actu
-    let NbrDataNbrF = 1; //Initialisation avec tableau jour actu
+function Moyenne(Periode, LigneStart, LigneStop, IndexVisuGraph) {
+    let CalcMoyenneNbrF = 0;
+    let NbrDataNbrF = 0;
     let CalcMoyenneInter = 0;
     let NbrDataInter = 0;
         if (TabJour.length > 0) NbrDataInter.length - 1;
     let CalcInter = 0;
-    let JourActu = new Date().getDay();
-        if (JourActu == 0) JourActu = 7
-    let JourMoisActu = new Date().getDate();
-    let LigneStop = 0;
-    let LigneStart = 0;
+
 
     //CaluleMoyenneJourActu
-    TabJour.forEach((Tab, i) => {
-        if (TabJour[i+1]?.dateTri && i != TabJour.length-1) {
-            CalcInter = Math.floor(new Date(Tab.dateTri) - new Date(TabJour[i+1].dateTri)) / 1000
-            CalcMoyenneInter += CalcInter; 
-        }
-    })
+    if (IndexVisuGraph == 0) {
+        NbrDataNbrF ++;
+        CalcMoyenneNbrF = TabJour.length;
 
-    switch (Periode) {
-        case "AnalyseSemaine":
-            LigneStop = ((TabAnnee.length-1)-(JourActu-2));
-            LigneStart = (TabAnnee.length-1);
-        
-            break;
-
-        case "AnalyseMois": 
-            LigneStop = ((TabAnnee.length-1)-(JourMoisActu-1));
-            LigneStart = (TabAnnee.length-1);
-
-        break;
-
-        case "AnalyseAnnee": 
-            const Today = new Date();
-            const Start = new Date(Today.getFullYear(), 0, 0)
-            const diff = Today - Start;
-            const oneDay = 1000 * 60 * 60 * 24;
-            const DayOfYears = Math.floor(diff / oneDay);
-
-            LigneStop = ((TabAnnee.length-1)-(DayOfYears-1));
-                if (LigneStop < 0) LigneStop = 0;
-            LigneStart = (TabAnnee.length-1);
-        break;
+        TabJour.forEach((Tab, i) => {
+            if (TabJour[i+1]?.dateTri && i != TabJour.length-1) {
+                CalcInter = Math.floor(new Date(Tab.dateTri) - new Date(TabJour[i+1].dateTri)) / 1000
+                CalcMoyenneInter += CalcInter; 
+            }
+        })
     }
 
     //Calcule Nombre et intervalle dans tabAnnee
-    for (let index = LigneStart; index >= LigneStop; index--) {
+    for (let index = LigneStart; index > LigneStop; index--) {
         if (TabAnnee[index]?.TableauJour[0]?.dateTri) {
             NbrDataNbrF ++;
             CalcMoyenneNbrF += TabAnnee[index].TableauJour.length
@@ -974,7 +949,6 @@ function Moyenne(Periode) {
         }
     }
 
-
     //Calcule Final + Affichage moyenne 
     const ResultatInter = CalcMoyenneInter / NbrDataInter;
     const Interheure = Math.floor((ResultatInter) / 3600).toString().padStart(2, "0");
@@ -982,7 +956,7 @@ function Moyenne(Periode) {
     const intervalle = `${Interheure} h ${Interminute} m`;
     const IntervalleActu = localStorage.getItem("intervalleSeconde")
 
-    SpanMoyenneJourNbrF.textContent = (Math.round(CalcMoyenneNbrF / NbrDataNbrF * 10)) / 10;
+    SpanMoyenneJourNbrF.textContent = (Math.round((CalcMoyenneNbrF / NbrDataNbrF) * 10)) / 10;
     if (SpanMoyenneJourNbrF.textContent <= Preference.NbrMoyVoulu) {
         SpanMoyenneJourNbrF.style.color = "green";
     } else {
